@@ -14,7 +14,7 @@
     "description": "Get the parameters shared from web pages",
     "icons": [
         {
-            "src": "/img/text-and-link.svg",
+            "src": "/tl.svg",
             "type": "image/svg+xml",
             "sizes": "any",
             "purpose": "any"
