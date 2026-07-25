@@ -16,7 +16,7 @@
     <!-- See index.html -->
     <!-- <base href=".."> -->
     <!-- <script>console.log("baseURI", document.baseURI);</script> -->
-    <!-- <script src="./init-error.js"></script> -->
+    <script src="./init-error-new.js"></script>
     <!-- <script type="module" src="./pwa.js"></script> -->
     <!-- <script type="module" src="./anchors-with-base.js"></script> -->
     <!-- <script src="./fc4i-importmaps.js"></script> -->
@@ -82,9 +82,6 @@
             align-items: flex-end;
         }
 
-        #info-fc4i {
-            font-style: italic;
-        }
 
         #div-output {
             display: grid;
@@ -125,7 +122,10 @@
             <a href="https://en.wikipedia.org/wiki/Click_identifier">click identifiers</a>:
             <textarea type="text" id="ta-link" placeholder="Link to clean"></textarea>
         </label>
-        <div id="output"> </div>
+        <div id="output">
+            <div id="output-text"></div>
+            <div id="output-link"></div>
+        </div>
     </section>
 
     <p>
@@ -135,131 +135,7 @@
         " in your web browser.
         (There is only support for this on Android mobiles yet.)
     </p>
-    <script>
-        const eltTitle = document.getElementById("header-title");
-        eltTitle.textContent = "Text+Link";
-
-        const inpLink = document.getElementById("ta-link");
-        inpLink.addEventListener("input", _evt => {
-            console.log("some4 input");
-        })
-        function removeUrlParam(urlIn, param) {
-            if (!(urlIn instanceof URL)) { throw Error(`urlIn is not URL`); }
-            const urlOut = new URL(urlIn);
-            urlOut.searchParams.delete(param);
-            return urlOut;
-        }
-
-
-        (async () => {
-            const modShPar = await import("./sharing-params.js");
-
-            const eltInfoHeader = document.getElementById("info-header");
-            const eltInfo = document.getElementById("info");
-            // const btnInfo = modMdc.mkMDCiconButton("info", "Show/hide info");
-            const btnInfo = document.createElement("button")
-            btnInfo.textContent = "Show/hide info";
-            btnInfo.style.color = "blue";
-            btnInfo.addEventListener("click", evt => { toggleInfo(); });
-            eltInfoHeader.appendChild(btnInfo);
-
-            const sharedParams = modShPar.getOurSharedParams();
-            console.log({ sharedParams });
-            const divOut = document.getElementById("output")
-            function toggleInfo() {
-                eltInfo.classList.toggle("display-none");
-            }
-            function showInfo() {
-                // divOut.textContent = "";
-                const p1 = mkElt("p", undefined,
-                    `This web page can be a share target for apps and web pages.`);
-                eltInfo.appendChild(p1);
-
-                const linkPWa = "https://en.wikipedia.org/wiki/Progressive_web_app";
-                const aPwa = mkElt("a", { href: linkPWa }, "Progressive web app");
-                const p2 = mkElt("p", undefined, [
-                    `For this to work it must be "installed as a PWA".`,
-                    "(", aPwa, ")"
-                ]);
-                eltInfo.appendChild(p2);
-            }
-            if (!sharedParams) {
-                btnInfo.remove();
-                // showInfo();
-                toggleInfo();
-            }
-            if (sharedParams) {
-                const divText = mkElt("div", { id: "text-content" });
-                if (sharedParams.title) {
-                    const div = mkElt("div", undefined, sharedParams.title + "\n");
-                    div.style.fontWeight = "bold";
-                    divText.appendChild(div);
-                }
-                if (sharedParams.text) {
-                    const div = mkElt("div", undefined, sharedParams.text + "\n");
-                    divText.appendChild(div);
-                }
-                if (sharedParams.url) {
-                    let url = new URL(sharedParams.url);
-
-                    // https://en.wikipedia.org/wiki/Click_identifier
-                    const knownClickIds = [
-                        // DoubleClick Click Identifier (dclid), used by Google Marketing Platform
-                        "dclid",
-                        // Facebook Click Identifier (fbclid) used by Meta Platforms in advertising and social media analytics
-                        "fbclid",
-                        // Google Click Identifier (gclid, gclsrc, wbraid and gbraid), used by Google Ads and Google Marketing Platform
-                        "gclid", "gclsrc", "wbraid", "gbraid",
-                        // LinkedIn Click Identifier (li_fat_id), used by LinkedIn Ads
-                        "li_fat_id",
-                        // Microsoft Click Identifier (msclkid), used by Microsoft Advertising
-                        "msclkid",
-                        // Seznam Click Identifier (sznclid), used by Seznam / Sklik
-                        "sznclid",
-                        // TikTok Click Identifier (ttclid), used by TikTok Ads
-                        "ttclid",
-                        // Twitter Click Identifier (twclid), used by X Ads
-                        "twclid",
-                        // Yahoo Click Identifier (yclid), used by Yahoo! Japan Ads
-                        "yclid",
-                        // Yandex Click Identifier (yclid), used by Yandex Direct advertising
-                        "yclid",
-                        // Zanox click identifier (zanpid), used by Awin
-                        "zanpid",
-                    ];
-                    knownClickIds.forEach(clickId => {
-                        url = removeUrlParam(url, clickId);
-                    });
-
-                    // url = removeUrlParam(url, "dclid");
-                    // url = removeUrlParam(url, "fbclid");
-                    // url = removeUrlParam(url, "gclid");
-                    // url = removeUrlParam(url, "gclsrc");
-                    // url = removeUrlParam(url, "wbraid");
-                    // url = removeUrlParam(url, "msclkid");
-                    // url = removeUrlParam(url, "twclid");
-                    // url = removeUrlParam(url, "yclid");
-
-                    const href = url.href;
-                    const eltA = mkElt("a", { href }, href)
-                    const div = mkElt("div", undefined, eltA);
-                    divText.appendChild(div);
-                }
-                const btnCopy = modMdc.mkMDCbutton("Copy", "raised");
-                btnCopy.addEventListener("click", errorHandlerAsyncEvent(async evt => {
-                    const text = divText.textContent;
-                    await navigator.clipboard.writeText(text);
-                    // Do we need to inform user?
-                    const ua = navigator.userAgent.toLowerCase();
-                    const isAndroid = ua.indexOf("android") > -1;
-                    if (isAndroid) return;
-                    modMdc.mkMDCsnackbar("copied to clipboard");
-                }));
-                const divTextOut = mkElt("div", { id: "div-output", class: "mdc-card" }, [divText, btnCopy]);
-                divOut.appendChild(divTextOut);
-            }
-        })();
-    </script>
+    <script src="text-and-link.js"></script>
 
 </body>
 
