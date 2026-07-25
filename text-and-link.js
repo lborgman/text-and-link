@@ -25,9 +25,8 @@ function handleInputLink() {
         divOutputLink.textContent = "";
         return;
     }
-    debugger;
-    const strOut2 = removeByPattern(strIn);
-    const strOut = removeTrailIds(strIn);
+    const strOut1 = removeTrailIds(strIn);
+    const strOut = removeByPattern(strOut1);
     console.log(strOut);
     divOutputLink.textContent = strOut;
 
@@ -45,9 +44,16 @@ function removeUrlParam(urlIn, param) {
     return urlOut;
 }
 function removeByPattern(strUrl) {
-        const url = new URL(strUrl);
-        console.log({url});
-        debugger;
+    let url = new URL(strUrl);
+    console.log({ url });
+    const arrNames = [...url.searchParams].map(p => { return p[0]; });
+    arrNames.forEach(n => {
+        if (n.startsWith("utm_")) {
+            console.log({ n });
+            url = removeUrlParam(url, n);
+        }
+    });
+    return url.href;
 }
 /**
  * @param {string} strUrl
