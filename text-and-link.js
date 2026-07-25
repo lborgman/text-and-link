@@ -1,5 +1,7 @@
 // @ts-check
 
+navigator.serviceWorker.register('./sw.js');
+
 const eltTitle = document.getElementById("header-title");
 eltTitle.textContent = "Text+Link";
 
