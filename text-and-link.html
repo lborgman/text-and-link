@@ -49,6 +49,12 @@
 
 
     <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
         :root {
             color: white;
             background-color: black;
@@ -63,6 +69,12 @@
             max-width: 300px;
             margin-left: auto;
             margin-right: auto;
+            outline: 1px dotted red;
+        }
+
+        #ta-link {
+            width: 100%;
+            margin-top: 4px;
         }
 
         #info-header {
@@ -101,44 +113,45 @@
     <!-- <script type="module" src="pwa"></script> -->
 
     <header id="main-header">
+        <p id="info-header"> <img src="./tl.svg" height="100" /> </p>
         <span>
             <span id="header-title"></span>
             <!-- (<span id="PWA-version"></span>) -->
         </span>
     </header>
     <section id="main-section">
-        <p id="info-header">
-            <img src="./tl.svg" height="100" />
-        </p>
-        <div id="info" class="display-none">
-            <p>
-                This web page can be a share target for apps and web pages.
-                It must be "installed as a
-                <a href="https://en.wikipedia.org/wiki/Progressive_web_app">PWA</a>
-                " in your web browser.
-                (There is only support for this on Android mobiles yet.)
-            </p>
-            <p>
-                The link in the output is cleaned from
-                <a href="https://en.wikipedia.org/wiki/Click_identifier">click identifiers</a>.
-            </p>
-            <!-- 
-            <p id="info-fc4i">
-                Note: This web page is a part of
-                <a href="./fc4i/fc4i.html">Flashcards 4 Internet</a>.
-            </p>
-            -->
-        </div>
+        <label>
+            Clean the link from
+            <a href="https://en.wikipedia.org/wiki/Click_identifier">click identifiers</a>:
+            <textarea type="text" id="ta-link" placeholder="Link to clean"></textarea>
+        </label>
         <div id="output"> </div>
     </section>
 
+    <p>
+        This web page can be a share target for apps and web pages.
+        It must be "installed as a
+        <a href="https://en.wikipedia.org/wiki/Progressive_web_app">PWA</a>
+        " in your web browser.
+        (There is only support for this on Android mobiles yet.)
+    </p>
     <script>
         const eltTitle = document.getElementById("header-title");
         eltTitle.textContent = "Text+Link";
 
+        const inpLink = document.getElementById("ta-link");
+        inpLink.addEventListener("input", _evt => {
+            console.log("some4 input");
+        })
+        function removeUrlParam(urlIn, param) {
+            if (!(urlIn instanceof URL)) { throw Error(`urlIn is not URL`); }
+            const urlOut = new URL(urlIn);
+            urlOut.searchParams.delete(param);
+            return urlOut;
+        }
+
+
         (async () => {
-            // const modMdc = await importFc4i("util-mdc");
-            // const modShPar = await importFc4i("sharing-params");
             const modShPar = await import("./sharing-params.js");
 
             const eltInfoHeader = document.getElementById("info-header");
@@ -190,14 +203,42 @@
                     let url = new URL(sharedParams.url);
 
                     // https://en.wikipedia.org/wiki/Click_identifier
-                    url = modShPar.removeUrlParam(url, "dclid");
-                    url = modShPar.removeUrlParam(url, "fbclid");
-                    url = modShPar.removeUrlParam(url, "gclid");
-                    url = modShPar.removeUrlParam(url, "gclsrc");
-                    url = modShPar.removeUrlParam(url, "wbraid");
-                    url = modShPar.removeUrlParam(url, "msclkid");
-                    url = modShPar.removeUrlParam(url, "twclid");
-                    url = modShPar.removeUrlParam(url, "yclid");
+                    const knownClickIds = [
+                        // DoubleClick Click Identifier (dclid), used by Google Marketing Platform
+                        "dclid",
+                        // Facebook Click Identifier (fbclid) used by Meta Platforms in advertising and social media analytics
+                        "fbclid",
+                        // Google Click Identifier (gclid, gclsrc, wbraid and gbraid), used by Google Ads and Google Marketing Platform
+                        "gclid", "gclsrc", "wbraid", "gbraid",
+                        // LinkedIn Click Identifier (li_fat_id), used by LinkedIn Ads
+                        "li_fat_id",
+                        // Microsoft Click Identifier (msclkid), used by Microsoft Advertising
+                        "msclkid",
+                        // Seznam Click Identifier (sznclid), used by Seznam / Sklik
+                        "sznclid",
+                        // TikTok Click Identifier (ttclid), used by TikTok Ads
+                        "ttclid",
+                        // Twitter Click Identifier (twclid), used by X Ads
+                        "twclid",
+                        // Yahoo Click Identifier (yclid), used by Yahoo! Japan Ads
+                        "yclid",
+                        // Yandex Click Identifier (yclid), used by Yandex Direct advertising
+                        "yclid",
+                        // Zanox click identifier (zanpid), used by Awin
+                        "zanpid",
+                    ];
+                    knownClickIds.forEach(clickId => {
+                        url = removeUrlParam(url, clickId);
+                    });
+
+                    // url = removeUrlParam(url, "dclid");
+                    // url = removeUrlParam(url, "fbclid");
+                    // url = removeUrlParam(url, "gclid");
+                    // url = removeUrlParam(url, "gclsrc");
+                    // url = removeUrlParam(url, "wbraid");
+                    // url = removeUrlParam(url, "msclkid");
+                    // url = removeUrlParam(url, "twclid");
+                    // url = removeUrlParam(url, "yclid");
 
                     const href = url.href;
                     const eltA = mkElt("a", { href }, href)

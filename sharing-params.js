@@ -55,9 +55,11 @@ export function getOurSharedParams() {
     return sharingParams;
 }
 
+/*
 export function removeUrlParam(urlIn, param) {
     if (!(urlIn instanceof URL)) { throw Error(`urlIn is not URL`); }
     const urlOut = new URL(urlIn);
     urlOut.searchParams.delete(param);
     return urlOut;
 }
+*/
