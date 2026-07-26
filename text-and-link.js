@@ -28,7 +28,22 @@ function handleInputLink() {
     const strOut1 = removeTrailIds(strIn);
     const strOut = removeByPattern(strOut1);
     console.log(strOut);
-    divOutputLink.textContent = strOut;
+    divOutputLink.textContent = "";
+    const href = strOut;
+    const eltA = mkElt("a", { href }, href);
+    divOutputLink?.appendChild(eltA);
+    const btnCopy = document.getElementById("btn-copy");
+    btnCopy.addEventListener("click", errorHandlerAsyncEvent(async evt => {
+        const text = divOutputText.textContent;
+        const link = divOutputLink.textContent;
+        const all = `${text}\n${link}`;
+        await navigator.clipboard.writeText(all);
+        // Do we need to inform user?
+        const ua = navigator.userAgent.toLowerCase();
+        const isAndroid = ua.indexOf("android") > -1;
+        if (isAndroid) return;
+        // modMdc.mkMDCsnackbar("copied to clipboard");
+    }));
 
 }
 
@@ -155,20 +170,10 @@ function removeTrailIds(strUrl) {
             handleInputLink();
 
 
-            const eltA = mkElt("a", { href }, href)
-            const div = mkElt("div", undefined, eltA);
-            divText.appendChild(div);
+            // const eltA = mkElt("a", { href }, href)
+            // const div = mkElt("div", undefined, eltA);
+            // divText.appendChild(div);
         }
-        const btnCopy = modMdc.mkMDCbutton("Copy", "raised");
-        btnCopy.addEventListener("click", errorHandlerAsyncEvent(async evt => {
-            const text = divText.textContent;
-            await navigator.clipboard.writeText(text);
-            // Do we need to inform user?
-            const ua = navigator.userAgent.toLowerCase();
-            const isAndroid = ua.indexOf("android") > -1;
-            if (isAndroid) return;
-            modMdc.mkMDCsnackbar("copied to clipboard");
-        }));
         const divTextOut = mkElt("div", { id: "div-output", class: "mdc-card" }, [divText, btnCopy]);
         divOutput.appendChild(divTextOut);
     }
