@@ -174,7 +174,7 @@ function removeTrailIds(strUrl) {
             // const div = mkElt("div", undefined, eltA);
             // divText.appendChild(div);
         }
-        const divTextOut = mkElt("div", { id: "div-output", class: "mdc-card" }, [divText, btnCopy]);
-        divOutput.appendChild(divTextOut);
+        // const divTextOut = mkElt("div", { id: "div-output", class: "mdc-card" }, [divText, btnCopy]);
+        // divOutput.appendChild(divTextOut);
     }
 })();
