@@ -184,17 +184,21 @@ function removeTrailIds(strUrl) {
 
 
 async function isPWAInstalled() {
+    // FIX-ME: experimental
+    // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/getInstalledRelatedApps
+    // https://caniuse.com/mdn-api_navigator_getinstalledrelatedapps
     if ('getInstalledRelatedApps' in navigator) {
         const relatedApps = await navigator.getInstalledRelatedApps();
         // Filter to see if your webapp platform is in the list
         const isInstalled = relatedApps.some(app => app.platform === 'webapp');
 
         if (isInstalled) {
-            console.log("PWA is already installed!");
+            console.log("PWA is installed!");
+            return true;
         } else {
             console.log("PWA is not installed.");
+            return false;
         }
-        return true;
     } else {
         console.log("The getInstalledRelatedApps API is not supported.");
         return false;
