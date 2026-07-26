@@ -177,4 +177,27 @@ function removeTrailIds(strUrl) {
         // const divTextOut = mkElt("div", { id: "div-output", class: "mdc-card" }, [divText, btnCopy]);
         // divOutput.appendChild(divTextOut);
     }
+    if (await isPWAInstalled()) {
+        document.documentElement.classList.add("pwa-is-installed");
+    }
 })();
+
+
+async function isPWAInstalled() {
+    if ('getInstalledRelatedApps' in navigator) {
+        const relatedApps = await navigator.getInstalledRelatedApps();
+        // Filter to see if your webapp platform is in the list
+        const isInstalled = relatedApps.some(app => app.platform === 'webapp');
+
+        if (isInstalled) {
+            console.log("PWA is already installed!");
+        } else {
+            console.log("PWA is not installed.");
+        }
+        return true;
+    } else {
+        console.log("The getInstalledRelatedApps API is not supported.");
+        return false;
+    }
+}
+

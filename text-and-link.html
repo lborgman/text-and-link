@@ -75,6 +75,7 @@
         #ta-link {
             width: 100%;
             margin-top: 4px;
+            field-sizing: content;
         }
 
         #info-header {
@@ -93,6 +94,7 @@
         #NOtext-content {
             overflow-wrap: anywhere;
         }
+
         #output {
             display: flex;
             justify-content: space-between;
@@ -107,6 +109,10 @@
             flex-direction: row;
             align-items: center;
             justify-content: space-around;
+        }
+
+        .pwa-is-installed #can-be-installed {
+            outline: 4px dotted red;
         }
     </style>
 </head>
@@ -140,7 +146,7 @@
         </div>
     </section>
 
-    <p>
+    <p id="can-be-installed">
         This web page can be a share target for apps and web pages.
         It must be "installed as a
         <a href="https://en.wikipedia.org/wiki/Progressive_web_app">PWA</a>
