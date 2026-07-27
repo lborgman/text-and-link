@@ -25,6 +25,7 @@ function handleInputLink() {
         divOutputLink.textContent = "";
         return;
     }
+
     /** @type {string[]} */
     const advIds = [];
     const strOut1 = removeTrailIds(strIn, advIds);
@@ -33,21 +34,29 @@ function handleInputLink() {
     const numCleaned = advIds.length;
     const eltCleanedInfo = document.getElementById("cleaned-info");
     if (!eltCleanedInfo) throw Error("!eltCleanedInfo");
-    eltCleanedInfo.textContent = `Removed ${numCleaned} click ids:`;
+    if (numCleaned == 0) {
+        eltCleanedInfo.textContent = `Found no click identifiers`;
+    } else {
+        eltCleanedInfo.textContent = `Removed ${numCleaned} click identifiers:`;
 
-    const btnRemovedInfo = mkElt("button", { id: "btn-cleaned-info" }, "Details");
-    eltCleanedInfo.appendChild(btnRemovedInfo);
-    btnRemovedInfo.addEventListener("click", evt => {
-        evt.stopPropagation();
-        btnRemovedInfo.remove();
-        const divRemovedInfo = mkElt("div");
-        advIds.sort().forEach(id => {
-            console.log("removed ", id);
-            divRemovedInfo.appendChild(mkElt("div", undefined, `Removed ${id}`));
+        const btnCleanedInfo = mkElt("button", { id: "btn-cleaned-info" }, "Details");
+        eltCleanedInfo.appendChild(btnCleanedInfo);
+        btnCleanedInfo.addEventListener("click", evt => {
+            evt.stopPropagation();
+            btnCleanedInfo.remove();
+            const divCleanedDetails = mkElt("div", { id: "div-cleaned-details" });
+            advIds.sort().forEach(id => {
+                console.log("removed ", id);
+                divCleanedDetails.appendChild(mkElt("div", undefined, `Removed ${id}`));
+            });
+            const divExpandingCleanedInfo = mkExpandable(divCleanedDetails);
+            const eltCleanedInfo = document.getElementById("cleaned-info");
+            if (!eltCleanedInfo) throw Error("!eltCleanedInfo");
+            eltCleanedInfo.parentElement.insertBefore(divExpandingCleanedInfo, eltCleanedInfo.nextElementSibling);
+            console.log({ eltCleanedInfo, divExpandingCleanedInfo });
+            setTimeout(() => { divExpandingCleanedInfo.classList.add("expanded") }, 10);
         });
-        eltCleanedInfo.parentElement.insertBefore(divRemovedInfo, eltCleanedInfo.nextElementSibling);
-        // alert("not ready");
-    });
+    }
 
 
 
@@ -243,3 +252,13 @@ async function isPWAInstalled() {
     }
 }
 
+const mkElt = window["mkElt"];
+/**
+ * @param {HTMLElement} eltContent
+ * @returns {HTMLDivElement}
+ */
+function mkExpandable(eltContent) {
+    return mkElt("div", { class: "expandable-wrapper" }, [
+        mkElt("div", { class: "expandable-content" }, eltContent)
+    ]);
+}

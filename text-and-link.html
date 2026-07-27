@@ -61,6 +61,27 @@
             font-family: Arial;
         }
 
+
+        .expandable-wrapper {
+            display: grid;
+            grid-template-rows: 0fr;
+            /* Starts at collapsed height */
+            transition: grid-template-rows 0.5s ease-out;
+            /* Controls the slow change */
+        }
+
+        /* Trigger this class when content is added */
+        .expandable-wrapper.expanded {
+            grid-template-rows: 1fr;
+            /* Safely expands to fit content smoothly */
+        }
+
+        .expandable-content {
+            overflow: hidden;
+            /* Prevents text from spilling out during animation */
+        }
+
+
         a {
             color: lightblue;
         }
@@ -96,7 +117,7 @@
             overflow-wrap: anywhere;
         }
 
-        #clean-this-link > div {
+        #clean-this-link>div {
             margin-bottom: 3px;
         }
 
@@ -107,6 +128,13 @@
             justify-content: center;
             align-items: center;
         }
+
+        #div-cleaned-details {
+            font-style: italic;
+            padding-left: 2rem;
+            padding-bottom: 10px;
+        }
+
 
         #output {
             display: flex;
