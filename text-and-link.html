@@ -6,47 +6,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <!-- This page © Copyright 2023, Lennart Borgman -->
+    <!-- This page © Copyright 2026, Lennart Borgman -->
     <meta name="author" content="Lennart Borgman">
-    <meta name="description" content="Get shared title, text and link">
+    <meta name="description" content="Clean link from click ids. Get shared text and link">
     <meta name="theme-color" content="#c0ca33">
 
-
-
-    <!-- See index.html -->
-    <!-- <base href=".."> -->
-    <!-- <script>console.log("baseURI", document.baseURI);</script> -->
     <script src="./init-error-new.js"></script>
-    <!-- <script type="module" src="./pwa.js"></script> -->
-    <!-- <script type="module" src="./anchors-with-base.js"></script> -->
-    <!-- <script src="./fc4i-importmaps.js"></script> -->
-    <!-- <script type="module" src="./src/js/tools.js"></script> -->
 
-
-
-
-
-    <title>Text+link</title>
+    <title>Text+Link</title>
     <link rel="icon" type="image/svg+xml" href="./tl.svg">
     <link rel="manifest" href="./manifest.json">
-
-
-    <!-- for MWC, https://github.com/material-components/material-web -->
-    <!-- 
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Material+Icons&amp;display=block" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    -->
-
-    <!-- Required styles for Material Web -->
-    <!-- <link rel="stylesheet" href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css"> -->
-    <!-- <link rel="stylesheet" href="./ext/mdc/14.0.0/material-components-web.css"> -->
-
-    <!-- <link rel="stylesheet" href="./css/fc4i.css"> -->
-    <!-- <link id="jsmind-my-colors" rel="stylesheet" href="./css/var-colors.css"> -->
-
 
     <style>
         *,
@@ -104,6 +73,10 @@
             display: flex;
             align-items: flex-end;
         }
+        #header-title {
+            font-size: 25px;
+            color: lightblue;
+        }
 
 
         #NOdiv-output {
@@ -132,7 +105,6 @@
         #div-cleaned-details {
             font-style: italic;
             padding-left: 2rem;
-            padding-bottom: 10px;
         }
 
 
@@ -165,21 +137,16 @@
 </head>
 
 <body>
-
-    <!-- <script src="./ext/mdc/material-components-web.js"></script> -->
-    <!-- <script type="module" src="pwa"></script> -->
-
     <header id="main-header">
         <p id="info-header"> <img src="./tl.svg" height="100" /> </p>
         <span>
-            <span id="header-title"></span>
-            <!-- (<span id="PWA-version"></span>) -->
+            <span id="header-title">Text+Link</span>
         </span>
     </header>
     <section id="main-section">
         <label id="clean-this-link">
             <div>
-                Clean this link from
+                Clean link from
                 <a href="https://en.wikipedia.org/wiki/Click_identifier">click identifiers</a>:
             </div>
             <textarea type="text" id="ta-link" placeholder="Link to clean"></textarea>
@@ -195,15 +162,15 @@
                 <button id="btn-copy">Copy</button>
             </div>
         </div>
-    </section>
 
-    <p id="can-be-installed">
-        This web page can be a share target for apps and web pages.
-        It must be "installed as a
-        <a href="https://en.wikipedia.org/wiki/Progressive_web_app">PWA</a>
-        " in your web browser.
-        (There is only support for this on Android mobiles yet.)
-    </p>
+        <p id="can-be-installed">
+            This web page can be a share target for apps and web pages.
+            It must be "installed as a
+            <a href="https://en.wikipedia.org/wiki/Progressive_web_app">PWA</a>
+            " in your web browser.
+            (There is only support for this on Android mobiles yet.)
+        </p>
+    </section>
     <script src="text-and-link.js"></script>
 
 </body>

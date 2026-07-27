@@ -1,9 +1,12 @@
 // @ts-check
 
+// @ts-ignore
+const mkElt = window["mkElt"];
+
 navigator.serviceWorker.register('./sw.js');
 
 const eltTitle = document.getElementById("header-title");
-eltTitle.textContent = "Text+Link";
+// eltTitle.textContent = "Text+Link";
 
 const divOutput = document.getElementById("output");
 const divOutputText = document.getElementById("output-text");
@@ -62,8 +65,8 @@ function handleInputLink() {
 
     divOutputLink.textContent = "";
     const href = strOut;
-    const eltA = mkElt("a", { href }, href);
-    divOutputLink?.appendChild(eltA);
+    const eltA = mkElt("a", { href, style:"word-wrap:anywhere;" }, href);
+    divOutputLink.appendChild(eltA);
     const btnCopy = document.getElementById("btn-copy");
     btnCopy.addEventListener("click", errorHandlerAsyncEvent(async evt => {
         const text = divOutputText.textContent;
@@ -160,37 +163,9 @@ function removeTrailIds(strUrl, advIds) {
     // const eltInfo = document.getElementById("info");
     const eltInfoHeader = document.getElementById("info-header");
     if (!eltInfoHeader) throw Error("!eltInfoHeader");
-    // const btnInfo = modMdc.mkMDCiconButton("info", "Show/hide info");
-    const btnInfo = document.createElement("button")
-    btnInfo.textContent = "Show/hide info";
-    btnInfo.style.color = "blue";
-    btnInfo.addEventListener("click", evt => { toggleInfo(); });
-    eltInfoHeader.appendChild(btnInfo);
 
     const sharedParams = modShPar.getOurSharedParams();
     console.log({ sharedParams });
-    function toggleInfo() {
-        eltInfoHeader.classList.toggle("display-none");
-    }
-    function showInfo() {
-        // divOut.textContent = "";
-        const p1 = mkElt("p", undefined,
-            `This web page can be a share target for apps and web pages.`);
-        eltInfo.appendChild(p1);
-
-        const linkPWa = "https://en.wikipedia.org/wiki/Progressive_web_app";
-        const aPwa = mkElt("a", { href: linkPWa }, "Progressive web app");
-        const p2 = mkElt("p", undefined, [
-            `For this to work it must be "installed as a PWA".`,
-            "(", aPwa, ")"
-        ]);
-        eltInfo.appendChild(p2);
-    }
-    if (!sharedParams) {
-        btnInfo.remove();
-        // showInfo();
-        toggleInfo();
-    }
     if (sharedParams) {
         const divText = mkElt("div", { id: "text-content" });
         if (sharedParams.title) {
@@ -252,7 +227,6 @@ async function isPWAInstalled() {
     }
 }
 
-const mkElt = window["mkElt"];
 /**
  * @param {HTMLElement} eltContent
  * @returns {HTMLDivElement}
