@@ -74,6 +74,7 @@
 
         #ta-link {
             width: 100%;
+            min-height: 60px;
             margin-top: 4px;
             field-sizing: content;
         }
@@ -95,6 +96,18 @@
             overflow-wrap: anywhere;
         }
 
+        #clean-this-link > div {
+            margin-bottom: 3px;
+        }
+
+        #cleaned-info {
+            height: 2rem;
+            display: flex;
+            gap: 40px;
+            justify-content: center;
+            align-items: center;
+        }
+
         #output {
             display: flex;
             justify-content: space-between;
@@ -111,7 +124,13 @@
             justify-content: space-around;
         }
 
+
+        /* FIX-ME: */
         .pwa-is-installed #can-be-installed {
+            outline: 4px dotted green;
+        }
+
+        .pwa-is-not-installed #can-be-installed {
             outline: 4px dotted red;
         }
     </style>
@@ -130,11 +149,15 @@
         </span>
     </header>
     <section id="main-section">
-        <label>
-            Clean the link from
-            <a href="https://en.wikipedia.org/wiki/Click_identifier">click identifiers</a>:
+        <label id="clean-this-link">
+            <div>
+                Clean this link from
+                <a href="https://en.wikipedia.org/wiki/Click_identifier">click identifiers</a>:
+            </div>
             <textarea type="text" id="ta-link" placeholder="Link to clean"></textarea>
         </label>
+        <div id="cleaned-info">
+        </div>
         <div id="output">
             <div>
                 <div id="output-text"></div>

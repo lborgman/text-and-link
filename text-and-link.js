@@ -25,9 +25,32 @@ function handleInputLink() {
         divOutputLink.textContent = "";
         return;
     }
-    const strOut1 = removeTrailIds(strIn);
-    const strOut = removeByPattern(strOut1);
-    console.log(strOut);
+    /** @type {string[]} */
+    const advIds = [];
+    const strOut1 = removeTrailIds(strIn, advIds);
+    const strOut = removeByPattern(strOut1, advIds);
+    console.log(strOut, advIds);
+    const numCleaned = advIds.length;
+    const eltCleanedInfo = document.getElementById("cleaned-info");
+    if (!eltCleanedInfo) throw Error("!eltCleanedInfo");
+    eltCleanedInfo.textContent = `Removed ${numCleaned} click ids:`;
+
+    const btnRemovedInfo = mkElt("button", { id: "btn-cleaned-info" }, "Details");
+    eltCleanedInfo.appendChild(btnRemovedInfo);
+    btnRemovedInfo.addEventListener("click", evt => {
+        evt.stopPropagation();
+        btnRemovedInfo.remove();
+        const divRemovedInfo = mkElt("div");
+        advIds.sort().forEach(id => {
+            console.log("removed ", id);
+            divRemovedInfo.appendChild(mkElt("div", undefined, `Removed ${id}`));
+        });
+        eltCleanedInfo.parentElement.insertBefore(divRemovedInfo, eltCleanedInfo.nextElementSibling);
+        // alert("not ready");
+    });
+
+
+
     divOutputLink.textContent = "";
     const href = strOut;
     const eltA = mkElt("a", { href }, href);
@@ -58,7 +81,7 @@ function removeUrlParam(urlIn, param) {
     urlOut.searchParams.delete(param);
     return urlOut;
 }
-function removeByPattern(strUrl) {
+function removeByPattern(strUrl, advIds) {
     let url = new URL(strUrl);
     console.log({ url });
     const arrNames = [...url.searchParams].map(p => { return p[0]; });
@@ -66,15 +89,17 @@ function removeByPattern(strUrl) {
         if (n.startsWith("utm_")) {
             console.log({ n });
             url = removeUrlParam(url, n);
+            advIds.push(n);
         }
     });
     return url.href;
 }
 /**
  * @param {string} strUrl
+ * @param {string[]} advIds 
  * @returns {string}
  */
-function removeTrailIds(strUrl) {
+function removeTrailIds(strUrl, advIds) {
     // https://en.wikipedia.org/wiki/Click_identifier
     const knownClickIds = [
         // DoubleClick Click Identifier (dclid), used by Google Marketing Platform
@@ -108,7 +133,12 @@ function removeTrailIds(strUrl) {
         return err.message;
     }
     knownClickIds.forEach(clickId => {
+        const hrefIn = url.href;
         url = removeUrlParam(url, clickId);
+        const hrefOut = url.href;
+        if (hrefIn != hrefOut) {
+            advIds.push(clickId);
+        }
     });
     return url.href;
 }
@@ -164,8 +194,6 @@ function removeTrailIds(strUrl) {
             divText.appendChild(div);
         }
         if (sharedParams.url) {
-            // let url = new URL(sharedParams.url);
-            // const href = removeTrailIds(sharedParams.url);
             taLink.value = sharedParams.url;
             handleInputLink();
 
@@ -177,8 +205,18 @@ function removeTrailIds(strUrl) {
         // const divTextOut = mkElt("div", { id: "div-output", class: "mdc-card" }, [divText, btnCopy]);
         // divOutput.appendChild(divTextOut);
     }
-    if (await isPWAInstalled()) {
-        document.documentElement.classList.add("pwa-is-installed");
+    const isInstalled = await isPWAInstalled();
+    switch (isInstalled) {
+        case true:
+            document.documentElement.classList.add("pwa-is-installed");
+            break;
+        case false:
+            document.documentElement.classList.add("pwa-is-not-installed");
+            break;
+        case undefined:
+            break;
+        default:
+            throw Error(`isInstalled == "${isInstalled}"`);
     }
 })();
 
@@ -201,7 +239,7 @@ async function isPWAInstalled() {
         }
     } else {
         console.log("The getInstalledRelatedApps API is not supported.");
-        return false;
+        return;
     }
 }
 
