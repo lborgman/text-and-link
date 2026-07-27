@@ -69,10 +69,29 @@
             field-sizing: content;
         }
 
-        #info-header {
-            display: flex;
-            align-items: flex-end;
+        #logo {
+            width: 60px;
+            height: 60px;
+            background-image: url(./tl.svg);
+            background-size: contain;
+            background-repeat: no-repeat;
+            cursor: pointer;
         }
+
+        #logo-info {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            /* outline: 2px dotted red; */
+            background-color: white;
+            background-image: url(./info.svg);
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+
         #header-title {
             font-size: 25px;
             color: lightblue;
@@ -138,7 +157,8 @@
 
 <body>
     <header id="main-header">
-        <p id="info-header"> <img src="./tl.svg" height="100" /> </p>
+        <!-- <p id="logo"> <img src="./tl.svg" height="100" /> </p> -->
+        <div id="logo"><div id="logo-info"></div></div>
         <span>
             <span id="header-title">Text+Link</span>
         </span>

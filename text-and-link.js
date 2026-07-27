@@ -65,7 +65,7 @@ function handleInputLink() {
 
     divOutputLink.textContent = "";
     const href = strOut;
-    const eltA = mkElt("a", { href, style:"word-wrap:anywhere;" }, href);
+    const eltA = mkElt("a", { href, style: "word-wrap:anywhere;" }, href);
     divOutputLink.appendChild(eltA);
     const btnCopy = document.getElementById("btn-copy");
     btnCopy.addEventListener("click", errorHandlerAsyncEvent(async evt => {
@@ -159,10 +159,17 @@ function removeTrailIds(strUrl, advIds) {
 (async () => {
     const modShPar = await import("./sharing-params.js");
 
-    // const eltInfoHeader = document.getElementById("info-header");
-    // const eltInfo = document.getElementById("info");
-    const eltInfoHeader = document.getElementById("info-header");
-    if (!eltInfoHeader) throw Error("!eltInfoHeader");
+    const eltLogo = document.getElementById("logo");
+    if (!eltLogo) throw Error("!eltLogo");
+    eltLogo.addEventListener("click", evt => {
+        evt.stopPropagation();
+        const aInfo = mkElt("a", {
+            href: "https://lborgman.github.io/text-and-link/",
+            target: "_blank"
+        });
+        aInfo.click();
+
+    })
 
     const sharedParams = modShPar.getOurSharedParams();
     console.log({ sharedParams });
