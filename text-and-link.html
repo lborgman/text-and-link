@@ -187,11 +187,86 @@
             background-color: white;
             color: blue;
         }
+
         #tell-open-link {
             transition: opacity linear;
             opacity: 1;
             NOcolor: green;
             NOcolor: darkred;
+        }
+
+
+
+        /****** dialog ******/
+        dialog {
+            position: relative;
+            border: 1px solid gray;
+            border-radius: 8px;
+            /* padding: 0; */
+            background-color: palegoldenrod;
+            max-width: calc(min(500px, 90vw));
+            opacity: 0;
+            transition-property: opacity, display, overlay;
+            transition-duration: 2s;
+            transition-behavior: allow-discrete;
+            /* transition-delay: 2s; */
+        }
+
+        dialog:modal {
+            /* CRITICAL FIX: Overrides the browser's native 'display: block' rule */
+            display: flex !important;
+            flex-direction: column;
+        }
+
+        dialog:modal .modal-scroll-body {
+            flex: 1 1 auto;
+            overflow-y: auto;
+
+            /* CRITICAL: Smooth out mobile touch scroll physics */
+            /* -webkit-overflow-scrolling: touch; */
+        }
+
+        dialog[open] {
+            opacity: 1;
+        }
+
+        /* Starting styles for entering */
+        @starting-style {
+            dialog[open] {
+                opacity: 0;
+            }
+        }
+
+        /* CRITICAL: Change transition ONLY when closing */
+        dialog:not([open]) {
+            transition-duration: 0.4s !important;
+        }
+
+        dialog::backdrop {
+            background-color: transparent;
+            backdrop-filter: blur(0px);
+            transition-property: background-color, backdrop-filter;
+            transition-duration: 2s;
+        }
+
+        dialog[open]::backdrop {
+            background-color: #0008;
+            backdrop-filter: blur(2px);
+        }
+
+        .x-close {
+            background: none;
+            border: none;
+            box-shadow: none;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 32px;
+            aspect-ratio: 1 / 1;
+        }
+
+        .x-close:hover {
+            background-color: red;
         }
     </style>
 </head>
@@ -199,7 +274,7 @@
 <body>
     <header id="main-header">
         <!-- <p id="logo"> <img src="./tl.svg" height="100" /> </p> -->
-        <div id="logo">
+        <div id="logo" title="- Help">
             <div id="logo-info"></div>
         </div>
         <span>

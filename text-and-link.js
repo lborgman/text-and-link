@@ -305,7 +305,6 @@ function showHere(clientX, clientY, txtOrDiv, idHtml) {
 async function showHelp() {
     const urlHelp = "https://lborgman.github.io/text-and-link/";
     const html = await fetch(urlHelp).then(r => r.text());
-    debugger;
     // document.getElementById("helpContent").innerHTML = html;
     const dialogId = "helpContent";
     let dialog = document.getElementById(dialogId);
@@ -315,6 +314,78 @@ async function showHelp() {
         document.body.appendChild(dialog);
     }
     dialog.innerHTML = html;
+    addXclose(dialog);
     if (!(dialog instanceof HTMLDialogElement)) { throw Error("Not dialog element"); }
     dialog.showModal();
+}
+
+
+
+///////////////////////////
+///// Dialogs
+
+/**
+ * @param {function} [funClose]
+ * @returns {HTMLButtonElement}
+ */
+function mkXclose(funClose) {
+    const xClose = mkElt("button", { class: "x-close", title: "- Close" }, "✖");
+    xClose.addEventListener("click", evt => {
+        evt.stopPropagation();
+        // debugger;
+        if (funClose) {
+            funClose();
+            return;
+        }
+        (xClose.closest("dialog"))?.close();
+    });
+    return xClose;
+}
+function addXclose(dialog) {
+    const btnClose = dialog.querySelector("button[class=x-close]");
+    if (btnClose) { return; }
+    const elt = mkXclose();
+    // dialog.appendChild(elt);
+    dialog.insertBefore(elt, dialog.firstElementChild);
+    return elt;
+}
+
+document.documentElement.addEventListener("click", evt => {
+    // evt.stopPropagation();
+    // evt.preventDefault();
+    // debugger;
+    // NOTE: first child element must covers the whole <dialog>
+    const dialog = evt.target;
+    // if (dialog?.tagName == "DIALOG") {
+    if (dialog instanceof HTMLDialogElement) {
+
+        const rect = dialog.getBoundingClientRect();
+        const scrollbarWidth = dialog.offsetWidth - dialog.clientWidth;
+        const xFromRight = rect.right - evt.clientX;
+
+        // Ignore if click is in scrollbar area
+        if (xFromRight <= scrollbarWidth && xFromRight > 0) {
+            return;
+        }
+
+        evt.stopPropagation();
+        evt.preventDefault();
+        closeDialog(dialog);
+    }
+    // const currentTarget = evt.currentTarget;
+    // const onDialog = dialog == currentTarget;
+    // if (onDialog) dialog.close();
+});
+
+/**
+ * 
+ * @param {HTMLDialogElement} dialog 
+ */
+function closeDialog(dialog) {
+    console.log("closeDialog", dialog);
+    dialog.close();
+    if (!dialog.classList.contains("html-dialog")) {
+        console.log("closeDialog remove");
+        dialog.remove();
+    }
 }
