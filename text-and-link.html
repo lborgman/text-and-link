@@ -69,6 +69,28 @@
             field-sizing: content;
         }
 
+        /*
+        .grow-wrap-textarea {
+            /* Scope the intrinsic keyword layout animation to this container only * /
+            interpolate-size: allow-keywords;
+
+            display: grid;
+            height: auto;
+            transition: height 3s ease-out;
+        }
+
+        .grow-wrap-textarea::after {
+            content: attr(data-value) " ";
+            white-space: pre-wrap;
+            visibility: hidden;
+        }
+
+        .grow-wrap-textarea textarea {
+            grid-area: 1 / 1 / 2 / 2;
+        }
+        */
+
+
         #logo {
             width: 60px;
             height: 60px;
@@ -152,13 +174,34 @@
         .pwa-is-not-installed #can-be-installed {
             outline: 4px dotted red;
         }
+
+        .tell-here {
+            max-width: 150px;
+            display: flex;
+            height: content;
+            position: fixed;
+            outline: 2px solid;
+            border-radius: 4px;
+            padding: 8px;
+
+            background-color: white;
+            color: blue;
+            color: darkred;
+            transition: opacity linear;
+            opacity: 1;
+        }
+        #tell-open-link {
+            color: green;
+        }
     </style>
 </head>
 
 <body>
     <header id="main-header">
         <!-- <p id="logo"> <img src="./tl.svg" height="100" /> </p> -->
-        <div id="logo"><div id="logo-info"></div></div>
+        <div id="logo">
+            <div id="logo-info"></div>
+        </div>
         <span>
             <span id="header-title">Text+Link</span>
         </span>
@@ -169,7 +212,9 @@
                 Clean link from
                 <a href="https://en.wikipedia.org/wiki/Click_identifier">click identifiers</a>:
             </div>
-            <textarea type="text" id="ta-link" placeholder="Link to clean"></textarea>
+            <div class="grow-wrap-textarea">
+                <textarea type="text" id="ta-link" placeholder="Link to clean"></textarea>
+            </div>
         </label>
         <div id="cleaned-info">
         </div>

@@ -16,6 +16,9 @@ if (!taLink) throw Error("!inpLink");
 taLink.addEventListener("input", _evt => {
     handleInputLink();
 });
+taLink.addEventListener("change", _evt => {
+    handleInputLink();
+});
 function handleInputLink() {
     // debugger;
     const strIn = taLink.value.trim();
@@ -163,11 +166,69 @@ function removeTrailIds(strUrl, advIds) {
     if (!eltLogo) throw Error("!eltLogo");
     eltLogo.addEventListener("click", evt => {
         evt.stopPropagation();
+        console.log({ evt });
+        const clientX = evt.clientX;
+        const clientY = evt.clientY;
+        // const div = showHere(clientX, clientY, "2Opening in new window...");
+        // const div = showHere(1000, 1000, "5Opening in new window...", "tell-open-link");
+        // const div = showHere(1000, 1000, mkElt("span", undefined, "7Opening in new window..."), "tell-open-link");
+        const div = showHere(1000, 1000, mkElt("span", undefined, "7Opening"), "tell-open-link");
+        /**
+         * Show txt popup-style.
+         * Poup is guaranteed to be entirely inside viewport.
+         *
+         * Uses CSS class "tell-here".
+         *
+         * @param {number} clientX
+         * @param {number} clientY
+         * @param {string} txt
+         * @param {string} [id]
+         * @returns {HTMLDivElement}
+         */
+        function showHere(clientX, clientY, txt, id) {
+            clientX = Math.max(0, clientX);
+            clientY = Math.max(0, clientY);
+            const div = mkElt("div", { class: "tell-here" }, txt);
+            if (id != undefined) { div.id = id; }
+            // div.textContent = txt;
+            div.style.left = `${clientX}px`;
+            div.style.top = `${clientY}px`;
+            document.documentElement.appendChild(div);
+            const bcr = div.getBoundingClientRect();
+            // console.log({ bcr });
+            const wW = window.innerWidth;
+            const wH = window.innerHeight;
+            if (bcr.right > wW) {
+                clientX = wW - bcr.width;
+                div.style.left = `${clientX}px`;
+            }
+            if (bcr.bottom > wH) {
+                clientY = wH - bcr.height;
+                div.style.top = `${clientY}px`;
+            }
+            return div;
+        }
+
+        const secDelay = 3;
+        const secDuration = secDelay + 1;
+        div.style.transitionDuration = `${secDuration}s`;
+        // div.style.transitionTiming= "linear";
+        // div.style.opacity = "1";
+        return;
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                div.style.opacity = "0"; // Transition will now trigger smoothly
+            });
+        });
+
         const aInfo = mkElt("a", {
             href: "https://lborgman.github.io/text-and-link/",
             target: "_blank"
         });
-        aInfo.click();
+        setTimeout(() => {
+            div.remove();
+            aInfo.click();
+        }, secDelay * 1000);
 
     })
 
