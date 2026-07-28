@@ -166,6 +166,8 @@ function removeTrailIds(strUrl, advIds) {
     if (!eltLogo) throw Error("!eltLogo");
     eltLogo.addEventListener("click", evt => {
         evt.stopPropagation();
+        showHelp();
+        return;
         console.log({ evt });
         const clientX = evt.clientX;
         const clientY = evt.clientY;
@@ -298,4 +300,21 @@ function showHere(clientX, clientY, txtOrDiv, idHtml) {
         div.style.top = `${clientY}px`;
     }
     return div;
+}
+
+async function showHelp() {
+    const urlHelp = "https://lborgman.github.io/text-and-link/";
+    const html = await fetch(urlHelp).then(r => r.text());
+    debugger;
+    // document.getElementById("helpContent").innerHTML = html;
+    const dialogId = "helpContent";
+    let dialog = document.getElementById(dialogId);
+    if (!dialog) {
+        dialog = mkElt("dialog", { id: dialogId });
+        if (!dialog) { throw Error("Could not create dialog"); }
+        document.body.appendChild(dialog);
+    }
+    dialog.innerHTML = html;
+    if (!(dialog instanceof HTMLDialogElement)) { throw Error("Not dialog element"); }
+    dialog.showModal();
 }
