@@ -76,10 +76,6 @@ function handleInputLink() {
         const link = divOutputLink.textContent;
         const all = `${text}\n${link}`;
         await navigator.clipboard.writeText(all);
-        // Do we need to inform user?
-        const ua = navigator.userAgent.toLowerCase();
-        const isAndroid = ua.indexOf("android") > -1;
-        if (isAndroid) return;
         // modMdc.mkMDCsnackbar("copied to clipboard");
     }));
 
@@ -168,6 +164,7 @@ function removeTrailIds(strUrl, advIds) {
         evt.stopPropagation();
         showHelp();
         return;
+        // The code below is not good UI on Android today.
         console.log({ evt });
         const clientX = evt.clientX;
         const clientY = evt.clientY;
@@ -234,6 +231,9 @@ function removeTrailIds(strUrl, advIds) {
     }
 })();
 
+if (isAndroid()) {
+    document.documentElement.classList.add("is-android");
+}
 
 async function isPWAInstalled() {
     // FIX-ME: experimental
@@ -388,4 +388,12 @@ function closeDialog(dialog) {
         console.log("closeDialog remove");
         dialog.remove();
     }
+}
+
+
+function isAndroid() {
+    // return true; // FIX-ME:
+    const ua = navigator.userAgent.toLowerCase();
+    const isAndroid = ua.indexOf("android") > -1;
+    return isAndroid;
 }

@@ -167,12 +167,16 @@
 
 
         /* FIX-ME: */
-        .pwa-is-installed #can-be-installed {
-            outline: 4px dotted green;
+        #can-be-installed {
+            display: none;
+            background-color: blue;
+            padding: 8px;
+            margin: 20px 0;
+            border-radius: 15px;
         }
 
-        .pwa-is-not-installed #can-be-installed {
-            outline: 4px dotted red;
+        .is-android.pwa-is-not-installed #can-be-installed {
+            display: block;
         }
 
         .show-here {
@@ -282,6 +286,19 @@
         </span>
     </header>
     <section id="main-section">
+        <div id="can-be-installed">
+            <p>
+                It looks like you are using an Android mobile or tablet.
+                Then there is a more easy way to use this web page.
+            </p>
+            <p>
+                On Android this web page can be a share target for apps and web pages.
+                For this to work it must be "installed as a
+                <a href="https://en.wikipedia.org/wiki/Progressive_web_app">PWA</a>
+                " in Google Chrome.
+            </p>
+        </div>
+
         <label id="clean-this-link">
             <div>
                 Clean link from
@@ -303,13 +320,6 @@
             </div>
         </div>
 
-        <p id="can-be-installed">
-            This web page can be a share target for apps and web pages.
-            It must be "installed as a
-            <a href="https://en.wikipedia.org/wiki/Progressive_web_app">PWA</a>
-            " in your web browser.
-            (There is only support for this on Android mobiles yet.)
-        </p>
     </section>
     <script src="text-and-link.js"></script>
 
