@@ -232,7 +232,11 @@ function removeTrailIds(strUrl, advIds) {
 })();
 
 if (isAndroid()) {
-    document.documentElement.classList.add("is-android");
+    // document.documentElement.classList.add("is-android");
+    const d = document.getElementById("can-be-installed");
+    if (!(d instanceof HTMLDialogElement)) throw Error("Not dialog");
+    addXclose(d);
+    d.showModal();
 }
 
 async function isPWAInstalled() {
@@ -302,9 +306,15 @@ function showHere(clientX, clientY, txtOrDiv, idHtml) {
     return div;
 }
 
-async function showHelp() {
+function showHelp() {
     const urlHelp = "https://lborgman.github.io/text-and-link/";
-    const html = await fetch(urlHelp).then(r => r.text());
+    showUrlAsDialog(urlHelp);
+}
+/**
+ * @param {string} url 
+ */
+async function showUrlAsDialog(url) {
+    const html = await fetch(url).then(r => r.text());
     // document.getElementById("helpContent").innerHTML = html;
     const dialogId = "helpContent";
     let dialog = document.getElementById(dialogId);
@@ -317,6 +327,48 @@ async function showHelp() {
     addXclose(dialog);
     if (!(dialog instanceof HTMLDialogElement)) { throw Error("Not dialog element"); }
     dialog.showModal();
+}
+function showHtmlAsDialog(html) {
+    const dialog = mkElt("dialog");
+    if (!(dialog instanceof HTMLDialogElement)) { throw Error("Not dialog element"); }
+    dialog.innerHTML = html;
+    addXclose(dialog);
+    document.body.appendChild(dialog)
+    dialog.showModal();
+}
+async function showWikipediaAsDialog(pageTitle) {
+    const html = await fetchWikiArticle(pageTitle, lang = 'en');
+    showHtmlAsDialog(html);
+}
+window.showWikipediaAsDialog = showWikipediaAsDialog;
+
+/**
+ * Fetches the HTML content of a Wikipedia article.
+ * @param {string} pageTitle - The title of the article (e.g., "Progressive_web_app" or "JavaScript").
+ * @param {string} [lang='en'] - The language code for Wikipedia (defaults to 'en').
+ * @returns {Promise<string>} - Resolves to the article's HTML content.
+ */
+async function fetchWikiArticle(pageTitle, lang = 'en') {
+    const url = `https://${lang}.wikipedia.org/w/api.php?action=parse&page=${encodeURIComponent(pageTitle)}&format=json&formatversion=2&origin=*`;
+
+    try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error(`HTTP error status: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.error) {
+            throw new Error(`Wikipedia API error: ${data.error.info}`);
+        }
+
+        return data.parse.text;
+    } catch (error) {
+        console.error(`Failed to fetch article "${pageTitle}":`, error);
+        throw error;
+    }
 }
 
 
@@ -344,7 +396,7 @@ function mkXclose(funClose) {
 function addXclose(dialog) {
     const btnClose = dialog.querySelector("button[class=x-close]");
     if (btnClose) { return; }
-    const elt = mkXclose();
+    const elt = mkXclose(() => closeDialog(dialog));
     // dialog.appendChild(elt);
     dialog.insertBefore(elt, dialog.firstElementChild);
     return elt;
@@ -360,6 +412,9 @@ document.documentElement.addEventListener("click", evt => {
     if (dialog instanceof HTMLDialogElement) {
 
         const rect = dialog.getBoundingClientRect();
+        if (isPointInside(rect, evt.clientX, evt.clientY)) {
+            return;
+        }
         const scrollbarWidth = dialog.offsetWidth - dialog.clientWidth;
         const xFromRight = rect.right - evt.clientX;
 
@@ -392,8 +447,19 @@ function closeDialog(dialog) {
 
 
 function isAndroid() {
-    // return true; // FIX-ME:
+    return true; // FIX-ME:
     const ua = navigator.userAgent.toLowerCase();
     const isAndroid = ua.indexOf("android") > -1;
     return isAndroid;
 }
+
+/**
+ * @param {DOMRect} rect
+ * @param {number} x
+ * @param {number} y
+ * @returns {boolean}
+ */
+function isPointInside(rect, x, y) {
+    return x >= rect.left && x <= rect.right &&
+        y >= rect.top && y <= rect.bottom;
+};

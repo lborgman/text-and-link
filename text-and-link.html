@@ -169,10 +169,16 @@
         /* FIX-ME: */
         #can-be-installed {
             display: none;
-            background-color: blue;
-            padding: 8px;
-            margin: 20px 0;
+            background-color: lightblue;
+            color: black;
+            padding: 15px;
+            padding-top: 30px;
+            /* margin: 20px 0; This breaks centering the dialog! */
             border-radius: 15px;
+
+            a {
+                color: darkblue;
+            }
         }
 
         .is-android.pwa-is-not-installed #can-be-installed {
@@ -286,18 +292,6 @@
         </span>
     </header>
     <section id="main-section">
-        <div id="can-be-installed">
-            <p>
-                It looks like you are using an Android mobile or tablet.
-                Then there is a more easy way to use this web page.
-            </p>
-            <p>
-                On Android this web page can be a share target for apps and web pages.
-                For this to work it must be "installed as a
-                <a href="https://en.wikipedia.org/wiki/Progressive_web_app">PWA</a>
-                " in Google Chrome.
-            </p>
-        </div>
 
         <label id="clean-this-link">
             <div>
@@ -321,8 +315,30 @@
         </div>
 
     </section>
-    <script src="text-and-link.js"></script>
+    <dialog id="can-be-installed" class="html-dialog">
+        <div>
+            <h3>This web page can do more!</h3>
+            <p>
+                It looks like you are using an Android mobile or tablet.
+                If so then there is a more easy way to use this web page:
+            </p>
+            <p>
+                On Android this web page can be a "share target" for apps and web pages.
+                Just install it as a
+                <a href="https://en.wikipedia.org/wiki/Progressive_web_app" onclick="
+                    event.preventDefault();
+                    const t = event.target;
+                    const href = t.href;
+                    console.log({href});
+                    const url = new window.URL(href);
+                    showWikipediaAsDialog(`Progressive_web_app`);
+                    ">PWA</a>
+                in Google Chrome.
+            </p>
+        </div>
+    </dialog>
 
+    <script src="text-and-link.js"></script>
 </body>
 
 </html>
