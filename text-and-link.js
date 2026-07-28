@@ -328,10 +328,10 @@ async function showUrlAsDialog(url) {
     if (!(dialog instanceof HTMLDialogElement)) { throw Error("Not dialog element"); }
     dialog.showModal();
 }
-function showHtmlAsDialog(html) {
+function showHtmlAsDialog(strHtml) {
     const dialog = mkElt("dialog");
     if (!(dialog instanceof HTMLDialogElement)) { throw Error("Not dialog element"); }
-    dialog.innerHTML = html;
+    dialog.innerHTML = strHtmlSpans = replaceAnchorsWithSpans(strHtml);
     addXclose(dialog);
     document.body.appendChild(dialog)
     dialog.showModal();
@@ -463,3 +463,47 @@ function isPointInside(rect, x, y) {
     return x >= rect.left && x <= rect.right &&
         y >= rect.top && y <= rect.bottom;
 };
+
+function replaceAnchorsWithSpans(htmlString) {
+    // if (!htmlString || typeof htmlString !== 'string') { return htmlString; }
+
+    try {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = htmlString;
+
+        const anchors = tempDiv.querySelectorAll('a');
+
+        anchors.forEach(anchor => {
+            const href = anchor.href;
+            const u = new URL(href);
+            // debugger;
+            if (href.startsWith(location.href)) {
+                // debugger;
+                return;
+            }
+            if (href.startsWith("http")) {
+                console.log("REPLACE:", href);
+                const span = document.createElement('span');
+
+                // Copy all attributes
+                for (const attr of anchor.attributes) {
+                    span.setAttribute(attr.name, attr.value);
+                }
+
+                // Copy child nodes (preserving DOM structure)
+                while (anchor.firstChild) {
+                    span.appendChild(anchor.firstChild);
+                }
+
+                anchor.parentNode.replaceChild(span, anchor);
+            } else {
+                console.log("not replaced:", href);
+            }
+        });
+
+        return tempDiv.innerHTML;
+    } catch (error) {
+        console.error('Error replacing anchors:', error);
+        return htmlString; // Return original on error
+    }
+}
