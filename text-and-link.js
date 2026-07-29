@@ -171,32 +171,6 @@ function removeTrailIds(strUrl, advIds) {
     eltLogo.addEventListener("click", evt => {
         evt.stopPropagation();
         showHelp();
-        return;
-        // The code below is not good UI on Android today.
-        console.log({ evt });
-        const clientX = evt.clientX;
-        const clientY = evt.clientY;
-        const div = showHere(clientX, clientY, "Opening in new window...", "tell-open-link");
-
-        const secDelay = 3;
-        const secDuration = secDelay + 2;
-        div.style.transitionDuration = `${secDuration}s`;
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => {
-                div.style.opacity = "0"; // Transition will now trigger smoothly
-            });
-        });
-        // return;
-
-        const aInfo = mkElt("a", {
-            href: "https://lborgman.github.io/text-and-link/",
-            target: "_blank"
-        });
-        setTimeout(() => {
-            div.remove();
-            aInfo.click();
-        }, secDelay * 1000);
-
     })
 
     const sharedParams = modShPar.getOurSharedParams();
@@ -298,8 +272,6 @@ function showHere(clientX, clientY, txtOrDiv, idHtml) {
     const div = mkElt("div", { class: "show-here" }, txtOrDiv);
     div.setAttribute("popover", "");
     if (idHtml != undefined) { div.id = idHtml; }
-    div.style.left = `${clientX}px`;
-    div.style.top = `${clientY}px`;
     document.documentElement.appendChild(div);
     const bcr = div.getBoundingClientRect();
     const wW = window.innerWidth;
@@ -313,6 +285,11 @@ function showHere(clientX, clientY, txtOrDiv, idHtml) {
         div.style.top = `${clientY}px`;
     }
     div.showPopover();
+    div.style.margin = `0`;
+    div.style.position = `fixed`;
+    div.style.left = `${clientX}px`;
+    div.style.top = `${clientY}px`;
+
     return div;
 }
 
@@ -557,4 +534,15 @@ function canBeWebUrl(string) {
     if (!tldRegex.test(url.hostname)) return false;
 
     return true;
+}
+
+
+// testShowHere();
+function testShowHere() {
+    document.body.addEventListener("click", evt => {
+        // evt.stopPropagation();
+        // evt.preventDefault();
+        const div = showHere(evt.clientX, evt.clientY, "Testing");
+        setTimeout(() => div.remove(), 3000);
+    });
 }
