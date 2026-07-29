@@ -68,26 +68,6 @@
             field-sizing: content;
         }
 
-        /*
-        .grow-wrap-textarea {
-            /* Scope the intrinsic keyword layout animation to this container only * /
-            interpolate-size: allow-keywords;
-
-            display: grid;
-            height: auto;
-            transition: height 3s ease-out;
-        }
-
-        .grow-wrap-textarea::after {
-            content: attr(data-value) " ";
-            white-space: pre-wrap;
-            visibility: hidden;
-        }
-
-        .grow-wrap-textarea textarea {
-            grid-area: 1 / 1 / 2 / 2;
-        }
-        */
 
 
         #logo {
@@ -304,12 +284,10 @@
             <div>
                 Clean link from
                 <a nohref="https://en.wikipedia.org/wiki/Click_identifier"
-                    onclick="showWikipediaAsDialog('Click_identifier')"
-                    style="text-decoration:underline;">click identifiers</a>:
+                    onclick="showWikipediaAsDialog('Click_identifier')" style="text-decoration:underline;">click
+                    identifiers</a>:
             </div>
-            <div class="grow-wrap-textarea">
-                <textarea type="text" id="ta-link" placeholder="Link to clean"></textarea>
-            </div>
+            <textarea type="text" id="ta-link" placeholder="Link to clean"></textarea>
         </label>
         <div id="cleaned-info">
         </div>

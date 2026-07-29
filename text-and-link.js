@@ -23,6 +23,9 @@ function handleInputLink() {
     const strIn = taLink.value.trim();
     if (!canBeWebUrl(strIn)) {
         divOutputLink.textContent = "";
+        const eltCleanedInfo = document.getElementById("cleaned-info");
+        if (!eltCleanedInfo) throw Error("!eltCleanedInfo");
+        eltCleanedInfo.textContent = "(Can't be a valid url)";
         return;
     }
 
