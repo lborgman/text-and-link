@@ -287,7 +287,8 @@ function mkExpandable(eltContent) {
 function showHere(clientX, clientY, txtOrDiv, idHtml) {
     clientX = Math.max(0, clientX);
     clientY = Math.max(0, clientY);
-    const div = mkElt("div", { class: "show-here" }, txtOrDiv);
+    const div = mkElt("div", { class: "show-here"  }, txtOrDiv);
+    div.setAttribute("popover", "");
     if (idHtml != undefined) { div.id = idHtml; }
     div.style.left = `${clientX}px`;
     div.style.top = `${clientY}px`;
@@ -303,6 +304,7 @@ function showHere(clientX, clientY, txtOrDiv, idHtml) {
         clientY = wH - bcr.height;
         div.style.top = `${clientY}px`;
     }
+    div.showPopover();
     return div;
 }
 
@@ -328,17 +330,46 @@ async function showUrlAsDialog(url) {
     if (!(dialog instanceof HTMLDialogElement)) { throw Error("Not dialog element"); }
     dialog.showModal();
 }
-function showHtmlAsDialog(strHtml) {
+function showHtmlAsDialog(strHtml, optDelegate) {
     const dialog = mkElt("dialog");
     if (!(dialog instanceof HTMLDialogElement)) { throw Error("Not dialog element"); }
-    dialog.innerHTML = strHtmlSpans = replaceAnchorsWithSpans(strHtml);
+    // dialog.innerHTML = strHtmlSpans = replaceAnchorsWithSpans(strHtml);
+    dialog.innerHTML = strHtml;
+    if (optDelegate) {
+        dialog.addEventListener(optDelegate.eventName, evt => optDelegate.funHandle(evt));
+    }
     addXclose(dialog);
     document.body.appendChild(dialog)
     dialog.showModal();
 }
 async function showWikipediaAsDialog(pageTitle) {
     const html = await fetchWikiArticle(pageTitle, lang = 'en');
-    showHtmlAsDialog(html);
+    function handleClick(evt) {
+        let targetA = evt.target;
+        if (targetA.tagName != "A") {
+            // debugger;
+            const newA = targetA.closest("a");
+            if (!newA) { return; }
+            targetA = newA;
+        }
+        const href = targetA.getAttribute("href");
+        console.log({ target: targetA, href });
+        if (href.startsWith("#")) { return; }
+        evt.stopPropagation();
+        evt.preventDefault();
+        const mWiki = href.match(new RegExp("^/wiki/(.*)$"));
+        if (mWiki) {
+            const wikiTitle = mWiki[1];
+            showWikipediaAsDialog(wikiTitle);
+            return;
+        }
+        const div = showHere(evt.clientX, evt.clientY, "Can't show this here");
+        setTimeout(() => div.remove(), 2000);
+    }
+    showHtmlAsDialog(html, {
+        eventName: "click",
+        funHandle: handleClick
+    });
 }
 window.showWikipediaAsDialog = showWikipediaAsDialog;
 
@@ -474,16 +505,17 @@ function replaceAnchorsWithSpans(htmlString) {
         const anchors = tempDiv.querySelectorAll('a');
 
         anchors.forEach(anchor => {
-            const href = anchor.href;
-            const u = new URL(href);
+            // const href = anchor.href;
+            const href = anchor.getAttribute("href");
+            if (href == null) { return; }
+            // const u = new URL(href);
             // debugger;
-            if (href.startsWith(location.href)) {
-                // debugger;
-                return;
-            }
-            if (href.startsWith("http")) {
+            // if (href.startsWith(location.href)) { // debugger; return; }
+            const isInternalLink = href.startsWith("#");
+            if (!isInternalLink) {
                 console.log("REPLACE:", href);
                 const span = document.createElement('span');
+                span.classList.add("replaced-a")
 
                 // Copy all attributes
                 for (const attr of anchor.attributes) {
