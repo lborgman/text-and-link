@@ -9,11 +9,11 @@ On some devices you can send links directly to this app from any other applicati
 - Tap your browser's menu (it looks like __…__ or __⋮__) and select __Add to Home Screen or Install__.
 2. __Share Content From Other Apps__
 - Open any app (such as Twitter, YouTube, or your mobile browser).
-- Find something you want to share, and tap the native __Share icon__.
+- Find something you want to share, and tap the native __Share icon__ (<img src="https://lborgman.github.io/text-and-link/share.svg" height="16" width="16" />)
 - Look through your device's popup share sheet menu.
-- Tap the icon ![icon](https://lborgman.github.io/text-and-link/tl.svg) from the list of available apps.
+- Tap the icon for this app ![icon](https://lborgman.github.io/text-and-link/tl.svg) from the list of available apps.
 
-- Tap the icon <img src="https://lborgman.github.io/text-and-link/tl.svg" height="20" width="20" /> from the list of available apps.
+- Tap the icon for this web page (<img src="https://lborgman.github.io/text-and-link/tl.svg" height="20" width="20" />) from the list of available apps.
 3. __What Happens Next__
 - This web page will automatically launch.
 - The shared link will instantly pre-fill, allowing you to copy immediately with the click identifiers removed.
