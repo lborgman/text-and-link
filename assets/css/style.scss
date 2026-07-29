@@ -2,6 +2,13 @@
 ---
 @import "{{ site.theme }}";
 
-header, .header, #header, .page-header, .site-header {
+/* Force target the specific header container structure in Midnight theme */
+html body div.wrapper header {
   display: none !important;
+}
+
+/* Reset the main body section so it expands to full-width */
+html body div.wrapper section {
+  width: 100% !important;
+  float: none !important;
 }
