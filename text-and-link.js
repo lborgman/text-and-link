@@ -20,14 +20,8 @@ taLink.addEventListener("change", _evt => {
     handleInputLink();
 });
 function handleInputLink() {
-    // debugger;
     const strIn = taLink.value.trim();
-    // if (strIn.length == 0) { divOutputLink.textContent = ""; return; }
-    if (!strIn.startsWith("https://")
-        &&
-        !strIn.startsWith("http://")
-    ) {
-        debugger;
+    if (!canBeWebUrl(strIn)) {
         divOutputLink.textContent = "";
         return;
     }
@@ -41,7 +35,11 @@ function handleInputLink() {
     const eltCleanedInfo = document.getElementById("cleaned-info");
     if (!eltCleanedInfo) throw Error("!eltCleanedInfo");
     if (numCleaned == 0) {
-        eltCleanedInfo.textContent = `Found no click identifiers`;
+        if (0 == strOut.length) {
+            eltCleanedInfo.textContent = "";
+        } else {
+            eltCleanedInfo.textContent = `Found no click identifiers`;
+        }
     } else {
         eltCleanedInfo.textContent = `Removed ${numCleaned} click identifiers:`;
 
@@ -93,7 +91,13 @@ function removeUrlParam(urlIn, param) {
     return urlOut;
 }
 function removeByPattern(strUrl, advIds) {
-    let url = new URL(strUrl);
+    let url;
+    try {
+        url = new URL(strUrl);
+    } catch (err) {
+        console.error(err);
+        return "";
+    }
     console.log({ url });
     const arrNames = [...url.searchParams].map(p => { return p[0]; });
     arrNames.forEach(n => {
@@ -140,8 +144,9 @@ function removeTrailIds(strUrl, advIds) {
     try {
         url = new URL(strUrl);
     } catch (err) {
-        debugger;
-        return err.message;
+        console.log({ err })
+        // return err.message;
+        return "";
     }
     knownClickIds.forEach(clickId => {
         const hrefIn = url.href;
@@ -287,7 +292,7 @@ function mkExpandable(eltContent) {
 function showHere(clientX, clientY, txtOrDiv, idHtml) {
     clientX = Math.max(0, clientX);
     clientY = Math.max(0, clientY);
-    const div = mkElt("div", { class: "show-here"  }, txtOrDiv);
+    const div = mkElt("div", { class: "show-here" }, txtOrDiv);
     div.setAttribute("popover", "");
     if (idHtml != undefined) { div.id = idHtml; }
     div.style.left = `${clientX}px`;
@@ -333,7 +338,6 @@ async function showUrlAsDialog(url) {
 function showHtmlAsDialog(strHtml, optDelegate) {
     const dialog = mkElt("dialog");
     if (!(dialog instanceof HTMLDialogElement)) { throw Error("Not dialog element"); }
-    // dialog.innerHTML = strHtmlSpans = replaceAnchorsWithSpans(strHtml);
     dialog.innerHTML = strHtml;
     if (optDelegate) {
         dialog.addEventListener(optDelegate.eventName, evt => optDelegate.funHandle(evt));
@@ -347,7 +351,6 @@ async function showWikipediaAsDialog(pageTitle) {
     function handleClick(evt) {
         let targetA = evt.target;
         if (targetA.tagName != "A") {
-            // debugger;
             const newA = targetA.closest("a");
             if (!newA) { return; }
             targetA = newA;
@@ -415,7 +418,6 @@ function mkXclose(funClose) {
     const xClose = mkElt("button", { class: "x-close", title: "- Close" }, "✖");
     xClose.addEventListener("click", evt => {
         evt.stopPropagation();
-        // debugger;
         if (funClose) {
             funClose();
             return;
@@ -434,12 +436,7 @@ function addXclose(dialog) {
 }
 
 document.documentElement.addEventListener("click", evt => {
-    // evt.stopPropagation();
-    // evt.preventDefault();
-    // debugger;
-    // NOTE: first child element must covers the whole <dialog>
     const dialog = evt.target;
-    // if (dialog?.tagName == "DIALOG") {
     if (dialog instanceof HTMLDialogElement) {
 
         const rect = dialog.getBoundingClientRect();
@@ -495,9 +492,9 @@ function isPointInside(rect, x, y) {
         y >= rect.top && y <= rect.bottom;
 };
 
-function replaceAnchorsWithSpans(htmlString) {
-    // if (!htmlString || typeof htmlString !== 'string') { return htmlString; }
 
+// Just keep the code to remember, using tempDiv is a nice hack
+function OLDreplaceAnchorsWithSpans(htmlString) {
     try {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = htmlString;
@@ -505,12 +502,8 @@ function replaceAnchorsWithSpans(htmlString) {
         const anchors = tempDiv.querySelectorAll('a');
 
         anchors.forEach(anchor => {
-            // const href = anchor.href;
             const href = anchor.getAttribute("href");
             if (href == null) { return; }
-            // const u = new URL(href);
-            // debugger;
-            // if (href.startsWith(location.href)) { // debugger; return; }
             const isInternalLink = href.startsWith("#");
             if (!isInternalLink) {
                 console.log("REPLACE:", href);
@@ -538,4 +531,27 @@ function replaceAnchorsWithSpans(htmlString) {
         console.error('Error replacing anchors:', error);
         return htmlString; // Return original on error
     }
+}
+
+
+
+/**
+ * @param {string} string 
+ * @returns {boolean}
+ */
+function canBeWebUrl(string) {
+    if (!URL.canParse(string)) return false;
+
+    const url = new URL(string);
+
+    if (url.protocol !== "http:" && url.protocol !== "https:") return false;
+
+    const hostnameRegex = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/i;
+    if (!hostnameRegex.test(url.hostname)) return false;
+
+    // Enforces a literal dot followed by 2 to 63 alphanumeric ASCII/Punycode characters
+    const tldRegex = /^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)*\.[a-z0-9]{2,63}$/i;
+    if (!tldRegex.test(url.hostname)) return false;
+
+    return true;
 }
