@@ -1,2 +1,7 @@
+---
+---
 @import "{{ site.theme }}";
-header { display: none !important; }
+
+header, .header, #header, .page-header, .site-header {
+  display: none !important;
+}
