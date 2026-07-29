@@ -536,13 +536,12 @@ function canBeWebUrl(string) {
     return true;
 }
 
-
-// testShowHere();
+/*
+testShowHere();
 function testShowHere() {
     document.body.addEventListener("click", evt => {
-        // evt.stopPropagation();
-        // evt.preventDefault();
         const div = showHere(evt.clientX, evt.clientY, "Testing");
         setTimeout(() => div.remove(), 3000);
     });
 }
+*/
