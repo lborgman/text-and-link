@@ -1,14 +1,7 @@
 ---
 ---
-@import "{{ site.theme }}";
+@import "jekyll-theme-midnight";
 
-/* Force target the specific header container structure in Midnight theme */
-html body div.wrapper header {
+#header, #title {
   display: none !important;
-}
-
-/* Reset the main body section so it expands to full-width */
-html body div.wrapper section {
-  width: 100% !important;
-  float: none !important;
 }
