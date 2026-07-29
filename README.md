@@ -2,7 +2,7 @@
   header h1 { display: none !important; }
 </style>
 
-# Clean Link
+# Clean Link 2
 [This web page ](https://lborgman.github.io/text-and-link/text-and-link.html) can ~~remove~~ [click identifiers](https://en.wikipedia.org/wiki/Click_identifier) from a link.
 
 ## Share target
