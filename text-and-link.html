@@ -304,7 +304,9 @@
         <label id="clean-this-link">
             <div>
                 Clean link from
-                <a href="https://en.wikipedia.org/wiki/Click_identifier">click identifiers</a>:
+                <a nohref="https://en.wikipedia.org/wiki/Click_identifier"
+                    onclick="showWikipediaAsDialog('Click_identifier')"
+                    style="text-decoration:underline;">click identifiers</a>:
             </div>
             <div class="grow-wrap-textarea">
                 <textarea type="text" id="ta-link" placeholder="Link to clean"></textarea>
