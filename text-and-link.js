@@ -164,6 +164,8 @@ function removeTrailIds(strUrl, advIds) {
 
 
 (async () => {
+    // For me to remember:
+    // https://chatgpt.com/share/6a62268a-17a8-83eb-acbe-0c86961a23c4
     const modShPar = await import("./sharing-params.js");
 
     const eltLogo = document.getElementById("logo");
@@ -300,15 +302,15 @@ async function showHelp() {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
     [...tempDiv.children].forEach(element => {
-       if ([
-        "META",
-        "TITLE",
-        "SCRIPT",
-        "LINK",
-        "STYLE",
-    ].includes(element.tagName)) {
-        element.remove();
-       }
+        if ([
+            "META",
+            "TITLE",
+            "SCRIPT",
+            "LINK",
+            "STYLE",
+        ].includes(element.tagName)) {
+            element.remove();
+        }
     });
     // FIX-ME: This is for jekyll-theme-midnight
     const ourCss = `

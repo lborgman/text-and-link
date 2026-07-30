@@ -3,7 +3,8 @@
 </style>
 
 # Clean Link 2
-[This web page ](https://lborgman.github.io/text-and-link/text-and-link.html) can ~~remove~~ [click identifiers](https://en.wikipedia.org/wiki/Click_identifier) from a link.
+[This web page ](https://lborgman.github.io/text-and-link/text-and-link.html) can remove [click identifiers](https://en.wikipedia.org/wiki/Click_identifier) from a link.
+Just enter the link that may contain click identifier and immediately get a cleaned link that you can copy.
 
 ## Share target
 
@@ -27,8 +28,3 @@ On some devices you can send links directly to this app from any other applicati
 
    - This web page will automatically launch.
    - The shared link will instantly pre-fill, allowing you to copy immediately with the click identifiers removed.
-
-
-
-##### For me to remember:
-https://chatgpt.com/share/6a62268a-17a8-83eb-acbe-0c86961a23c4
