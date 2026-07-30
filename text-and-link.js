@@ -293,15 +293,23 @@ function showHere(clientX, clientY, txtOrDiv, idHtml) {
     return div;
 }
 
-function showHelp() {
+async function showHelp() {
     const urlHelp = "https://lborgman.github.io/text-and-link/";
-    showUrlAsDialog(urlHelp);
+    // showUrlAsDialog(urlHelp);
+    const html = await fetch(urlHelp).then(r => r.text());
+    const newHtml = html.replaceAll('"/', '"https://lborgman.github.io/');
+    const dlg = showHtmlAsDialog(newHtml);
+    debugger;
+    dlg.style.backgroundColor = "#252525";
+    dlg.style.color = "#e8e8e8";
+    dlg.querySelectorAll("a").forEach(a => a.style.color = "#ffcc00");
 }
 /**
  * @param {string} url 
  */
 async function showUrlAsDialog(url) {
     const html = await fetch(url).then(r => r.text());
+    console.log({html});
     // document.getElementById("helpContent").innerHTML = html;
     const dialogId = "helpContent";
     let dialog = document.getElementById(dialogId);
@@ -325,6 +333,7 @@ function showHtmlAsDialog(strHtml, optDelegate) {
     addXclose(dialog);
     document.body.appendChild(dialog)
     dialog.showModal();
+    return dialog;
 }
 async function showWikipediaAsDialog(pageTitle) {
     const html = await fetchWikiArticle(pageTitle, lang = 'en');
