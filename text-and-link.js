@@ -346,7 +346,6 @@ async function showHelp() {
     fullDiv.appendChild(tempDiv);
 
     // const dlg = showHtmlAsDialog(fullDiv.innerHTML);
-    debugger;
     const dlg = showHtmlAsDialog(tempDiv.innerHTML, {
         css: ourCss,
         // FIX-ME: why does the linter complain??

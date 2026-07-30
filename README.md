@@ -6,6 +6,7 @@
 <a href="https://lborgman.github.io/text-and-link/text-and-link.html"
    onclick="
    (event) => {
+      debugger;
       if (location.href == 'https://lborgman.github.io/text-and-link/text-and-link.html') {
          event.preventDefault();
          event.stopPropagation();
