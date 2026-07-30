@@ -8,7 +8,7 @@ Just enter the link that may contain click identifier and immediately get a clea
 
 ## Share target
 
-On some devices you can send links directly to this app from any other application on your device using your system's native share.  (Currently this only works well on __Android devices/mobiles__. It can also work on Windows 11.)
+On some devices you can send links directly to this app from any other application on your device using your system's native share.  (Currently this only works well on __Android devices/mobiles__.)
 
 1. __Install this web page__
 

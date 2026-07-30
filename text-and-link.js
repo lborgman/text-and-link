@@ -301,17 +301,21 @@ async function showHelp() {
     // const htmlGH = html.replaceAll('"/', '"https://lborgman.github.io/');
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = html;
-    [...tempDiv.children].forEach(element => {
-        if ([
-            "META",
-            "TITLE",
-            "SCRIPT",
-            "LINK",
-            "STYLE",
-        ].includes(element.tagName)) {
-            element.remove();
-        }
-    });
+    removeHtmlHeaderElements(tempDiv);
+    function removeHtmlHeaderElements(tempDiv) {
+        [...tempDiv.children].forEach(element => {
+            if ([
+                "META",
+                "TITLE",
+                "SCRIPT",
+                "LINK",
+                "STYLE",
+            ].includes(element.tagName)) {
+                element.remove();
+            }
+        });
+        // return tempDiv.innerHTML;
+    }
     // FIX-ME: This is for jekyll-theme-midnight
     const ourCss = `
         dialog#show-help-dialog[open] {
@@ -335,14 +339,20 @@ async function showHelp() {
     `;
     const ourStyle = document.createElement("style");
     ourStyle.textContent = ourCss;
-    tempDiv.insertBefore(ourStyle, tempDiv.firstElementChild);
     const fullDiv = document.createElement("div");
 
     // The style will be added when the dialog is opened and removed when closed
     fullDiv.appendChild(ourStyle);
     fullDiv.appendChild(tempDiv);
 
-    const dlg = showHtmlAsDialog(fullDiv.innerHTML);
+    // const dlg = showHtmlAsDialog(fullDiv.innerHTML);
+    debugger;
+    const dlg = showHtmlAsDialog(tempDiv.innerHTML, {
+        css: ourCss,
+        // FIX-ME: why does the linter complain??
+        script: scriptWikipediaClickFun
+    });
+
     dlg.id = "show-help-dialog";
     // dlg.style.backgroundColor = "#252525";
     // dlg.style.color = "#e8e8e8";
@@ -367,12 +377,33 @@ async function showUrlAsDialog(url) {
     if (!(dialog instanceof HTMLDialogElement)) { throw Error("Not dialog element"); }
     dialog.showModal();
 }
-function showHtmlAsDialog(strHtml, optDelegate) {
+
+/**
+ * @param {string} strHtml
+ * @param {{css?: string, script?: string, [key: string]: any}} opts
+ * @return {HTMLDialogElement}
+ */
+function showHtmlAsDialog(strHtml, opts = {}) {
+    const allowedOpts = ["css", "script"]
+    const rest = { ...opts };
+    for (const key of allowedOpts) { delete rest[key]; }
+    if (Object.keys(rest).length > 0) {
+        const unknownKeys = Object.keys(rest).join(", ");
+        throw new Error(
+            `Invalid options passed to displayMenu: ${unknownKeys}. ` +
+            `Only allowed: ${allowedOpts.join(", ")}`
+        );
+    }
+    const optScript = opts?.script;
+    const optCss = opts?.css || "";
+
     const dialog = mkElt("dialog");
     if (!(dialog instanceof HTMLDialogElement)) { throw Error("Not dialog element"); }
-    dialog.innerHTML = strHtml;
-    if (optDelegate) {
-        dialog.addEventListener(optDelegate.eventName, evt => optDelegate.funHandle(evt));
+
+    const strCss = `<style>${optCss}</style>`;
+    dialog.innerHTML = `${strCss} ${strHtml}`;
+    if (optScript) {
+        optScript(dialog);
     }
     addXclose(dialog);
     document.body.appendChild(dialog)
@@ -381,30 +412,8 @@ function showHtmlAsDialog(strHtml, optDelegate) {
 }
 async function showWikipediaAsDialog(pageTitle) {
     const html = await fetchWikiArticle(pageTitle, lang = 'en');
-    function handleClick(evt) {
-        let targetA = evt.target;
-        if (targetA.tagName != "A") {
-            const newA = targetA.closest("a");
-            if (!newA) { return; }
-            targetA = newA;
-        }
-        const href = targetA.getAttribute("href");
-        console.log({ target: targetA, href });
-        if (href.startsWith("#")) { return; }
-        evt.stopPropagation();
-        evt.preventDefault();
-        const mWiki = href.match(new RegExp("^/wiki/(.*)$"));
-        if (mWiki) {
-            const wikiTitle = mWiki[1];
-            showWikipediaAsDialog(wikiTitle);
-            return;
-        }
-        const div = showHere(evt.clientX, evt.clientY, "Can't show this here");
-        setTimeout(() => div.remove(), 2000);
-    }
     showHtmlAsDialog(html, {
-        eventName: "click",
-        funHandle: handleClick
+        script: scriptWikipediaClickFun
     });
 }
 window.showWikipediaAsDialog = showWikipediaAsDialog;
@@ -598,3 +607,28 @@ function testShowHere() {
     });
 }
 */
+
+function handleWikipediaClick(evt) {
+    let targetA = evt.target;
+    if (targetA.tagName != "A") {
+        const newA = targetA.closest("a");
+        if (!newA) { return; }
+        targetA = newA;
+    }
+    const href = targetA.getAttribute("href");
+    console.log({ target: targetA, href });
+    if (href.startsWith("#")) { return; }
+    evt.stopPropagation();
+    evt.preventDefault();
+    const mWiki = href.match(new RegExp("^/wiki/(.*)$"));
+    if (mWiki) {
+        const wikiTitle = mWiki[1];
+        showWikipediaAsDialog(wikiTitle);
+        return;
+    }
+    const div = showHere(evt.clientX, evt.clientY, "Can't show this here");
+    setTimeout(() => div.remove(), 2000);
+}
+function scriptWikipediaClickFun(dialog) {
+    dialog.addEventListener("click", evt => handleWikipediaClick(evt));
+}
