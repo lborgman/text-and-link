@@ -620,7 +620,7 @@ function handleWikipediaClick(evt) {
     evt.stopPropagation();
     evt.preventDefault();
     // const mWiki = href.match(new RegExp("^/wiki/(.*)$"));
-    const mWiki = href.match(new RegExp("^(https://en.wikipedia.org)?/wiki/(.*)$"));
+    const mWiki = href.match(new RegExp("^(?:https://en.wikipedia.org)?/wiki/(.*)$"));
     if (mWiki) {
         const wikiTitle = mWiki[1];
         showWikipediaAsDialog(wikiTitle);
