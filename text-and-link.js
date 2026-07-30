@@ -656,6 +656,8 @@ function scriptAddShowHelpClickFun(dialog) {
         const baseUrl = location.origin + location.pathname;
         const hrefEvt = getAHref(evt);
         if (baseUrl == hrefEvt) {
+            evt.preventDefault();
+            evt.stopPropagation();
             const div = showHere(evt.clientX, evt.clientY, "You are already there!");
             setTimeout(() => div.remove(), 2000);
             return true;
