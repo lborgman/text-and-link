@@ -20,7 +20,8 @@ On some devices you can send links directly to this app from any other applicati
    - Open any app (such as Twitter, YouTube, or your mobile browser).
    - Find something you want to share, and tap the native __Share icon__ (<img src="https://lborgman.github.io/text-and-link/share.svg" height="16" width="16" alt="Share icon" />)
    - Look through your device's popup share sheet menu. Tap the icon for this web page from the list of available apps:
-<img src="https://lborgman.github.io/text-and-link/tl.svg" alt="Logo" width="26" height="26" xalign="left" style="margin-left: 65px; margin-top:10px;" />
+<img src="https://lborgman.github.io/text-and-link/tl.svg" alt="Logo" width="26" height="26" xalign="left"
+    style="vertical-align:text-top; margin-left:10px;" />
 
 1. __What Happens Next__
 
