@@ -349,7 +349,8 @@ async function showHelp() {
     const dlg = showHtmlAsDialog(tempDiv.innerHTML, {
         css: ourCss,
         // FIX-ME: why does the linter complain??
-        script: scriptWikipediaClickFun
+        // script: scriptAddtWikipediaClickFun
+        script: scriptAddShowHelpClickFun
     });
 
     dlg.id = "show-help-dialog";
@@ -412,7 +413,7 @@ function showHtmlAsDialog(strHtml, opts = {}) {
 async function showWikipediaAsDialog(pageTitle) {
     const html = await fetchWikiArticle(pageTitle, lang = 'en');
     showHtmlAsDialog(html, {
-        script: scriptWikipediaClickFun
+        script: scriptAddtWikipediaClickFun
     });
 }
 window.showWikipediaAsDialog = showWikipediaAsDialog;
@@ -607,7 +608,7 @@ function testShowHere() {
 }
 */
 
-function handleWikipediaClick(evt) {
+function getAHref(evt) {
     let targetA = evt.target;
     if (targetA.tagName != "A") {
         const newA = targetA.closest("a");
@@ -615,7 +616,21 @@ function handleWikipediaClick(evt) {
         targetA = newA;
     }
     const href = targetA.getAttribute("href");
-    console.log({ target: targetA, href });
+    console.log({ targetA, href });
+    return href;
+}
+function handleWikipediaClick(evt) {
+    /*
+    let targetA = evt.target;
+    if (targetA.tagName != "A") {
+        const newA = targetA.closest("a");
+        if (!newA) { return; }
+        targetA = newA;
+    }
+    const href = targetA.getAttribute("href");
+    */
+    const href = getAHref(evt);
+    if (!href) { return; }
     if (href.startsWith("#")) { return; }
     evt.stopPropagation();
     evt.preventDefault();
@@ -629,6 +644,26 @@ function handleWikipediaClick(evt) {
     const div = showHere(evt.clientX, evt.clientY, "Can't show this here");
     setTimeout(() => div.remove(), 2000);
 }
-function scriptWikipediaClickFun(dialog) {
+
+/** @param {HTMLDialogElement} dialog */
+function scriptAddtWikipediaClickFun(dialog) {
     dialog.addEventListener("click", evt => handleWikipediaClick(evt));
+}
+
+/** @param {HTMLDialogElement} dialog */
+function scriptAddShowHelpClickFun(dialog) {
+    const handleOnThisUrl = (evt) => {
+        const baseUrl = location.origin + location.pathname;
+        const hrefEvt = getAHref(evt);
+        if (baseUrl == hrefEvt) {
+            const div = showHere(evt.clientX, evt.clientY, "You are already there!");
+            setTimeout(() => div.remove(), 2000);
+            return true;
+        }
+        return false;
+    }
+    dialog.addEventListener("click", evt => {
+        if (handleOnThisUrl(evt)) { return; }
+        handleWikipediaClick(evt);
+    });
 }
