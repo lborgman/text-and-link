@@ -295,21 +295,63 @@ function showHere(clientX, clientY, txtOrDiv, idHtml) {
 
 async function showHelp() {
     const urlHelp = "https://lborgman.github.io/text-and-link/";
-    // showUrlAsDialog(urlHelp);
     const html = await fetch(urlHelp).then(r => r.text());
-    const newHtml = html.replaceAll('"/', '"https://lborgman.github.io/');
-    const dlg = showHtmlAsDialog(newHtml);
-    debugger;
-    dlg.style.backgroundColor = "#252525";
-    dlg.style.color = "#e8e8e8";
-    dlg.querySelectorAll("a").forEach(a => a.style.color = "#ffcc00");
+    // const htmlGH = html.replaceAll('"/', '"https://lborgman.github.io/');
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = html;
+    [...tempDiv.children].forEach(element => {
+       if ([
+        "META",
+        "TITLE",
+        "SCRIPT",
+        "LINK",
+        "STYLE",
+    ].includes(element.tagName)) {
+        element.remove();
+       }
+    });
+    // FIX-ME: This is for jekyll-theme-midnight
+    const ourCss = `
+        dialog#show-help-dialog[open] {
+            background-color : #252525;
+            color : #e8e8e8;
+            a {
+                color : #ffcc00;
+            }
+            /* Resets the default browser push */
+            ul, ol {
+                padding-left: 20px; /* Reduces the 40px default by half */
+                margin-left: 0;
+            }
+            #header {
+                display: none;
+            }
+            #title {
+                display: none;
+            }
+        }
+    `;
+    const ourStyle = document.createElement("style");
+    ourStyle.textContent = ourCss;
+    tempDiv.insertBefore(ourStyle, tempDiv.firstElementChild);
+    const fullDiv = document.createElement("div");
+
+    // The style will be added when the dialog is opened and removed when closed
+    fullDiv.appendChild(ourStyle);
+    fullDiv.appendChild(tempDiv);
+
+    const dlg = showHtmlAsDialog(fullDiv.innerHTML);
+    dlg.id = "show-help-dialog";
+    // dlg.style.backgroundColor = "#252525";
+    // dlg.style.color = "#e8e8e8";
+    // dlg.querySelectorAll("a").forEach(a => a.style.color = "#ffcc00");
 }
 /**
  * @param {string} url 
  */
 async function showUrlAsDialog(url) {
     const html = await fetch(url).then(r => r.text());
-    console.log({html});
+    console.log({ html });
     // document.getElementById("helpContent").innerHTML = html;
     const dialogId = "helpContent";
     let dialog = document.getElementById(dialogId);

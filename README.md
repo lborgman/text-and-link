@@ -12,8 +12,8 @@ On some devices you can send links directly to this app from any other applicati
 1. __Install this web page__
 
    - This feature only works if the app is actively installed on your device.
-   - Open [this web page](https://lborgman.github.io/text-and-link/text-and-link.html) in your mobile browser (I have tested only in Chrome).
-   - Tap your browser's menu (it looks like __…__ or __⋮__) and select __Add to Home Screen or Install__.
+   - Open this web page in your mobile browser (I have tested only in Chrome).
+   - Tap your browser's menu (it looks like __⋮__) and select __Install and create shortcut__. (This may change with the Chrome web browser version.)
 
 1. __Share Content From Other Apps__
 
