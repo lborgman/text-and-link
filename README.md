@@ -13,7 +13,7 @@
       }
    }
 ">This new test</a>
-[This web page ](https://lborgman.github.io/text-and-link/text-and-link.html) can remove [click identifiers](Click_identifier) from a link.
+[This web page ](https://lborgman.github.io/text-and-link/text-and-link.html) can remove [click identifiers](/wiki/Click_identifier) from a link.
 Just enter the link that may contain click identifier and immediately get a cleaned link that you can copy.
 
 ## Share target
