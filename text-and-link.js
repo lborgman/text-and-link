@@ -291,6 +291,8 @@ function showSnack(txtOrDiv) {
     const div = mkElt("div", { class: "snack" }, txtOrDiv);
     div.setAttribute("popover", "");
     document.documentElement.appendChild(div);
+    div.showPopover();
+    // return; // FIX-ME:
     setTimeout(() => {
         div.remove();
     }, 3 * 1000);
@@ -517,8 +519,7 @@ function addXclose(dialog) {
     return elt;
 }
 
-/*
-document.documentElement.addEventListener("NOclick", evt => {
+document.documentElement.addEventListener("click", evt => {
     const dialog = evt.target;
     if (dialog instanceof HTMLDialogElement) {
 
@@ -542,6 +543,8 @@ document.documentElement.addEventListener("NOclick", evt => {
     // const onDialog = dialog == currentTarget;
     // if (onDialog) dialog.close();
 });
+/*
+w
 */
 
 /**
@@ -640,15 +643,6 @@ function canBeWebUrl(string) {
     return true;
 }
 
-/*
-testShowHere();
-function testShowHere() {
-    document.body.addEventListener("click", evt => {
-        const div = showHere(evt.clientX, evt.clientY, "Testing");
-        setTimeout(() => div.remove(), 3000);
-    });
-}
-*/
 
 function getAHref(evt) {
     let targetA = evt.target;
@@ -683,8 +677,8 @@ function handleWikipediaClick(evt) {
         showWikipediaAsDialog(wikiTitle);
         return;
     }
-    const div = showHere(evt.clientX, evt.clientY, "Can't show this here");
-    setTimeout(() => div.remove(), 2000);
+    const div = showHere(evt.clientX + 30, evt.clientY - 40, "Can't show this here");
+    setTimeout(() => div.remove(), 3000);
 }
 
 /** @param {HTMLDialogElement} dialog */
@@ -697,11 +691,12 @@ function scriptAddShowHelpClickFun(dialog) {
     const handleOnThisUrl = (evt) => {
         const baseUrl = location.origin + location.pathname;
         const hrefEvt = getAHref(evt);
+        debugger;
         if (baseUrl == hrefEvt) {
             evt.preventDefault();
             evt.stopPropagation();
             const div = showHere(evt.clientX, evt.clientY, "You are already there!");
-            setTimeout(() => div.remove(), 2000);
+            setTimeout(() => div.remove(), 3000);
             return true;
         }
         return false;
