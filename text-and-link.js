@@ -552,10 +552,10 @@ w
  * @param {HTMLDialogElement} dialog 
  */
 function closeDialog(dialog) {
-    console.log("closeDialog", dialog);
+    // console.log("closeDialog", dialog);
     dialog.close();
     if (!dialog.classList.contains("html-dialog")) {
-        console.log("closeDialog remove");
+        // console.log("closeDialog remove");
         dialog.remove();
     }
 }
@@ -711,3 +711,15 @@ function removeDialogCanInstall() {
     const dlg = document.getElementById("can-be-installed");
     dlg.remove();
 }
+
+
+
+// Remove popover on rim click
+document.addEventListener('toggle', (event) => {
+    if (!event.target) { return; }
+    // 1. Ensure the event comes from a closed state
+    // 2. Ensure the element actually has the popover attribute
+    if (event.newState === 'closed' && event.target.hasAttribute('popover')) {
+        event.target.remove(); // Removes the specific popover that closed
+    }
+}, true); // Using capture phase handles all edge cases smoothly
