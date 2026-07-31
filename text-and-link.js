@@ -72,14 +72,26 @@ function handleInputLink() {
     const eltA = mkElt("a", { href, style: "word-wrap:anywhere;" }, href);
     divOutputLink.appendChild(eltA);
     const btnCopy = document.getElementById("btn-copy");
+    /*
+    */
     btnCopy.addEventListener("click", errorHandlerAsyncEvent(async evt => {
         const text = divOutputText.textContent;
         const link = divOutputLink.textContent;
-        const all = `${text}\n${link}`;
-        await navigator.clipboard.writeText(all);
+        const allText = `${text}\n${link}`;
+        console.log({ text, link, allText });
+        try {
+            await navigator.clipboard.writeText(allText);
+        } catch (err) {
+            debugger;
+            throw Error(err);
+        }
         // modMdc.mkMDCsnackbar("copied to clipboard");
     }));
-
+    btnCopy.addEventListener("NOclick", evt => {
+        alert("btnCopy");
+        evt.stopPropagation();
+        console.log("btnCopy");
+    });
 }
 
 /**
@@ -182,7 +194,7 @@ function removeTrailIds(strUrl, advIds) {
         const divText = document.getElementById("output-text");
         if (!divText) { throw Error("Did not find output-text"); }
         if (sharedParams.title) {
-            const div = mkElt("div", undefined, sharedParams.title + "\n");
+            const div = mkElt("div", undefined, sharedParams.title);
             div.style.fontWeight = "bold";
             divText.appendChild(div);
         }
@@ -199,14 +211,14 @@ function removeTrailIds(strUrl, advIds) {
             // const div = mkElt("div", undefined, eltA);
             // divText.appendChild(div);
         }
-        // const divTextOut = mkElt("div", { id: "div-output", class: "mdc-card" }, [divText, btnCopy]);
-        // divOutput.appendChild(divTextOut);
         document.documentElement.classList.add("pwa-is-installed");
+        removeDialogCanInstall();
     } else {
         const isInstalled = await isPWAInstalled();
         switch (isInstalled) {
             case true:
                 document.documentElement.classList.add("pwa-is-installed");
+                removeDialogCanInstall();
                 break;
             case false:
                 document.documentElement.classList.add("pwa-is-not-installed");
@@ -222,10 +234,10 @@ function removeTrailIds(strUrl, advIds) {
 if (isAndroid()) {
     document.documentElement.classList.add("is-android");
     // if (!isPWAInstalled()) {
-        const d = document.getElementById("can-be-installed");
-        if (!(d instanceof HTMLDialogElement)) throw Error("Not dialog");
-        addXclose(d);
-        d.showModal();
+    const d = document.getElementById("can-be-installed");
+    if (!(d instanceof HTMLDialogElement)) throw Error("Not dialog");
+    addXclose(d);
+    d.showModal();
     // }
 }
 
@@ -484,7 +496,8 @@ function addXclose(dialog) {
     return elt;
 }
 
-document.documentElement.addEventListener("click", evt => {
+/*
+document.documentElement.addEventListener("NOclick", evt => {
     const dialog = evt.target;
     if (dialog instanceof HTMLDialogElement) {
 
@@ -508,6 +521,7 @@ document.documentElement.addEventListener("click", evt => {
     // const onDialog = dialog == currentTarget;
     // if (onDialog) dialog.close();
 });
+*/
 
 /**
  * 
@@ -675,4 +689,9 @@ function scriptAddShowHelpClickFun(dialog) {
         if (handleOnThisUrl(evt)) { return; }
         handleWikipediaClick(evt);
     });
+}
+
+function removeDialogCanInstall() {
+    const dlg = document.getElementById("can-be-installed");
+    dlg.remove();
 }
