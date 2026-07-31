@@ -5,7 +5,7 @@ const mkElt = window["mkElt"];
 
 navigator.serviceWorker.register('./sw.js');
 
-const eltTitle = document.getElementById("header-title");
+// const eltTitle = document.getElementById("header-title");
 // eltTitle.textContent = "Text+Link";
 
 const divOutput = document.getElementById("output");
@@ -28,6 +28,8 @@ function handleInputLink() {
         eltCleanedInfo.textContent = "(Can't be a valid url)";
         return;
     }
+    const eltOutput = document.getElementById("output");
+    if (eltOutput?.hasAttribute("style")) { eltOutput.removeAttribute("style"); }
 
     /** @type {string[]} */
     const advIds = [];
@@ -71,34 +73,37 @@ function handleInputLink() {
     const href = strOut;
     const eltA = mkElt("a", { href, style: "word-wrap:anywhere;" }, href);
     divOutputLink.appendChild(eltA);
-    const btnCopy = document.getElementById("btn-copy");
-    /*
-    */
-    btnCopy.addEventListener("click", errorHandlerAsyncEvent(async evt => {
-        const text = divOutputText.textContent;
-        const link = divOutputLink.textContent;
-        const allText = `${text}\n${link}`;
-        console.log({ text, link, allText });
-        try {
-            await navigator.clipboard.writeText(allText);
-            const elt = mkElt("div", { style: "max-width: clamp(160px, 400px, 70dvw);" }, [
-                mkElt("i", { style: "color:blue;" }, "Copied:"),
-                mkElt("pre", { style: " overflow-wrap: anywhere; white-space: pre-wrap; " }, allText)
-            ]
-            );
-            showSnack(elt);
-        } catch (err) {
-            debugger;
-            throw Error(err);
-        }
-        // modMdc.mkMDCsnackbar("copied to clipboard");
-    }));
-    btnCopy.addEventListener("NOclick", evt => {
-        alert("btnCopy");
-        evt.stopPropagation();
-        console.log("btnCopy");
-    });
+
 }
+const btnCopy = document.getElementById("btn-copy");
+btnCopy.addEventListener("click", errorHandlerAsyncEvent(async evt => {
+    const text = divOutputText.textContent;
+    const link = divOutputLink.textContent;
+    if (text.length + link.length == 0) {
+        showSnack("Nothing to copy");
+        return;
+    }
+    const allText = `${text}\n${link}`;
+    console.log({ text, link, allText });
+    try {
+        await navigator.clipboard.writeText(allText);
+        const elt = mkElt("div", { style: "max-width: clamp(160px, 400px, 70dvw);" }, [
+            mkElt("i", { style: "color:blue;" }, "Copied:"),
+            mkElt("pre", { style: " overflow-wrap: anywhere; white-space: pre-wrap; " }, allText)
+        ]
+        );
+        showSnack(elt);
+    } catch (err) {
+        debugger;
+        throw Error(err);
+    }
+    // modMdc.mkMDCsnackbar("copied to clipboard");
+}));
+btnCopy.addEventListener("NOclick", evt => {
+    alert("btnCopy");
+    evt.stopPropagation();
+    console.log("btnCopy");
+});
 
 /**
  * @param {URL} urlIn
