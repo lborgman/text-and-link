@@ -164,6 +164,18 @@
             display: block !important;
         }
 
+        .snack {
+            max-width: clamp(160px, 400px, 70dvw);
+            display: block;
+            padding: 10px;
+            border:none;
+            border-radius: 10px;
+            background-color: white;
+            color: black;
+            outline: 2px solid yellow;
+            box-shadow: 0px 0px 20px 4px yellow;
+        }
+
         .show-here {
             max-width: 150px;
             display: flex;
@@ -314,7 +326,7 @@
             <p>
                 On Android this web page can be a "share target" for apps and web pages.
                 Just install it in Google Chrome.
-                (This web page is a 
+                (This web page is a
                 <a href="https://en.wikipedia.org/wiki/Progressive_web_app" onclick="
                     event.preventDefault();
                     const t = event.target;

@@ -81,9 +81,9 @@ function handleInputLink() {
         console.log({ text, link, allText });
         try {
             await navigator.clipboard.writeText(allText);
-            const elt = mkElt("div", undefined,[
-                mkElt("b", undefined, "Copied:"),
-                mkElt("pre", undefined, allText)
+            const elt = mkElt("div", { style: "max-width: clamp(160px, 400px, 70dvw);" }, [
+                mkElt("i", { style: "color:blue;" }, "Copied:"),
+                mkElt("pre", { style: " overflow-wrap: anywhere; white-space: pre-wrap; " }, allText)
             ]
             );
             showSnack(elt);
@@ -283,7 +283,7 @@ function mkExpandable(eltContent) {
  * Show txt popup-style in the middle of the screen
  */
 function showSnack(txtOrDiv) {
-    const div = mkElt("div", { class: "show-here" }, txtOrDiv);
+    const div = mkElt("div", { class: "snack" }, txtOrDiv);
     div.setAttribute("popover", "");
     document.documentElement.appendChild(div);
     setTimeout(() => {
