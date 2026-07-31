@@ -178,7 +178,9 @@ function removeTrailIds(strUrl, advIds) {
     const sharedParams = modShPar.getOurSharedParams();
     console.log({ sharedParams });
     if (sharedParams) {
-        const divText = mkElt("div", { id: "text-content" });
+        // const divText = mkElt("div", { id: "text-content" });
+        const divText = document.getElementById("output-text");
+        if (!divText) { throw Error("Did not find output-text"); }
         if (sharedParams.title) {
             const div = mkElt("div", undefined, sharedParams.title + "\n");
             div.style.fontWeight = "bold";
@@ -199,28 +201,32 @@ function removeTrailIds(strUrl, advIds) {
         }
         // const divTextOut = mkElt("div", { id: "div-output", class: "mdc-card" }, [divText, btnCopy]);
         // divOutput.appendChild(divTextOut);
-    }
-    const isInstalled = await isPWAInstalled();
-    switch (isInstalled) {
-        case true:
-            document.documentElement.classList.add("pwa-is-installed");
-            break;
-        case false:
-            document.documentElement.classList.add("pwa-is-not-installed");
-            break;
-        case undefined:
-            break;
-        default:
-            throw Error(`isInstalled == "${isInstalled}"`);
+        document.documentElement.classList.add("pwa-is-installed");
+    } else {
+        const isInstalled = await isPWAInstalled();
+        switch (isInstalled) {
+            case true:
+                document.documentElement.classList.add("pwa-is-installed");
+                break;
+            case false:
+                document.documentElement.classList.add("pwa-is-not-installed");
+                break;
+            case undefined:
+                break;
+            default:
+                throw Error(`isInstalled == "${isInstalled}"`);
+        }
     }
 })();
 
 if (isAndroid()) {
-    // document.documentElement.classList.add("is-android");
-    const d = document.getElementById("can-be-installed");
-    if (!(d instanceof HTMLDialogElement)) throw Error("Not dialog");
-    addXclose(d);
-    d.showModal();
+    document.documentElement.classList.add("is-android");
+    // if (!isPWAInstalled()) {
+        const d = document.getElementById("can-be-installed");
+        if (!(d instanceof HTMLDialogElement)) throw Error("Not dialog");
+        addXclose(d);
+        d.showModal();
+    // }
 }
 
 async function isPWAInstalled() {

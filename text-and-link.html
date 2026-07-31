@@ -146,8 +146,8 @@
 
 
         /* FIX-ME: */
-        #can-be-installed {
-            display: none;
+        dialog#can-be-installed {
+            display: none !important;
             background-color: lightblue;
             color: black;
             padding: 15px;
@@ -161,7 +161,7 @@
         }
 
         .is-android.pwa-is-not-installed #can-be-installed {
-            display: block;
+            display: block !important;
         }
 
         .show-here {
