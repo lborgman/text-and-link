@@ -350,7 +350,7 @@ async function showHelp() {
         css: ourCss,
         // FIX-ME: why does the linter complain??
         // script: scriptAddtWikipediaClickFun
-        script: scriptAddShowHelpClickFun
+        script: scriptAddShowHelpClickFun,
     });
 
     dlg.id = "show-help-dialog";
@@ -413,7 +413,8 @@ function showHtmlAsDialog(strHtml, opts = {}) {
 async function showWikipediaAsDialog(pageTitle) {
     const html = await fetchWikiArticle(pageTitle, lang = 'en');
     showHtmlAsDialog(html, {
-        script: scriptAddtWikipediaClickFun
+        script: scriptAddtWikipediaClickFun,
+        css: "dialog[open] { padding-top:40px; }"
     });
 }
 window.showWikipediaAsDialog = showWikipediaAsDialog;

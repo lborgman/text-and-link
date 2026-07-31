@@ -3,16 +3,7 @@
 </style>
 
 # Clean Link
-<a href="https://lborgman.github.io/text-and-link/text-and-link.html"
-   onclick="
-   (event) => {
-      debugger; // I never get here
-      if (location.href == 'https://lborgman.github.io/text-and-link/text-and-link.html') {
-         event.preventDefault();
-         event.stopPropagation();
-      }
-   }
-">This new test</a>
+
 [This web page](https://lborgman.github.io/text-and-link/text-and-link.html) can remove [click identifiers](https://en.wikipedia.org/wiki/Click_identifier) from a link.
 Just enter the link that may contain click identifier and immediately get a cleaned link that you can copy.
 
