@@ -81,6 +81,12 @@ function handleInputLink() {
         console.log({ text, link, allText });
         try {
             await navigator.clipboard.writeText(allText);
+            const elt = mkElt("div", undefined,[
+                mkElt("b", undefined, "Copied:"),
+                mkElt("pre", undefined, allText)
+            ]
+            );
+            showSnack(elt);
         } catch (err) {
             debugger;
             throw Error(err);
@@ -273,9 +279,19 @@ function mkExpandable(eltContent) {
     ]);
 }
 
-
 /**
- * Show txt popup-style.
+ * Show txt popup-style in the middle of the screen
+ */
+function showSnack(txtOrDiv) {
+    const div = mkElt("div", { class: "show-here" }, txtOrDiv);
+    div.setAttribute("popover", "");
+    document.documentElement.appendChild(div);
+    setTimeout(() => {
+        div.remove();
+    }, 3 * 1000);
+}
+/**
+ * Show txt popup-style at a certain point.
  * Popup is guaranteed to be entirely inside viewport.
  *
  * Uses CSS class "show-here".
