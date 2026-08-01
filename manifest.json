@@ -20,7 +20,7 @@
             "purpose": "any"
         }
     ],
-    "start_url": "/text-and-link/text-and-link.html",
+    "start_url": "/text-and-link/text-and-link.html?utm_source=pwa",
     "scope": "/text-and-link",
     "display": "standalone",
     "background_color": "olive",

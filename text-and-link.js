@@ -216,52 +216,52 @@ function removeTrailIds(strUrl, advIds) {
         if (sharedParams.url) {
             taLink.value = sharedParams.url;
             handleInputLink();
-
-
-            // const eltA = mkElt("a", { href }, href)
-            // const div = mkElt("div", undefined, eltA);
-            // divText.appendChild(div);
         }
-        document.documentElement.classList.add("pwa-is-installed");
-        removeDialogCanInstall();
-    } else {
-        const isInstalled = await isPWAInstalled();
-        switch (isInstalled) {
-            case true:
-                document.documentElement.classList.add("pwa-is-installed");
-                removeDialogCanInstall();
-                break;
-            case false:
-                document.documentElement.classList.add("pwa-is-not-installed");
-                break;
-            case undefined:
-                break;
-            default:
-                throw Error(`isInstalled == "${isInstalled}"`);
-        }
+    }
+    const isInstalled = await isPWAInstalled();
+    switch (isInstalled) {
+        case true:
+            document.documentElement.classList.add("pwa-is-installed");
+            removeDialogCanInstall();
+            break;
+        case false:
+            document.documentElement.classList.add("pwa-is-not-installed");
+            break;
+        case undefined:
+            break;
+        default:
+            throw Error(`isInstalled == "${isInstalled}"`);
     }
 })();
 
 if (isAndroid()) {
     document.documentElement.classList.add("is-android");
-    // if (!isPWAInstalled()) {
+    // We have checked before if it is in the DOM!
     const d = document.getElementById("can-be-installed");
-    if (!(d instanceof HTMLDialogElement)) throw Error("Not dialog");
-    addXclose(d);
-    d.showModal();
-    // }
+    if (d) {
+        addXclose(d);
+        d.showModal();
+    }
 }
 
+// FIX-ME: experimental
+// https://developer.mozilla.org/en-US/docs/Web/API/Navigator/getInstalledRelatedApps
+// https://caniuse.com/mdn-api_navigator_getinstalledrelatedapps
 async function isPWAInstalled() {
-    // FIX-ME: experimental
-    // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/getInstalledRelatedApps
-    // https://caniuse.com/mdn-api_navigator_getinstalledrelatedapps
+    debugger;
+    // Check for param from manifest:
+    if (new URLSearchParams(window.location.search).get('utm_source') === 'pwa') {
+        return true;
+    }
+    if (new URLSearchParams(window.location.search).has('url')) {
+        return true;
+    }
     if ('getInstalledRelatedApps' in navigator) {
         const relatedApps = await navigator.getInstalledRelatedApps();
         // Filter to see if your webapp platform is in the list
         const isInstalled = relatedApps.some(app => app.platform === 'webapp');
-
         if (isInstalled) {
+            debugger;
             console.log("PWA is installed!");
             return true;
         } else {
@@ -709,6 +709,7 @@ function scriptAddShowHelpClickFun(dialog) {
 
 function removeDialogCanInstall() {
     const dlg = document.getElementById("can-be-installed");
+    if (!dlg) { throw Error('Did not find "can-be-installed"'); }
     dlg.remove();
 }
 
