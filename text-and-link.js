@@ -248,11 +248,13 @@ if (isAndroid()) {
 // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/getInstalledRelatedApps
 // https://caniuse.com/mdn-api_navigator_getinstalledrelatedapps
 async function isPWAInstalled() {
-    debugger;
+    // debugger;
     // Check for param from manifest:
     if (new URLSearchParams(window.location.search).get('utm_source') === 'pwa') {
+        showSnack("Found utm_source");
         return true;
     }
+    showSnack("No utm_source");
     if (new URLSearchParams(window.location.search).has('url')) {
         return true;
     }
@@ -562,7 +564,17 @@ function closeDialog(dialog) {
 
 
 function isAndroid() {
-    return true; // FIX-ME:
+    const isLocalhost = Boolean(
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.hostname === '[::1]' // IPv6 loopback
+    );
+
+    if (isLocalhost) {
+        console.log('Running locally, pretend Android');
+        return true; // FIX-ME:
+    }
+
     const ua = navigator.userAgent.toLowerCase();
     const isAndroid = ua.indexOf("android") > -1;
     return isAndroid;
