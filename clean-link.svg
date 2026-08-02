@@ -1,7 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Uploaded to SVGRepo https://www.svgrepo.com -->
-<!-- https://css-tricks.com/svg-path-syntax-illustrated-guide/ -->
-<!-- https://css-tricks.com/transforms-on-svg-elements/ -->
 <svg xmlns="http://www.w3.org/2000/svg"
 	xmlns:xlink="http://www.w3.org/1999/xlink"
 	x="0" y="0" viewBox="0 0 256 256" xml:space="preserve">
@@ -9,13 +6,15 @@
     <circle cx="50%" cy="50%" r="40%"
 	  fill="lightskyblue" stroke="grey"
       stroke-width="1" />
-    <text y="35%" x="15%"
-        transform="rotate(45, 50, 100)"
-        font-size="120"
+    <text y="128" x="128"
+        text-anchor="middle"
+        dominant-baseline="central"
+        transform="rotate(-90, 128, 128)"
+        font-size="200"
         font-family="sans-serif"
-       fill="#250">C</text>
-    <text y="85%" x="42%"
-        transform="rotate(-25, 40, 100)"
+        fill="#250">C</text>
+    <text y="128" x="110"
+        transform="rotate(-9, 128, 110)"
         font-size="110"
         font-style="underline"
         font-family="sans-serif"
