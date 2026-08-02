@@ -1,8 +1,8 @@
 {
-    "short_name": "Text+Link",
-    "name": "Text and link - get shared parameters",
+    "short_name": "Clean Link",
+    "name": "Clean Link",
     "share_target": {
-        "action": "https://lborgman.github.io/text-and-link/text-and-link.html",
+        "action": "https://lborgman.github.io/text-and-link/clean-link.html",
         "enctype": "application/x-www-form-urlencoded",
         "method": "GET",
         "params": {
@@ -11,16 +11,16 @@
             "url": "url"
         }
     },
-    "description": "Get cleaned shared parameters when installed",
+    "description": "Clean url:s from click identifiers",
     "icons": [
         {
-            "src": "/text-and-link/tl.svg",
+            "src": "/text-and-link/clean-link.svg",
             "type": "image/svg+xml",
             "sizes": "any",
             "purpose": "any"
         }
     ],
-    "start_url": "/text-and-link/text-and-link.html?utm_source=pwa",
+    "start_url": "/text-and-link/clean-link.html?utm_source=pwa",
     "scope": "/text-and-link",
     "display": "standalone",
     "background_color": "olive",
