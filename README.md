@@ -9,6 +9,7 @@ Just enter the link that may contain click identifier and immediately get a clea
 
 <!-- Final high-performance tag for your above-the-fold screenshot -->
 <div align="center">
+<figure>
 <img 
   src="./screenshot2.webp" 
   alt="App interface screenshot" 
@@ -17,6 +18,8 @@ Just enter the link that may contain click identifier and immediately get a clea
   fetchpriority="low" 
   decoding="async"
 />
+<figcaption>Screenshot, share target</figcaption>
+</figure>
 </div>
 
 ## Share target
