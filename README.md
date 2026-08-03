@@ -8,6 +8,7 @@
 Just enter the link that may contain click identifier and immediately get a cleaned link that you can copy.
 
 <!-- Final high-performance tag for your above-the-fold screenshot -->
+<div align="center>
 <img 
   src="./screenshot.webp" 
   alt="App interface screenshot" 
@@ -16,6 +17,7 @@ Just enter the link that may contain click identifier and immediately get a clea
   fetchpriority="low" 
   decoding="async"
 />
+</div>
 
 ## Share target
 
