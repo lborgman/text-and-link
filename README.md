@@ -32,7 +32,7 @@ On some devices you can send links directly to this app from any other applicati
 
    - For the share feature to work the web page __Clean Link__ must be installed (in your web browser) on your device.
    - Open this web page in your mobile browser (I have tested only in __Google Chrome__ and I think that it currently can work on with Goggle Chrome).
-   - Tap your browser's menu (it looks like __⋮__) and select __Install and create shortcut__. (The name of the menu entry may change with the web browser version.)
+   - Tap your browser's menu (it looks like __⋮__) and select __Install and create shortcut__. (The name of the menu entry may change with future web browser version.)
 
 1. __Share Content From Other Apps__
 
