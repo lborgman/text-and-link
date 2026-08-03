@@ -7,6 +7,16 @@
 [This web page](https://lborgman.github.io/text-and-link/text-and-link.html) can remove [click identifiers](https://en.wikipedia.org/wiki/Click_identifier) from a link.
 Just enter the link that may contain click identifier and immediately get a cleaned link that you can copy.
 
+<!-- Final high-performance tag for your above-the-fold screenshot -->
+<img 
+  src="./screenshot.webp" 
+  alt="App interface screenshot" 
+  width="223" 
+  height="260" 
+  fetchpriority="low" 
+  decoding="async"
+>
+
 ## Share target
 
 On some devices you can send links directly to this app from any other application on your device using your system's native share.  (Currently this only works well on __Android devices/mobiles__.)
