@@ -15,7 +15,7 @@ Just enter the link that may contain click identifier and immediately get a clea
   height="260" 
   fetchpriority="low" 
   decoding="async"
->
+/>
 
 ## Share target
 
