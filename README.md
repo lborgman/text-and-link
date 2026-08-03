@@ -10,20 +10,10 @@ Just enter the link that may contain click identifier and immediately get a clea
 <!-- Final high-performance tag for your above-the-fold screenshot -->
 <div align="center">
 <img 
-  src="./screenshot.webp" 
-  alt="App interface screenshot" 
-  width="223" 
-  height="260" 
-  fetchpriority="low" 
-  decoding="async"
-/>
-</div>
-<div align="center">
-<img 
   src="./screenshot2.webp" 
   alt="App interface screenshot" 
-  width="230" 
-  height="611" 
+  width="240" 
+  height="340" 
   fetchpriority="low" 
   decoding="async"
 />
