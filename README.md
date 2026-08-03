@@ -18,6 +18,16 @@ Just enter the link that may contain click identifier and immediately get a clea
   decoding="async"
 />
 </div>
+<div align="center">
+<img 
+  src="./screenshot2.webp" 
+  alt="App interface screenshot" 
+  width="230" 
+  height="611" 
+  fetchpriority="low" 
+  decoding="async"
+/>
+</div>
 
 ## Share target
 
