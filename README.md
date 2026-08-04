@@ -10,19 +10,21 @@ Just enter the link that may contain click identifier and immediately get a clea
 <!-- Final high-performance tag for your above-the-fold screenshot -->
 <div align="center">
 <figure>
-<img 
-  src="./screenshot2.webp" 
-  alt="App interface screenshot" 
-  width="240" 
-  height="340" 
-  fetchpriority="low" 
+<img
+  src="./screenshot2.webp"
+  alt="App interface screenshot"
+  width="240"
+  height="340"
+  fetchpriority="low"
   decoding="async"
 />
 <figcaption>Screenshot, share target</figcaption>
 </figure>
 </div>
 
-To use __Clean Link__ open this web page in your web browser: https://lborgman.github.io/text-and-link/text-and-link.html (not inside the social media where you might be reading this information page).
+To use __Clean Link__ open this web page:
+* [https://lborgman.github.io/text-and-link/text-and-link.html](https://lborgman.github.io/text-and-link/text-and-link.html)
+(in your web browser, not inside the social media where you might be reading this information page).
 
 ## Share target
 

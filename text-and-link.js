@@ -286,10 +286,58 @@ function mkExpandable(eltContent) {
     ]);
 }
 
+
+/**
+ * @param {string|HTMLDivElement} txtOrDiv
+ * @param {number} [secTimeout]
+ * @param {number} [clientX]
+ * @param {number} [clientY]
+ *
+ * @return {HTMLDivElement}
+ */
+function showOver(txtOrDiv, secTimeout, clientX, clientY) {
+    // Both must be number or undefined
+    const hasPos = clientX != undefined || clientY != undefined;
+    if (hasPos) {
+        if (isNaN(clientX + clientY)) {
+            throw Error(`Bad pos: (${clientX}, ${clientY})`);
+        }
+    }
+    const div = mkElt("div", { class: "snack" }, txtOrDiv);
+    div.setAttribute("popover", "");
+    document.documentElement.appendChild(div);
+    if (hasPos) {
+        const bcr = div.getBoundingClientRect();
+        const wW = window.innerWidth;
+        const wH = window.innerHeight;
+        if (bcr.right > wW) {
+            clientX = wW - bcr.width;
+            div.style.left = `${clientX}px`;
+        }
+        if (bcr.bottom > wH) {
+            clientY = wH - bcr.height;
+            div.style.top = `${clientY}px`;
+        }
+    }
+    div.showPopover();
+    if (hasPos) {
+        div.style.margin = `0`;
+        div.style.position = `fixed`;
+        div.style.left = `${clientX}px`;
+        div.style.top = `${clientY}px`;
+    }
+    if (secTimeout == undefined) return div;
+    setTimeout(() => {
+        div.remove();
+    }, secTimeout * 1000);
+    return div;
+}
 /**
  * Show txt popup-style in the middle of the screen
  */
 function showSnack(txtOrDiv) {
+    showOver(txtOrDiv, 3);
+    return;
     const div = mkElt("div", { class: "snack" }, txtOrDiv);
     div.setAttribute("popover", "");
     document.documentElement.appendChild(div);
@@ -308,10 +356,11 @@ function showSnack(txtOrDiv) {
  * @param {number} clientX
  * @param {number} clientY
  * @param {string|HTMLDivElement} txtOrDiv
- * @param {string} [idHtml] - override CSS values in "show-here"
+ * @param {number} [secTimeout]
  * @returns {HTMLDivElement}
  */
-function showHere(clientX, clientY, txtOrDiv, idHtml) {
+function showHere(clientX, clientY, txtOrDiv, secTimeout) {
+    return  showOver(txtOrDiv, secTimeout, clientX, clientY);
     clientX = Math.max(0, clientX);
     clientY = Math.max(0, clientY);
     const div = mkElt("div", { class: "show-here" }, txtOrDiv);
@@ -689,8 +738,9 @@ function handleWikipediaClick(evt) {
         showWikipediaAsDialog(wikiTitle);
         return;
     }
-    const div = showHere(evt.clientX + 30, evt.clientY - 40, "Can't show this here");
-    setTimeout(() => div.remove(), 3000);
+    // const div = showHere(evt.clientX + 30, evt.clientY - 40, "Can't show this here");
+    // setTimeout(() => div.remove(), 3000);
+    showHere(evt.clientX + 30, evt.clientY - 40, "Can't show this here", 3);
 }
 
 /** @param {HTMLDialogElement} dialog */
@@ -707,8 +757,9 @@ function scriptAddShowHelpClickFun(dialog) {
         if (baseUrl == hrefEvt) {
             evt.preventDefault();
             evt.stopPropagation();
-            const div = showHere(evt.clientX, evt.clientY, "You are already there!");
-            setTimeout(() => div.remove(), 3000);
+            // const div = showHere(evt.clientX, evt.clientY, "You are already there!");
+            // setTimeout(() => div.remove(), 3000);
+            showHere(evt.clientX, evt.clientY, "You are already there!", 3);
             return true;
         }
         return false;
