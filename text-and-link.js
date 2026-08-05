@@ -2,17 +2,25 @@
 
 // @ts-ignore
 const mkElt = window["mkElt"];
+// @ts-ignore
+const errorHandlerAsyncEvent = window["errorHandlerAsyncEvent"];
 
 navigator.serviceWorker.register('./sw.js');
 
-// const eltTitle = document.getElementById("header-title");
-// eltTitle.textContent = "Text+Link";
+/*
+// Not used here.
+// For <dialog> and popovers:
+const clsDontRemoveme = "dont-remove-me";
+document.querySelectorAll("dialog").forEach(elt => elt.classList.add(clsDontRemoveme));
+document.querySelectorAll("[popover]").forEach(elt => elt.classList.add(clsDontRemoveme));
+*/
+
 
 const divOutput = document.getElementById("output");
 const divOutputText = document.getElementById("output-text");
 const divOutputLink = document.getElementById("output-link");
-const taLink = document.getElementById("ta-link");
-if (!taLink) throw Error("!inpLink");
+const taLink = /** @type {HTMLTextAreaElement} */ (document.getElementById("ta-link"));
+if (!taLink) throw Error("Did not find ta-Link");
 taLink.addEventListener("input", _evt => {
     handleInputLink();
 });
@@ -20,8 +28,10 @@ taLink.addEventListener("change", _evt => {
     handleInputLink();
 });
 function handleInputLink() {
+    if (!(taLink instanceof HTMLTextAreaElement)) { throw Error("taLink is not textarea"); }
     const strIn = taLink.value.trim();
     if (!canBeWebUrl(strIn)) {
+        if (!(divOutputLink instanceof HTMLDivElement)) { throw Error("divOutputLink is not div"); }
         divOutputLink.textContent = "";
         const eltCleanedInfo = document.getElementById("cleaned-info");
         if (!eltCleanedInfo) throw Error("!eltCleanedInfo");
@@ -50,25 +60,27 @@ function handleInputLink() {
 
         const btnCleanedInfo = mkElt("button", { id: "btn-cleaned-info" }, "Details");
         eltCleanedInfo.appendChild(btnCleanedInfo);
-        btnCleanedInfo.addEventListener("click", evt => {
-            evt.stopPropagation();
-            btnCleanedInfo.remove();
-            const divCleanedDetails = mkElt("div", { id: "div-cleaned-details" });
-            advIds.sort().forEach(id => {
-                console.log("removed ", id);
-                divCleanedDetails.appendChild(mkElt("div", undefined, `Removed ${id}`));
+        btnCleanedInfo.addEventListener("click",
+            /** @param {PointerEvent} evt */ evt => {
+                evt.stopPropagation();
+                btnCleanedInfo.remove();
+                const divCleanedDetails = mkElt("div", { id: "div-cleaned-details" });
+                advIds.sort().forEach(id => {
+                    console.log("removed ", id);
+                    divCleanedDetails.appendChild(mkElt("div", undefined, `Removed ${id}`));
+                });
+                const divExpandingCleanedInfo = mkExpandable(divCleanedDetails);
+                const eltCleanedInfo = document.getElementById("cleaned-info");
+                if (!eltCleanedInfo) throw Error("!eltCleanedInfo");
+                if (!eltCleanedInfo.parentElement) throw Error("!eltCleanedInfo.parentElement");
+                eltCleanedInfo.parentElement.insertBefore(divExpandingCleanedInfo, eltCleanedInfo.nextElementSibling);
+                console.log({ eltCleanedInfo, divExpandingCleanedInfo });
+                setTimeout(() => { divExpandingCleanedInfo.classList.add("expanded") }, 10);
             });
-            const divExpandingCleanedInfo = mkExpandable(divCleanedDetails);
-            const eltCleanedInfo = document.getElementById("cleaned-info");
-            if (!eltCleanedInfo) throw Error("!eltCleanedInfo");
-            eltCleanedInfo.parentElement.insertBefore(divExpandingCleanedInfo, eltCleanedInfo.nextElementSibling);
-            console.log({ eltCleanedInfo, divExpandingCleanedInfo });
-            setTimeout(() => { divExpandingCleanedInfo.classList.add("expanded") }, 10);
-        });
     }
 
 
-
+    if (divOutputLink == null) { throw Error("divOutputLink == null"); }
     divOutputLink.textContent = "";
     const href = strOut;
     const eltA = mkElt("a", { href, style: "word-wrap:anywhere;" }, href);
@@ -76,8 +88,11 @@ function handleInputLink() {
 
 }
 const btnCopy = document.getElementById("btn-copy");
-btnCopy.addEventListener("click", errorHandlerAsyncEvent(async evt => {
+if (btnCopy == null) throw Error("btnCopy == null");
+btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEvent} evt */ async evt => {
+    if (divOutputText == null) throw Error("divOutputText == null");
     const text = divOutputText.textContent;
+    if (divOutputLink == null) throw Error("divOutputLink == null");
     const link = divOutputLink.textContent;
     if (text.length + link.length == 0) {
         showSnack("Nothing to copy");
@@ -94,10 +109,9 @@ btnCopy.addEventListener("click", errorHandlerAsyncEvent(async evt => {
         );
         showSnack(elt);
     } catch (err) {
-        debugger;
-        throw Error(err);
+        const errorMessage = err instanceof Error ? err.message : String(err);
+        throw new Error(errorMessage, { cause: err });
     }
-    // modMdc.mkMDCsnackbar("copied to clipboard");
 }));
 btnCopy.addEventListener("NOclick", evt => {
     alert("btnCopy");
@@ -116,8 +130,15 @@ function removeUrlParam(urlIn, param) {
     urlOut.searchParams.delete(param);
     return urlOut;
 }
+
+/**
+ * 
+ * @param {string} strUrl 
+ * @param {string[]} advIds 
+ * @returns {string}
+ */
 function removeByPattern(strUrl, advIds) {
-    let url;
+    /** @type {URL} */ let url;
     try {
         url = new URL(strUrl);
     } catch (err) {
@@ -166,7 +187,7 @@ function removeTrailIds(strUrl, advIds) {
         // Zanox click identifier (zanpid), used by Awin
         "zanpid",
     ];
-    let url;
+    /** @type {URL} */ let url;
     try {
         url = new URL(strUrl);
     } catch (err) {
@@ -185,8 +206,8 @@ function removeTrailIds(strUrl, advIds) {
     return url.href;
 }
 
-
-(async () => {
+{
+    // (async () => {
     // For me to remember:
     // https://chatgpt.com/share/6a62268a-17a8-83eb-acbe-0c86961a23c4
     const modShPar = await import("./sharing-params.js");
@@ -232,12 +253,13 @@ function removeTrailIds(strUrl, advIds) {
         default:
             throw Error(`isInstalled == "${isInstalled}"`);
     }
-})();
+    // })();
+}
 
 if (isAndroid()) {
     document.documentElement.classList.add("is-android");
-    // We have checked before if it is in the DOM!
-    const d = document.getElementById("can-be-installed");
+    // FIX-ME: We have checked before if it is in the DOM!
+    const d = /** @type {HTMLDialogElement} */ (document.getElementById("can-be-installed"));
     if (d) {
         addXclose(d);
         d.showModal();
@@ -259,9 +281,13 @@ async function isPWAInstalled() {
         return true;
     }
     if ('getInstalledRelatedApps' in navigator) {
-        const relatedApps = await navigator.getInstalledRelatedApps();
+        /** @type {Array<{platform: string}>} */
+        const relatedApps = await (/** @type {any} */ (navigator)).getInstalledRelatedApps();
+
         // Filter to see if your webapp platform is in the list
-        const isInstalled = relatedApps.some(app => app.platform === 'webapp');
+        /** @type {boolean} */
+        const isInstalled = relatedApps.some(app => app.platform === 'web');
+        alert(`isInstalled==${isInstalled}`);
         if (isInstalled) {
             debugger;
             console.log("PWA is installed!");
@@ -288,6 +314,8 @@ function mkExpandable(eltContent) {
 
 
 /**
+ * Show as popover
+ *
  * @param {string|HTMLDivElement} txtOrDiv
  * @param {number} [secTimeout]
  * @param {number} [clientX]
@@ -297,9 +325,9 @@ function mkExpandable(eltContent) {
  */
 function showOver(txtOrDiv, secTimeout, clientX, clientY) {
     // Both must be number or undefined
-    const hasPos = clientX != undefined || clientY != undefined;
+    const hasPos = clientX != undefined && clientY != undefined;
     if (hasPos) {
-        if (isNaN(clientX + clientY)) {
+        if (Number.isNaN(clientX) || Number.isNaN(clientY)) {
             throw Error(`Bad pos: (${clientX}, ${clientY})`);
         }
     }
@@ -334,18 +362,10 @@ function showOver(txtOrDiv, secTimeout, clientX, clientY) {
 }
 /**
  * Show txt popup-style in the middle of the screen
+ * @param {string|HTMLDivElement} txtOrDiv
  */
 function showSnack(txtOrDiv) {
-    showOver(txtOrDiv, 3);
-    return;
-    const div = mkElt("div", { class: "snack" }, txtOrDiv);
-    div.setAttribute("popover", "");
-    document.documentElement.appendChild(div);
-    div.showPopover();
-    // return; // FIX-ME:
-    setTimeout(() => {
-        div.remove();
-    }, 3 * 1000);
+    return showOver(txtOrDiv, 3);
 }
 /**
  * Show txt popup-style at a certain point.
@@ -360,41 +380,17 @@ function showSnack(txtOrDiv) {
  * @returns {HTMLDivElement}
  */
 function showHere(clientX, clientY, txtOrDiv, secTimeout) {
-    return  showOver(txtOrDiv, secTimeout, clientX, clientY);
-    clientX = Math.max(0, clientX);
-    clientY = Math.max(0, clientY);
-    const div = mkElt("div", { class: "show-here" }, txtOrDiv);
-    div.setAttribute("popover", "");
-    if (idHtml != undefined) { div.id = idHtml; }
-    document.documentElement.appendChild(div);
-    const bcr = div.getBoundingClientRect();
-    const wW = window.innerWidth;
-    const wH = window.innerHeight;
-    if (bcr.right > wW) {
-        clientX = wW - bcr.width;
-        div.style.left = `${clientX}px`;
-    }
-    if (bcr.bottom > wH) {
-        clientY = wH - bcr.height;
-        div.style.top = `${clientY}px`;
-    }
-    div.showPopover();
-    div.style.margin = `0`;
-    div.style.position = `fixed`;
-    div.style.left = `${clientX}px`;
-    div.style.top = `${clientY}px`;
-
-    return div;
+    return showOver(txtOrDiv, secTimeout, clientX, clientY);
 }
 
 async function showHelp() {
     const urlHelp = "https://lborgman.github.io/text-and-link/";
     const html = await fetch(urlHelp).then(r => r.text());
     // const htmlGH = html.replaceAll('"/', '"https://lborgman.github.io/');
-    const tempDiv = document.createElement('div');
+    const tempDiv = /** @type {HTMLDivElement} */ (document.createElement('div'));
     tempDiv.innerHTML = html;
-    removeHtmlHeaderElements(tempDiv);
-    function removeHtmlHeaderElements(tempDiv) {
+    removeHtmlHeaderElements();
+    function removeHtmlHeaderElements() {
         [...tempDiv.children].forEach(element => {
             if ([
                 "META",
@@ -437,18 +433,12 @@ async function showHelp() {
     fullDiv.appendChild(ourStyle);
     fullDiv.appendChild(tempDiv);
 
-    // const dlg = showHtmlAsDialog(fullDiv.innerHTML);
     const dlg = showHtmlAsDialog(tempDiv.innerHTML, {
         css: ourCss,
-        // FIX-ME: why does the linter complain??
-        // script: scriptAddtWikipediaClickFun
         script: scriptAddShowHelpClickFun,
     });
 
     dlg.id = "show-help-dialog";
-    // dlg.style.backgroundColor = "#252525";
-    // dlg.style.color = "#e8e8e8";
-    // dlg.querySelectorAll("a").forEach(a => a.style.color = "#ffcc00");
 }
 /**
  * @param {string} url 
@@ -458,9 +448,9 @@ async function showUrlAsDialog(url) {
     console.log({ html });
     // document.getElementById("helpContent").innerHTML = html;
     const dialogId = "helpContent";
-    let dialog = document.getElementById(dialogId);
+    let dialog = /** @type {HTMLDialogElement} */ (document.getElementById(dialogId));
     if (!dialog) {
-        dialog = mkElt("dialog", { id: dialogId });
+        dialog = /** @type {HTMLDialogElement} */ (mkElt("dialog", { id: dialogId }));
         if (!dialog) { throw Error("Could not create dialog"); }
         document.body.appendChild(dialog);
     }
@@ -472,13 +462,16 @@ async function showUrlAsDialog(url) {
 
 /**
  * @param {string} strHtml
- * @param {{css?: string, script?: string, [key: string]: any}} opts
+ * @param {{css?: string, script?: Function, [key:string]:any }} opts
  * @return {HTMLDialogElement}
  */
 function showHtmlAsDialog(strHtml, opts = {}) {
-    const allowedOpts = ["css", "script"]
+    const allowedOpts = /** @type {const} */ (["css", "script"]);
     const rest = { ...opts };
-    for (const key of allowedOpts) { delete rest[key]; }
+    for (const key of allowedOpts) {
+        // delete rest[/** @type {keyof typeof rest} */ (key)];
+        delete rest[key];
+    }
     if (Object.keys(rest).length > 0) {
         const unknownKeys = Object.keys(rest).join(", ");
         throw new Error(
@@ -502,8 +495,12 @@ function showHtmlAsDialog(strHtml, opts = {}) {
     dialog.showModal();
     return dialog;
 }
+
+/**
+ * @param {string} pageTitle 
+ */
 async function showWikipediaAsDialog(pageTitle) {
-    const html = await fetchWikiArticle(pageTitle, lang = 'en');
+    const html = await fetchWikiArticle(pageTitle);
     showHtmlAsDialog(html, {
         script: scriptAddtWikipediaClickFun,
         css: "dialog[open] { padding-top:40px; }"
@@ -551,19 +548,28 @@ async function fetchWikiArticle(pageTitle, lang = 'en') {
  */
 function mkXclose(funClose) {
     const xClose = mkElt("button", { class: "x-close", title: "- Close" }, "✖");
-    xClose.addEventListener("click", evt => {
-        evt.stopPropagation();
-        if (funClose) {
-            funClose();
-            return;
-        }
-        (xClose.closest("dialog"))?.close();
-    });
+    xClose.addEventListener("click",
+            /** @param {PointerEvent} evt */ evt => {
+            evt.stopPropagation();
+            if (funClose) {
+                funClose();
+                return;
+            }
+            (xClose.closest("dialog"))?.close();
+        });
     return xClose;
 }
+
+/**
+ * @param {HTMLDialogElement} dialog 
+ * @returns {HTMLButtonElement}
+ */
 function addXclose(dialog) {
     const btnClose = dialog.querySelector("button[class=x-close]");
-    if (btnClose) { return; }
+    if (btnClose) {
+        if (!(btnClose instanceof HTMLButtonElement)) throw Error("btnClose it not button");
+        return btnClose;
+    }
     const elt = mkXclose(() => closeDialog(dialog));
     // dialog.appendChild(elt);
     dialog.insertBefore(elt, dialog.firstElementChild);
@@ -594,13 +600,10 @@ document.documentElement.addEventListener("click", evt => {
     // const onDialog = dialog == currentTarget;
     // if (onDialog) dialog.close();
 });
-/*
-w
-*/
 
 /**
  * 
- * @param {HTMLDialogElement} dialog 
+ * @param {HTMLDialogElement} dialog
  */
 function closeDialog(dialog) {
     // console.log("closeDialog", dialog);
@@ -641,6 +644,7 @@ function isPointInside(rect, x, y) {
 };
 
 
+/*
 // Just keep the code to remember, using tempDiv is a nice hack
 function OLDreplaceAnchorsWithSpans(htmlString) {
     try {
@@ -680,6 +684,7 @@ function OLDreplaceAnchorsWithSpans(htmlString) {
         return htmlString; // Return original on error
     }
 }
+*/
 
 
 
@@ -705,8 +710,10 @@ function canBeWebUrl(string) {
 }
 
 
+/** @param {PointerEvent} evt */
 function getAHref(evt) {
-    let targetA = evt.target;
+    let targetA = /** @type {HTMLElement} */ (evt.target);
+    if (targetA == null) throw Error("targetA==null");
     if (targetA.tagName != "A") {
         const newA = targetA.closest("a");
         if (!newA) { return; }
@@ -716,31 +723,26 @@ function getAHref(evt) {
     console.log({ targetA, href });
     return href;
 }
+
+/** @param {PointerEvent} evt */
 function handleWikipediaClick(evt) {
-    /*
-    let targetA = evt.target;
-    if (targetA.tagName != "A") {
-        const newA = targetA.closest("a");
-        if (!newA) { return; }
-        targetA = newA;
-    }
-    const href = targetA.getAttribute("href");
-    */
     const href = getAHref(evt);
     if (!href) { return; }
     if (href.startsWith("#")) { return; }
     evt.stopPropagation();
     evt.preventDefault();
-    // const mWiki = href.match(new RegExp("^/wiki/(.*)$"));
     const mWiki = href.match(new RegExp("^(?:https://en.wikipedia.org)?/wiki/(.*)$"));
     if (mWiki) {
         const wikiTitle = mWiki[1];
         showWikipediaAsDialog(wikiTitle);
         return;
     }
-    // const div = showHere(evt.clientX + 30, evt.clientY - 40, "Can't show this here");
-    // setTimeout(() => div.remove(), 3000);
-    showHere(evt.clientX + 30, evt.clientY - 40, "Can't show this here", 3);
+    let target = /** @type {HTMLElement} */ (evt.target);
+    if (target == null) throw Error("target==null");
+    const targetA = target.closest("a");
+    if (targetA == null) throw Error("targetA,2==null");
+    const txtA = targetA.textContent
+    showHere(evt.clientX + 30, evt.clientY - 40, `Can't "${txtA}" this here`, 3);
 }
 
 /** @param {HTMLDialogElement} dialog */
@@ -750,10 +752,9 @@ function scriptAddtWikipediaClickFun(dialog) {
 
 /** @param {HTMLDialogElement} dialog */
 function scriptAddShowHelpClickFun(dialog) {
-    const handleOnThisUrl = (evt) => {
+    const handleOnThisUrl = /** @param {PointerEvent} evt */ (evt) => {
         const baseUrl = location.origin + location.pathname;
         const hrefEvt = getAHref(evt);
-        debugger;
         if (baseUrl == hrefEvt) {
             evt.preventDefault();
             evt.stopPropagation();
@@ -764,7 +765,7 @@ function scriptAddShowHelpClickFun(dialog) {
         }
         return false;
     }
-    dialog.addEventListener("click", evt => {
+    dialog.addEventListener("click",/** @param {PointerEvent} evt */(evt) => {
         if (handleOnThisUrl(evt)) { return; }
         handleWikipediaClick(evt);
     });
@@ -781,9 +782,8 @@ function removeDialogCanInstall() {
 // Remove popover on rim click
 document.addEventListener('toggle', (event) => {
     if (!event.target) { return; }
-    // 1. Ensure the event comes from a closed state
-    // 2. Ensure the element actually has the popover attribute
-    if (event.newState === 'closed' && event.target.hasAttribute('popover')) {
-        event.target.remove(); // Removes the specific popover that closed
+    const target = /** @type {HTMLElement} */ (event.target);
+    if (event.newState === 'closed' && target.hasAttribute('popover')) {
+        target.remove();
     }
 }, true); // Using capture phase handles all edge cases smoothly
