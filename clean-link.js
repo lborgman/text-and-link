@@ -88,7 +88,7 @@ btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEve
     if (divOutputLink == null) throw Error("divOutputLink == null");
     const link = divOutputLink.textContent;
     if (text.length + link.length == 0) {
-        showSnack("Nothing to copy");
+        showSnackbar("Nothing to copy");
         return;
     }
     const allText = `${text}\n${link}`;
@@ -100,7 +100,7 @@ btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEve
             mkElt("pre", { style: " overflow-wrap: anywhere; white-space: pre-wrap; " }, allText)
         ]
         );
-        showSnack(elt);
+        showSnackbar(elt);
     } catch (err) {
         const errorMessage = err instanceof Error ? err.message : String(err);
         throw new Error(errorMessage, { cause: err });
@@ -266,10 +266,10 @@ async function isPWAInstalled() {
     // debugger;
     // Check for param from manifest:
     if (new URLSearchParams(window.location.search).get('utm_source') === 'pwa') {
-        showSnack("Found utm_source");
+        showSnackbar("Found utm_source");
         return true;
     }
-    showSnack("No utm_source");
+    showSnackbar("No utm_source");
     if (new URLSearchParams(window.location.search).has('url')) {
         return true;
     }
@@ -633,7 +633,7 @@ function showOver(txtOrDiv, secTimeout, clientX, clientY) {
             throw Error(`Bad pos: (${clientX}, ${clientY})`);
         }
     }
-    const div = mkElt("div", { class: "snack" }, txtOrDiv);
+    const div = mkElt("div", { class: "snackbar" }, txtOrDiv);
     div.setAttribute("popover", "");
     document.documentElement.appendChild(div);
     if (hasPos) {
@@ -666,7 +666,7 @@ function showOver(txtOrDiv, secTimeout, clientX, clientY) {
  * Show txt popup-style in the middle of the screen
  * @param {string|HTMLDivElement} txtOrDiv
  */
-function showSnack(txtOrDiv) {
+function showSnackbar(txtOrDiv) {
     return showOver(txtOrDiv, 3);
 }
 /**

@@ -11,13 +11,16 @@
     <meta name="description" content="Clean link from click ids. Get shared text and link">
     <meta name="theme-color" content="#c0ca33">
 
+    <link rel="preconnect" href="https://lborgman.github.io" crossorigin />
+
     <script src="./init-error-new.js"></script>
 
     <title>Text+Link</title>
+
     <link rel="icon" type="image/svg+xml" href="./clean-link.svg">
     <link rel="manifest" href="./manifest.json">
 
-    <script src="text-and-link.js" type="module"></script>
+    <script src="clean-link.js" type="module"></script>
 
     <style>
         *,
@@ -171,12 +174,13 @@
             position: fixed;
             padding: 10px;
             border-radius: 10px;
-            border:none;
+            border: none;
             outline: 2px solid blue;
             background-color: white;
             color: blue;
         }
-        .snack {
+
+        .snackbar {
             max-width: clamp(160px, 400px, 70dvw);
             outline-color: yellow;
             box-shadow: 0px 0px 20px 4px yellow;
@@ -192,6 +196,11 @@
         }
 
 
+
+
+        /*********************************/
+        /** basic-ui.js, basic-ui.css ****/
+        /*********************************/
 
         /****** dialog ******/
         dialog {
@@ -231,11 +240,7 @@
         }
 
         /* Starting styles for entering */
-        @starting-style {
-            dialog[open] {
-                opacity: 0;
-            }
-        }
+        /* @starting-style { dialog[open] { opacity: 0; } } */
 
         /* CRITICAL: Change transition ONLY when closing */
         dialog:not([open]) {
@@ -269,10 +274,6 @@
 
         .x-close:hover {
             background-color: red;
-        }
-
-        .replaced-a {
-            color: red;
         }
     </style>
 </head>
