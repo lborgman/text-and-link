@@ -7,13 +7,6 @@ const errorHandlerAsyncEvent = window["errorHandlerAsyncEvent"];
 
 navigator.serviceWorker.register('./sw.js');
 
-/*
-// Not used here.
-// For <dialog> and popovers:
-const clsDontRemoveme = "dont-remove-me";
-document.querySelectorAll("dialog").forEach(elt => elt.classList.add(clsDontRemoveme));
-document.querySelectorAll("[popover]").forEach(elt => elt.classList.add(clsDontRemoveme));
-*/
 
 
 const divOutput = document.getElementById("output");
@@ -313,75 +306,6 @@ function mkExpandable(eltContent) {
 }
 
 
-/**
- * Show as popover
- *
- * @param {string|HTMLDivElement} txtOrDiv
- * @param {number} [secTimeout]
- * @param {number} [clientX]
- * @param {number} [clientY]
- *
- * @return {HTMLDivElement}
- */
-function showOver(txtOrDiv, secTimeout, clientX, clientY) {
-    // Both must be number or undefined
-    const hasPos = clientX != undefined && clientY != undefined;
-    if (hasPos) {
-        if (Number.isNaN(clientX) || Number.isNaN(clientY)) {
-            throw Error(`Bad pos: (${clientX}, ${clientY})`);
-        }
-    }
-    const div = mkElt("div", { class: "snack" }, txtOrDiv);
-    div.setAttribute("popover", "");
-    document.documentElement.appendChild(div);
-    if (hasPos) {
-        const bcr = div.getBoundingClientRect();
-        const wW = window.innerWidth;
-        const wH = window.innerHeight;
-        if (bcr.right > wW) {
-            clientX = wW - bcr.width;
-            div.style.left = `${clientX}px`;
-        }
-        if (bcr.bottom > wH) {
-            clientY = wH - bcr.height;
-            div.style.top = `${clientY}px`;
-        }
-    }
-    div.showPopover();
-    if (hasPos) {
-        div.style.margin = `0`;
-        div.style.position = `fixed`;
-        div.style.left = `${clientX}px`;
-        div.style.top = `${clientY}px`;
-    }
-    if (secTimeout == undefined) return div;
-    setTimeout(() => {
-        div.remove();
-    }, secTimeout * 1000);
-    return div;
-}
-/**
- * Show txt popup-style in the middle of the screen
- * @param {string|HTMLDivElement} txtOrDiv
- */
-function showSnack(txtOrDiv) {
-    return showOver(txtOrDiv, 3);
-}
-/**
- * Show txt popup-style at a certain point.
- * Popup is guaranteed to be entirely inside viewport.
- *
- * Uses CSS class "show-here".
- *
- * @param {number} clientX
- * @param {number} clientY
- * @param {string|HTMLDivElement} txtOrDiv
- * @param {number} [secTimeout]
- * @returns {HTMLDivElement}
- */
-function showHere(clientX, clientY, txtOrDiv, secTimeout) {
-    return showOver(txtOrDiv, secTimeout, clientX, clientY);
-}
 
 async function showHelp() {
     const urlHelp = "https://lborgman.github.io/text-and-link/";
@@ -440,61 +364,7 @@ async function showHelp() {
 
     dlg.id = "show-help-dialog";
 }
-/**
- * @param {string} url 
- */
-async function showUrlAsDialog(url) {
-    const html = await fetch(url).then(r => r.text());
-    console.log({ html });
-    // document.getElementById("helpContent").innerHTML = html;
-    const dialogId = "helpContent";
-    let dialog = /** @type {HTMLDialogElement} */ (document.getElementById(dialogId));
-    if (!dialog) {
-        dialog = /** @type {HTMLDialogElement} */ (mkElt("dialog", { id: dialogId }));
-        if (!dialog) { throw Error("Could not create dialog"); }
-        document.body.appendChild(dialog);
-    }
-    dialog.innerHTML = html;
-    addXclose(dialog);
-    if (!(dialog instanceof HTMLDialogElement)) { throw Error("Not dialog element"); }
-    dialog.showModal();
-}
 
-/**
- * @param {string} strHtml
- * @param {{css?: string, script?: Function, [key:string]:any }} opts
- * @return {HTMLDialogElement}
- */
-function showHtmlAsDialog(strHtml, opts = {}) {
-    const allowedOpts = /** @type {const} */ (["css", "script"]);
-    const rest = { ...opts };
-    for (const key of allowedOpts) {
-        // delete rest[/** @type {keyof typeof rest} */ (key)];
-        delete rest[key];
-    }
-    if (Object.keys(rest).length > 0) {
-        const unknownKeys = Object.keys(rest).join(", ");
-        throw new Error(
-            `Invalid options passed to displayMenu: ${unknownKeys}. ` +
-            `Only allowed: ${allowedOpts.join(", ")}`
-        );
-    }
-    const optScript = opts?.script;
-    const optCss = opts?.css || "";
-
-    const dialog = mkElt("dialog");
-    if (!(dialog instanceof HTMLDialogElement)) { throw Error("Not dialog element"); }
-
-    const strCss = `<style>${optCss}</style>`;
-    dialog.innerHTML = `${strCss} ${strHtml}`;
-    if (optScript) {
-        optScript(dialog);
-    }
-    addXclose(dialog);
-    document.body.appendChild(dialog)
-    dialog.showModal();
-    return dialog;
-}
 
 /**
  * @param {string} pageTitle 
@@ -539,6 +409,14 @@ async function fetchWikiArticle(pageTitle, lang = 'en') {
 
 
 
+
+////////////////
+////// basic-ui
+// - FIX-ME: copy all of those into basic-ui.js
+// - FIX-ME: import basic-ui.js instead??? Move
+////////////////
+
+
 ///////////////////////////
 ///// Dialogs
 
@@ -560,59 +438,6 @@ function mkXclose(funClose) {
     return xClose;
 }
 
-/**
- * @param {HTMLDialogElement} dialog 
- * @returns {HTMLButtonElement}
- */
-function addXclose(dialog) {
-    const btnClose = dialog.querySelector("button[class=x-close]");
-    if (btnClose) {
-        if (!(btnClose instanceof HTMLButtonElement)) throw Error("btnClose it not button");
-        return btnClose;
-    }
-    const elt = mkXclose(() => closeDialog(dialog));
-    // dialog.appendChild(elt);
-    dialog.insertBefore(elt, dialog.firstElementChild);
-    return elt;
-}
-
-document.documentElement.addEventListener("click", evt => {
-    const dialog = evt.target;
-    if (dialog instanceof HTMLDialogElement) {
-
-        const rect = dialog.getBoundingClientRect();
-        if (isPointInside(rect, evt.clientX, evt.clientY)) {
-            return;
-        }
-        const scrollbarWidth = dialog.offsetWidth - dialog.clientWidth;
-        const xFromRight = rect.right - evt.clientX;
-
-        // Ignore if click is in scrollbar area
-        if (xFromRight <= scrollbarWidth && xFromRight > 0) {
-            return;
-        }
-
-        evt.stopPropagation();
-        evt.preventDefault();
-        closeDialog(dialog);
-    }
-    // const currentTarget = evt.currentTarget;
-    // const onDialog = dialog == currentTarget;
-    // if (onDialog) dialog.close();
-});
-
-/**
- * 
- * @param {HTMLDialogElement} dialog
- */
-function closeDialog(dialog) {
-    // console.log("closeDialog", dialog);
-    dialog.close();
-    if (!dialog.classList.contains("html-dialog")) {
-        // console.log("closeDialog remove");
-        dialog.remove();
-    }
-}
 
 
 function isAndroid() {
@@ -779,6 +604,87 @@ function removeDialogCanInstall() {
 
 
 
+
+
+
+
+////////////////////
+/////// UI-basic
+////////////////////
+
+
+////// Popover
+
+/**
+ * Show as popover
+ *
+ * @param {string|HTMLDivElement} txtOrDiv
+ * @param {number} [secTimeout]
+ * @param {number} [clientX]
+ * @param {number} [clientY]
+ *
+ * @return {HTMLDivElement}
+ */
+function showOver(txtOrDiv, secTimeout, clientX, clientY) {
+    // Both must be number or undefined
+    const hasPos = clientX != undefined && clientY != undefined;
+    if (hasPos) {
+        if (Number.isNaN(clientX) || Number.isNaN(clientY)) {
+            throw Error(`Bad pos: (${clientX}, ${clientY})`);
+        }
+    }
+    const div = mkElt("div", { class: "snack" }, txtOrDiv);
+    div.setAttribute("popover", "");
+    document.documentElement.appendChild(div);
+    if (hasPos) {
+        const bcr = div.getBoundingClientRect();
+        const wW = window.innerWidth;
+        const wH = window.innerHeight;
+        if (bcr.right > wW) {
+            clientX = wW - bcr.width;
+            div.style.left = `${clientX}px`;
+        }
+        if (bcr.bottom > wH) {
+            clientY = wH - bcr.height;
+            div.style.top = `${clientY}px`;
+        }
+    }
+    div.showPopover();
+    if (hasPos) {
+        div.style.margin = `0`;
+        div.style.position = `fixed`;
+        div.style.left = `${clientX}px`;
+        div.style.top = `${clientY}px`;
+    }
+    if (secTimeout == undefined) return div;
+    setTimeout(() => {
+        div.remove();
+    }, secTimeout * 1000);
+    return div;
+}
+/**
+ * Show txt popup-style in the middle of the screen
+ * @param {string|HTMLDivElement} txtOrDiv
+ */
+function showSnack(txtOrDiv) {
+    return showOver(txtOrDiv, 3);
+}
+/**
+ * Show txt popup-style at a certain point.
+ * Popup is guaranteed to be entirely inside viewport.
+ *
+ * Uses CSS class "show-here".
+ *
+ * @param {number} clientX
+ * @param {number} clientY
+ * @param {string|HTMLDivElement} txtOrDiv
+ * @param {number} [secTimeout]
+ * @returns {HTMLDivElement}
+ */
+function showHere(clientX, clientY, txtOrDiv, secTimeout) {
+    return showOver(txtOrDiv, secTimeout, clientX, clientY);
+}
+
 // Remove popover on rim click
 document.addEventListener('toggle', (event) => {
     if (!event.target) { return; }
@@ -787,3 +693,130 @@ document.addEventListener('toggle', (event) => {
         target.remove();
     }
 }, true); // Using capture phase handles all edge cases smoothly
+
+
+
+
+//// Dialog
+/**
+ * @param {HTMLDialogElement} dialog 
+ * @returns {HTMLButtonElement}
+ */
+function addXclose(dialog) {
+    const btnClose = dialog.querySelector("button[class=x-close]");
+    if (btnClose) {
+        if (!(btnClose instanceof HTMLButtonElement)) throw Error("btnClose it not button");
+        return btnClose;
+    }
+    const elt = mkXclose(() => closeDialog(dialog));
+    // dialog.appendChild(elt);
+    dialog.insertBefore(elt, dialog.firstElementChild);
+    return elt;
+}
+
+document.documentElement.addEventListener("click", evt => {
+    const dialog = evt.target;
+    if (dialog instanceof HTMLDialogElement) {
+
+        const rect = dialog.getBoundingClientRect();
+        if (isPointInside(rect, evt.clientX, evt.clientY)) {
+            return;
+        }
+        const scrollbarWidth = dialog.offsetWidth - dialog.clientWidth;
+        const xFromRight = rect.right - evt.clientX;
+
+        // Ignore if click is in scrollbar area
+        if (xFromRight <= scrollbarWidth && xFromRight > 0) {
+            return;
+        }
+
+        evt.stopPropagation();
+        evt.preventDefault();
+        closeDialog(dialog);
+    }
+    // const currentTarget = evt.currentTarget;
+    // const onDialog = dialog == currentTarget;
+    // if (onDialog) dialog.close();
+});
+
+/**
+ * 
+ * @param {HTMLDialogElement} dialog
+ */
+function closeDialog(dialog) {
+    // console.log("closeDialog", dialog);
+    dialog.close();
+    if (!dialog.classList.contains("html-dialog")) {
+        // console.log("closeDialog remove");
+        dialog.remove();
+    }
+}
+
+
+
+//// For PWA (you can't open external urls)
+
+/**
+ * @param {string} url 
+ */
+async function showUrlAsDialog(url) {
+    const html = await fetch(url).then(r => r.text());
+    console.log({ html });
+    // document.getElementById("helpContent").innerHTML = html;
+    const dialogId = "helpContent";
+    let dialog = /** @type {HTMLDialogElement} */ (document.getElementById(dialogId));
+    if (!dialog) {
+        dialog = /** @type {HTMLDialogElement} */ (mkElt("dialog", { id: dialogId }));
+        if (!dialog) { throw Error("Could not create dialog"); }
+        document.body.appendChild(dialog);
+    }
+    dialog.innerHTML = html;
+    addXclose(dialog);
+    if (!(dialog instanceof HTMLDialogElement)) { throw Error("Not dialog element"); }
+    dialog.showModal();
+}
+
+/**
+ * @param {string} strHtml
+ * @param {{css?: string, script?: Function, [key:string]:any }} opts
+ * @return {HTMLDialogElement}
+ */
+function showHtmlAsDialog(strHtml, opts = {}) {
+    const allowedOpts = /** @type {const} */ (["css", "script"]);
+    const rest = { ...opts };
+    for (const key of allowedOpts) {
+        // delete rest[/** @type {keyof typeof rest} */ (key)];
+        delete rest[key];
+    }
+    if (Object.keys(rest).length > 0) {
+        const unknownKeys = Object.keys(rest).join(", ");
+        throw new Error(
+            `Invalid options passed to displayMenu: ${unknownKeys}. ` +
+            `Only allowed: ${allowedOpts.join(", ")}`
+        );
+    }
+    const optScript = opts?.script;
+    const optCss = opts?.css || "";
+
+    const dialog = mkElt("dialog");
+    if (!(dialog instanceof HTMLDialogElement)) { throw Error("Not dialog element"); }
+
+    const strCss = `<style>${optCss}</style>`;
+    dialog.innerHTML = `${strCss} ${strHtml}`;
+    if (optScript) {
+        optScript(dialog);
+    }
+    addXclose(dialog);
+    document.body.appendChild(dialog)
+    dialog.showModal();
+    return dialog;
+}
+
+
+/*
+// Not used here.
+// For <dialog> and popovers:
+const clsDontRemoveme = "dont-remove-me";
+document.querySelectorAll("dialog").forEach(elt => elt.classList.add(clsDontRemoveme));
+document.querySelectorAll("[popover]").forEach(elt => elt.classList.add(clsDontRemoveme));
+*/
