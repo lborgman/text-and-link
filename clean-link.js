@@ -7,7 +7,10 @@ const errorHandlerAsyncEvent = window["errorHandlerAsyncEvent"];
 
 navigator.serviceWorker.register('./sw.js');
 
-
+export { };
+const modBasicUI = await import("https://lborgman.github.io/speech-kb/js/mod/basic-ui.js");
+// console.log({ modBasicUI });
+// debugger;
 
 const divOutput = document.getElementById("output");
 const divOutputText = document.getElementById("output-text");
@@ -667,7 +670,8 @@ function showOver(txtOrDiv, secTimeout, clientX, clientY) {
  * @param {string|HTMLDivElement} txtOrDiv
  */
 function showSnackbar(txtOrDiv) {
-    return showOver(txtOrDiv, 3);
+    return modBasicUI.snackbar(txtOrDiv);
+    // return showOver(txtOrDiv, 3);
 }
 /**
  * Show txt popup-style at a certain point.
@@ -685,9 +689,10 @@ function showHere(clientX, clientY, txtOrDiv, secTimeout) {
     return showOver(txtOrDiv, secTimeout, clientX, clientY);
 }
 
-// Remove popover on rim click
+// Remove popover without id on rim click
 document.addEventListener('toggle', (event) => {
     if (!event.target) { return; }
+    if (event.target.id) { return; }
     const target = /** @type {HTMLElement} */ (event.target);
     if (event.newState === 'closed' && target.hasAttribute('popover')) {
         target.remove();
