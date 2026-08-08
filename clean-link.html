@@ -203,85 +203,44 @@
 
 
 
-
         /*********************************/
         /** basic-ui.js, basic-ui.css ****/
         /*********************************/
+        #snackbar-popover {
+            /* 1. Reset top-layer default positioning (bottom-left placement) */
+            margin: 0;
+            top: auto;
+            bottom: 2rem;
+            left: 2rem;
 
-        /****** dialog ******/
-        dialog {
-            position: relative;
-            border: 1px solid gray;
-            border-radius: 8px;
-            /* padding: 0; */
-            background-color: palegoldenrod;
-            max-width: calc(min(500px, 90vw));
-            opacity: 0;
-            transition-property: opacity, display, overlay;
-            transition-duration: 2s;
-            transition-behavior: allow-discrete;
+            /* 2. Open / Default Visible State */
+            transform: translateX(0);
+            opacity: 1;
 
-            /* transition-delay: 2s; */
-            a {
-                color: blue;
+            /* 3. Smooth transition settings */
+            transition:
+                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
+                opacity 0.3s ease-out,
+                display 0.3s allow-discrete,
+                overlay 0.3s allow-discrete;
+        }
+
+        /* Entry Animation: Slide in from the left */
+        @starting-style {
+            #snackbar-popover:popover-open {
+                transform: translateX(-100dvw);
+                opacity: 0;
             }
         }
 
-        dialog:modal {
-            /* CRITICAL FIX: Overrides the browser's native 'display: block' rule */
-            display: flex !important;
-            flex-direction: column;
-        }
-
-        dialog:modal .modal-scroll-body {
-            flex: 1 1 auto;
-            overflow-y: auto;
-
-            /* CRITICAL: Smooth out mobile touch scroll physics */
-            /* -webkit-overflow-scrolling: touch; */
-        }
-
-        dialog[open] {
-            opacity: 1;
-        }
-
-        /* Starting styles for entering */
-        /* @starting-style { dialog[open] { opacity: 0; } } */
-
-        /* CRITICAL: Change transition ONLY when closing */
-        dialog:not([open]) {
-            transition-duration: 0.4s !important;
-        }
-
-        dialog::backdrop {
-            background-color: transparent;
-            backdrop-filter: blur(0px);
-            transition-property: background-color, backdrop-filter;
-            transition-duration: 2s;
-        }
-
-        dialog[open]::backdrop {
-            background-color: #0008;
-            backdrop-filter: blur(2px);
-        }
-
-        .x-close {
-            /* background: none; */
-            background-color: #44f7;
-            border: none;
-            outline: none;
-            box-shadow: none;
-            position: absolute;
-            right: 0;
-            top: 0;
-            width: 32px;
-            aspect-ratio: 1 / 1;
-        }
-
-        .x-close:hover {
-            background-color: red;
+        /* Exit Animation: Fade out in place */
+        #snackbar-popover:not(:popover-open) {
+            transform: translateX(0);
+            opacity: 0;
         }
     </style>
+    <no-style style="display:none;">
+    </no-style>
 </head>
 
 <body>
