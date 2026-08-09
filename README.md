@@ -1,9 +1,7 @@
 <style>
    header h1 { display: none !important; }
-   blockquote {
-    border-left: none !important; /* Removes GitHub's default vertical line */
-    color: inherit !important;     /* Keeps your normal text color */
-    margin-left: 20px;             /* Creates the exact margin space you want */
+   figure {
+    margin-left: 40px;             /* Creates the exact margin space you want */
    }
 </style>
 
@@ -13,7 +11,6 @@ The web page __Clean Link__ can remove [click identifiers](https://en.wikipedia.
 Just enter the link that may contain click identifier and immediately get a cleaned and much shorter link that you can copy and use on social media etc:
 
 <!-- Final high-performance tag for your above-the-fold screenshot -->
-<blockquote>
 <figure>
 <img
   src="./screenshot2.webp"
@@ -25,7 +22,6 @@ Just enter the link that may contain click identifier and immediately get a clea
 />
 <figcaption>Screenshot, share target</figcaption>
 </figure>
-</blockquote>
 
 To use __Clean Link__ open this web page:
 * [https://lborgman.github.io/text-and-link/text-and-link.html](https://lborgman.github.io/text-and-link/text-and-link.html)
