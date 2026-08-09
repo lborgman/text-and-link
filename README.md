@@ -8,6 +8,9 @@
       width: 100%;
       height: auto;
     }
+    figcaption {
+      font-style: italic;
+    }
    }
 </style>
 
