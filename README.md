@@ -2,7 +2,8 @@
    header h1 { display: none !important; }
    figure {
     margin-left: 40px;
-    max-width: calc(80% - 40px);
+    max-width: 337px;
+    width: calc(100% - 40px);
    }
 </style>
 
