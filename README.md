@@ -1,7 +1,8 @@
 <style>
    header h1 { display: none !important; }
    figure {
-    margin-left: 40px;             /* Creates the exact margin space you want */
+    margin-left: 40px;
+    max-width: calc(80% - 40px);
    }
 </style>
 
