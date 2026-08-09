@@ -1,9 +1,13 @@
 <style>
    header h1 { display: none !important; }
    figure {
-    margin-left: 40px;
+    margin-left: 20px;
     max-width: 337px;
-    width: calc(100% - 40px);
+    width: calc(100% - 20px);
+    img {
+      width: 100%;
+      height: auto;
+    }
    }
 </style>
 
