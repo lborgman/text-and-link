@@ -4,6 +4,7 @@
     margin-left: 20px;
     max-width: 337px;
     width: calc(100% - 20px);
+    margin-bottom: 30px;
     img {
       width: 100%;
       height: auto;
