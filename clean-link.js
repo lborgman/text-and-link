@@ -91,6 +91,7 @@ btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEve
     if (divOutputLink == null) throw Error("divOutputLink == null");
     const link = divOutputLink.textContent;
     if (text.length + link.length == 0) {
+        clearSnackbars();
         showSnackbar("Nothing to copy");
         return;
     }
@@ -98,11 +99,12 @@ btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEve
     console.log({ text, link, allText });
     try {
         await navigator.clipboard.writeText(allText);
-        const elt = mkElt("div", { style: "max-width: clamp(160px, 400px, 70dvw);" }, [
+        const elt = mkElt("div", { style: "NOmax-width: clamp(160px, 400px, 70dvw);" }, [
             mkElt("i", { style: "color:blue;" }, "Copied:"),
             mkElt("pre", { style: " overflow-wrap: anywhere; white-space: pre-wrap; " }, allText)
         ]
         );
+        clearSnackbars();
         showSnackbar(elt);
     } catch (err) {
         const errorMessage = err instanceof Error ? err.message : String(err);
@@ -673,6 +675,10 @@ function showSnackbar(txtOrDiv) {
     return modBasicUI.snackbar(txtOrDiv);
     // return showOver(txtOrDiv, 3);
 }
+function clearSnackbars() {
+    modBasicUI.clearSnackbarQueue();
+}
+
 /**
  * Show txt popup-style at a certain point.
  * Popup is guaranteed to be entirely inside viewport.
