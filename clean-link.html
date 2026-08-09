@@ -206,42 +206,55 @@
         /*********************************/
         /** basic-ui.js, basic-ui.css ****/
         /*********************************/
+
+        /* ////////////////// Below is suggestions from full Gemini.  */
         #snackbar-popover {
-            /* 1. Reset top-layer default positioning (bottom-left placement) */
-            margin: 0;
+            /* 1. Base positioning & resets */
+            position: fixed;
             top: auto;
             bottom: 2rem;
             left: 2rem;
-            max-width: clamp(160px, 400px, calc(100dvw - 2 * 2rem));
+            right: auto;
+            margin: 0;
+            max-width: clamp(160px, 400px, calc(100dvw - 4rem));
 
-            /* 2. Open / Default Visible State */
-            transform: translateX(0);
-            opacity: 1;
+            /* 2. Closed / Exit target state */
+            opacity: 0;
+            transform: translateY(calc(100% + 2rem));
 
-            /* 3. Smooth transition settings */
-            transition:
-                transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
-                opacity 0.3s ease-out,
-                display 0.3s allow-discrete,
-                overlay 0.3s allow-discrete;
+            /* 3. Exit Transition */
+            transition-property: transform, opacity, display, overlay;
+            transition-duration: 3.5s;
+            transition-timing-function: cubic-bezier(0.3, 0, 1, 1), linear, ease, ease;
+            transition-behavior: allow-discrete;
         }
 
-        /* Entry Animation: Slide in from the left */
+        /* 4. Active Open State */
+        #snackbar-popover:popover-open {
+            top: auto;
+            bottom: 2rem;
+            left: 2rem;
+            right: auto;
+            margin: 0;
+
+            opacity: 1;
+            transform: translateY(0);
+
+            /* Entry Transition - overriding only the timing functions */
+            transition-property: transform, opacity, display, overlay;
+            transition-duration: 3.5s;
+            transition-timing-function: cubic-bezier(0.05, 0.7, 0.1, 1), linear, ease, ease;
+            transition-behavior: allow-discrete;
+        }
+
+        /* 5. Entry Starting Frame State */
         @starting-style {
             #snackbar-popover:popover-open {
-                transform: translateX(-100dvw);
                 opacity: 0;
+                transform: translateY(calc(100% + 2rem));
             }
         }
-
-        /* Exit Animation: Fade out in place */
-        #snackbar-popover:not(:popover-open) {
-            transform: translateX(0);
-            opacity: 0;
-        }
     </style>
-    <no-style style="display:none;">
-    </no-style>
 </head>
 
 <body>
