@@ -220,11 +220,11 @@
 
             /* 2. Closed / Exit target state */
             opacity: 0;
-            transform: translateY(calc(100% + 2rem));
+            transform: translateY(-calc(100% + 2rem));
 
             /* 3. Exit Transition */
             transition-property: transform, opacity, display, overlay;
-            transition-duration: 3.5s;
+            transition-duration: 0.5s;
             transition-timing-function: cubic-bezier(0.3, 0, 1, 1), linear, ease, ease;
             transition-behavior: allow-discrete;
         }
@@ -242,7 +242,7 @@
 
             /* Entry Transition - overriding only the timing functions */
             transition-property: transform, opacity, display, overlay;
-            transition-duration: 3.5s;
+            NOtransition-duration: 4.5s;
             transition-timing-function: cubic-bezier(0.05, 0.7, 0.1, 1), linear, ease, ease;
             transition-behavior: allow-discrete;
         }

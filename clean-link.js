@@ -676,6 +676,8 @@ function showSnackbar(txtOrDiv) {
     // return showOver(txtOrDiv, 3);
 }
 function clearSnackbars() {
+    return; // FIX-ME: to do or not to do
+    // This is a bit broken:
     modBasicUI.clearSnackbarQueue();
 }
 
