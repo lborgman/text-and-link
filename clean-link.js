@@ -149,7 +149,7 @@ btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEve
             return;
         }
         // On Android there is very good default feedback when copying.
-        if (isDebugAndroid()) {
+        if (isAndroid()) {
             const bcr = btnCopy.getBoundingClientRect();
             showHere(bcr.left, bcr.top + bcr.height, "Copied", 1.5);
             return;
@@ -300,7 +300,7 @@ function removeTrailIds(strUrl, advIds) {
     // })();
 }
 
-if (isDebugAndroid()) {
+if (isAndroid()) {
     document.documentElement.classList.add("is-android");
     // FIX-ME: We have checked before if it is in the DOM!
     const d = /** @type {HTMLDialogElement} */ (document.getElementById("can-be-installed"));
@@ -911,7 +911,10 @@ function isMobileEmulation() {
     return uaIsMobile && (platformIsDesktop || chIsDesktop);
 }
 
-function isDebugAndroid() {
+/*
+// I do not think this is needed any more.
+// Dev tools set the userAgent.
+function OLDisDebugAndroid() {
     if (isLocalhost()) {
         if (isMobileEmulation()) {
             console.log('Running locally, dev tools mobile, pretend Android');
@@ -920,6 +923,7 @@ function isDebugAndroid() {
     }
     return isAndroid();
 }
+*/
 
 function isAndroid() {
     const ua = navigator.userAgent.toLowerCase();
