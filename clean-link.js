@@ -123,8 +123,8 @@ btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEve
     if (divOutputLink == null) throw Error("divOutputLink == null");
     const link = divOutputLink.textContent;
     if (text.length + link.length == 0) {
-        clearSnackbars();
-        showSnackbar("Nothing to copy");
+        // clearSnackbars();
+        tellUser("Nothing to copy");
         return;
     }
     const allText = `${text}\n${link}`;
@@ -136,11 +136,25 @@ btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEve
             mkElt("pre", { style: " overflow-wrap: anywhere; white-space: pre-wrap; " }, allText)
         ]
         );
-        clearSnackbars();
-        showSnackbar(elt);
+        // clearSnackbars();
+        tellUser(elt);
     } catch (err) {
         const errorMessage = err instanceof Error ? err.message : String(err);
         throw new Error(errorMessage, { cause: err });
+    }
+    function tellUser(message) {
+        if (typeof message == "string") {
+            // Nothing was copied
+            showSnackbar(message);
+            return;
+        }
+        // On Android there is very good default feedback when copying.
+        if (isDebugAndroid()) {
+            const bcr = btnCopy.getBoundingClientRect();
+            showHere(bcr.left, bcr.top + bcr.height, "Copied", 1.5);
+            return;
+        }
+        showSnackbar(message);
     }
 }));
 btnCopy.addEventListener("NOclick", evt => {
@@ -286,7 +300,7 @@ function removeTrailIds(strUrl, advIds) {
     // })();
 }
 
-if (isAndroid()) {
+if (isDebugAndroid()) {
     document.documentElement.classList.add("is-android");
     // FIX-ME: We have checked before if it is in the DOM!
     const d = /** @type {HTMLDialogElement} */ (document.getElementById("can-be-installed"));
@@ -477,22 +491,7 @@ function mkXclose(funClose) {
 
 
 
-function isAndroid() {
-    const isLocalhost = Boolean(
-        window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1' ||
-        window.location.hostname === '[::1]' // IPv6 loopback
-    );
 
-    if (isLocalhost) {
-        console.log('Running locally, pretend Android');
-        return true; // FIX-ME:
-    }
-
-    const ua = navigator.userAgent.toLowerCase();
-    const isAndroid = ua.indexOf("android") > -1;
-    return isAndroid;
-}
 
 /**
  * @param {DOMRect} rect
@@ -865,3 +864,65 @@ const clsDontRemoveme = "dont-remove-me";
 document.querySelectorAll("dialog").forEach(elt => elt.classList.add(clsDontRemoveme));
 document.querySelectorAll("[popover]").forEach(elt => elt.classList.add(clsDontRemoveme));
 */
+
+
+
+/////////////////////////
+//// Debugging helers
+/////////////////////////
+
+function debugIsMobileEmulation() {
+    if (!isLocalhost()) return false;
+    if (isMobileEmulation()) {
+        console.log("Mobile emulation detected!");
+        return true;
+    }
+    return false;
+}
+
+
+
+
+// FIX-ME: Move to Basic-UI.js:
+function isLocalhost() {
+    return Boolean(
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1' ||
+        window.location.hostname === '[::1]' // IPv6 loopback
+    );
+}
+function isMobileEmulation() {
+    const ua = navigator.userAgent || '';
+    const platform = navigator.platform || '';
+
+    // 1. Check if the User-Agent claims to be mobile
+    const uaIsMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile/i.test(ua);
+
+    // 2. Check if the system platform reports a desktop OS
+    const platformIsDesktop = /Mac|Win|Linux/i.test(platform);
+
+    // 3. Fallback check for User-Agent Client Hints (modern Chrome/Edge)
+    let chIsDesktop = false;
+    if (navigator.userAgentData) {
+        chIsDesktop = !navigator.userAgentData.mobile;
+    }
+
+    // If UA says mobile but OS says desktop, it's emulated
+    return uaIsMobile && (platformIsDesktop || chIsDesktop);
+}
+
+function isDebugAndroid() {
+    if (isLocalhost()) {
+        if (isMobileEmulation()) {
+            console.log('Running locally, dev tools mobile, pretend Android');
+            return true; // FIX-ME:
+        }
+    }
+    return isAndroid();
+}
+
+function isAndroid() {
+    const ua = navigator.userAgent.toLowerCase();
+    const isAndroid = ua.indexOf("android") > -1;
+    return isAndroid;
+}
