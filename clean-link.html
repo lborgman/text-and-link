@@ -208,6 +208,9 @@
         /*********************************/
 
         /* ////////////////// Below is suggestions from full Gemini.  */
+        :root {
+            --snack-trans-dur: 500ms;
+        }
         #snackbar-popover {
             /* 1. Base positioning & resets */
             position: fixed;
@@ -224,7 +227,8 @@
 
             /* 3. Exit Transition */
             transition-property: transform, opacity, display, overlay;
-            transition-duration: 0.5s;
+            /* transition-duration: 0.5s; */
+            transition-duration: var(--snack-trans-dur);
             transition-timing-function: cubic-bezier(0.3, 0, 1, 1), linear, ease, ease;
             transition-behavior: allow-discrete;
         }

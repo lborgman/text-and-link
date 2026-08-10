@@ -7,6 +7,38 @@ const errorHandlerAsyncEvent = window["errorHandlerAsyncEvent"];
 
 navigator.serviceWorker.register('./sw.js');
 
+
+// Check snackbar transition-duration, takes less than 0.5ms
+{
+    let strSnackTransDur =
+        window.getComputedStyle(document.documentElement)
+            .getPropertyValue("--snack-trans-dur")
+            .trim();
+    if (strSnackTransDur.length == 0) {
+        debugger;
+        throw Error("--snack-trans-dur not set on :root");
+        strSnackTransDur = "500ms";
+    }
+    if (!strSnackTransDur.endsWith("ms")) {
+        debugger;
+        throw Error("--snack-trans-dur does not end with ms");
+    }
+    strSnackTransDur = strSnackTransDur.slice(0, -2);
+    if (strSnackTransDur.endsWith(" ")) {
+        debugger;
+        throw Error("--snack-trans-dur spance before ms");
+    }
+    if (Number.isNaN(Number(strSnackTransDur))) {
+        debugger;
+        throw Error("--snack-trans-dur does not have a number");
+    }
+    const snackTransDur = parseFloat(strSnackTransDur);
+    if (snackTransDur > 2000) {
+        debugger;
+        throw Error("--snack-trans-dur > 2000ms");
+    }
+}
+
 export { };
 const modBasicUI = await import("https://lborgman.github.io/speech-kb/js/mod/basic-ui.js");
 // console.log({ modBasicUI });
@@ -480,9 +512,9 @@ function OLDreplaceAnchorsWithSpans(htmlString) {
     try {
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = htmlString;
-
+ 
         const anchors = tempDiv.querySelectorAll('a');
-
+ 
         anchors.forEach(anchor => {
             const href = anchor.getAttribute("href");
             if (href == null) { return; }
@@ -491,23 +523,23 @@ function OLDreplaceAnchorsWithSpans(htmlString) {
                 console.log("REPLACE:", href);
                 const span = document.createElement('span');
                 span.classList.add("replaced-a")
-
+ 
                 // Copy all attributes
                 for (const attr of anchor.attributes) {
                     span.setAttribute(attr.name, attr.value);
                 }
-
+ 
                 // Copy child nodes (preserving DOM structure)
                 while (anchor.firstChild) {
                     span.appendChild(anchor.firstChild);
                 }
-
+ 
                 anchor.parentNode.replaceChild(span, anchor);
             } else {
                 console.log("not replaced:", href);
             }
         });
-
+ 
         return tempDiv.innerHTML;
     } catch (error) {
         console.error('Error replacing anchors:', error);
