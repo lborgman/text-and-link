@@ -330,7 +330,7 @@ function hasParamTitle() {
 async function checkInstalledRelatedApps() {
     if ('getInstalledRelatedApps' in navigator) {
         /** @type {Array<{platform: string}>} */
-        const relatedApps = await(/** @type {any} */(navigator)).getInstalledRelatedApps();
+        const relatedApps = await (/** @type {any} */(navigator)).getInstalledRelatedApps();
 
         // Filter to see if your webapp platform is in the list
         /** @type {boolean} */
@@ -967,13 +967,19 @@ btnDebug.addEventListener("click", async evt => {
     hasParamTitle()=="${hasParamTitle()}"
     checkInstalledRelatedApps()=="${(await checkInstalledRelatedApps())}"
     getSearchParamNames()=="${getSearchParamNames().join(',')}"
+    isStandalone()=="${isStandalone()}"
     `;
     alert(str);
 });
 
 function getSearchParamNames() {
     const sp = new URLSearchParams(window.location.search);
-    const a = [... sp];
+    const a = [...sp];
     const n = a.map(e => e[0]);
     return n;
+}
+function isStandalone() {
+    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
+    // || window.navigator.standalone === true; // iOS Safari legacy property
+    return isStandalone
 }
