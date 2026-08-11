@@ -20,7 +20,7 @@
             "purpose": "any"
         }
     ],
-    "start_url": "/text-and-link/clean-link.html?utm_source=pwa",
+    "start_url": "/text-and-link/clean-link.html?cleanlink_is_installed=pwa",
     "scope": "/text-and-link",
     "display": "standalone",
     "background_color": "olive",

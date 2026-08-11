@@ -314,7 +314,7 @@ if (isAndroid()) {
 // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/getInstalledRelatedApps
 // https://caniuse.com/mdn-api_navigator_getinstalledrelatedapps
 function hasParamInstalled() {
-    const paramName = "utm_source";
+    const paramName = "cleanlink_is_installed";
     const val = new URLSearchParams(window.location.search).get(paramName);
     return val === 'pwa';
 }
@@ -348,10 +348,10 @@ async function isPWAInstalled() {
     // debugger;
     // Check for param from manifest:
     if (hasParamInstalled()) {
-        // showSnackbar("Found utm_source");
+        // showSnackbar("Found cleanlink_is_installed");
         return true;
     }
-    // showSnackbar("No utm_source");
+    // showSnackbar("No cleanlink_is_installed");
     if (hasParamUrl()) {
         return true;
     }
