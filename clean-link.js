@@ -966,6 +966,14 @@ btnDebug.addEventListener("click", async evt => {
     hasParamText()=="${hasParamText()}"
     hasParamTitle()=="${hasParamTitle()}"
     checkInstalledRelatedApps()=="${(await checkInstalledRelatedApps())}"
+    getSearchParamNames()=="${getSearchParamNames().join(',')}"
     `;
     alert(str);
-})
+});
+
+function getSearchParamNames() {
+    const sp = new URLSearchParams(window.location.search);
+    const a = [... sp];
+    const n = a.map(e => e[0]);
+    return n;
+}
