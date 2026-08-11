@@ -321,6 +321,12 @@ function hasParamInstalled() {
 function hasParamUrl() {
     return new URLSearchParams(window.location.search).has('url');
 }
+function hasParamText() {
+    return new URLSearchParams(window.location.search).has('text');
+}
+function hasParamTitle() {
+    return new URLSearchParams(window.location.search).has('title');
+}
 async function checkInstalledRelatedApps() {
     if ('getInstalledRelatedApps' in navigator) {
         /** @type {Array<{platform: string}>} */
@@ -957,6 +963,8 @@ btnDebug.addEventListener("click", async evt => {
     isAndroid=="${isAndroid()}"
     hasParamInstalled()=="${hasParamInstalled()}"
     hasParamUrl()=="${hasParamUrl()}"
+    hasParamText()=="${hasParamText()}"
+    hasParamTitle()=="${hasParamTitle()}"
     checkInstalledRelatedApps()=="${(await checkInstalledRelatedApps())}"
     `;
     alert(str);
