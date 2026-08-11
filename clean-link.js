@@ -361,7 +361,8 @@ function mkExpandable(eltContent) {
 }
 
 
-
+// @ts-ignore
+window.showHelp = showHelp;
 async function showHelp() {
     const urlHelp = "https://lborgman.github.io/text-and-link/";
     const html = await fetch(urlHelp).then(r => r.text());
