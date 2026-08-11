@@ -314,6 +314,7 @@ if (isAndroid()) {
 // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/getInstalledRelatedApps
 // https://caniuse.com/mdn-api_navigator_getinstalledrelatedapps
 function hasParamInstalled() {
+    // Checking installed: This only works during installation. Useless unless you save it.
     const paramName = "cleanlink_is_installed";
     const val = new URLSearchParams(window.location.search).get(paramName);
     return val === 'pwa';
@@ -328,6 +329,7 @@ function hasParamTitle() {
     return new URLSearchParams(window.location.search).has('title');
 }
 async function checkInstalledRelatedApps() {
+    // Checking installed: Not reliable yet
     if ('getInstalledRelatedApps' in navigator) {
         /** @type {Array<{platform: string}>} */
         const relatedApps = await (/** @type {any} */(navigator)).getInstalledRelatedApps();
@@ -967,19 +969,20 @@ btnDebug.addEventListener("click", async evt => {
     hasParamTitle()=="${hasParamTitle()}"
     checkInstalledRelatedApps()=="${(await checkInstalledRelatedApps())}"
     getSearchParamNames()=="${getSearchParamNames().join(',')}"
-    isStandalone()=="${isStandalone()}"
+    isDisplayModePWA()=="${isDisplayModePWA()}"
     `;
     alert(str);
 });
 
 function getSearchParamNames() {
+    // Checking installed: Works, but only when shared to
     const sp = new URLSearchParams(window.location.search);
     const a = [...sp];
     const n = a.map(e => e[0]);
     return n;
 }
-function isStandalone() {
-    const isStandalone = window.matchMedia('(display-mode: standalone)').matches;
-    // || window.navigator.standalone === true; // iOS Safari legacy property
-    return isStandalone
+function isDisplayModePWA() {
+    // Checking installed: only this way works today (2026-08-11), from Claude
+    return ['fullscreen', 'standalone', 'minimal-ui']
+        .some(mode => window.matchMedia(`(display-mode: ${mode})`).matches);
 }
