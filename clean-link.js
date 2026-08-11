@@ -313,22 +313,15 @@ if (isAndroid()) {
 // FIX-ME: experimental
 // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/getInstalledRelatedApps
 // https://caniuse.com/mdn-api_navigator_getinstalledrelatedapps
-function hasParamInstalled() {
+
+// These checks are pretty useless:
+function OLDhasParamInstalled() {
     // Checking installed: This only works during installation. Useless unless you save it.
     const paramName = "cleanlink_is_installed";
     const val = new URLSearchParams(window.location.search).get(paramName);
     return val === 'pwa';
 }
-function hasParamUrl() {
-    return new URLSearchParams(window.location.search).has('url');
-}
-function hasParamText() {
-    return new URLSearchParams(window.location.search).has('text');
-}
-function hasParamTitle() {
-    return new URLSearchParams(window.location.search).has('title');
-}
-async function checkInstalledRelatedApps() {
+async function OLDcheckInstalledRelatedApps() {
     // Checking installed: Not reliable yet
     if ('getInstalledRelatedApps' in navigator) {
         /** @type {Array<{platform: string}>} */
@@ -354,16 +347,7 @@ async function checkInstalledRelatedApps() {
 
 async function isPWAInstalled() {
     // debugger;
-    // Check for param from manifest:
-    if (hasParamInstalled()) {
-        // showSnackbar("Found cleanlink_is_installed");
-        return true;
-    }
-    // showSnackbar("No cleanlink_is_installed");
-    if (hasParamUrl()) {
-        return true;
-    }
-    return (await checkInstalledRelatedApps()) == true;
+    return isDisplayModePWA();
 }
 
 /**
@@ -963,11 +947,6 @@ btnDebug.addEventListener("click", async evt => {
     evt.stopPropagation();
     let str = `
     isAndroid=="${isAndroid()}"
-    hasParamInstalled()=="${hasParamInstalled()}"
-    hasParamUrl()=="${hasParamUrl()}"
-    hasParamText()=="${hasParamText()}"
-    hasParamTitle()=="${hasParamTitle()}"
-    checkInstalledRelatedApps()=="${(await checkInstalledRelatedApps())}"
     getSearchParamNames()=="${getSearchParamNames().join(',')}"
     isDisplayModePWA()=="${isDisplayModePWA()}"
     `;
@@ -983,6 +962,7 @@ function getSearchParamNames() {
 }
 function isDisplayModePWA() {
     // Checking installed: only this way works today (2026-08-11), from Claude
+    // Works on Android, Windows, Linux (but not iOS)
     return ['fullscreen', 'standalone', 'minimal-ui']
         .some(mode => window.matchMedia(`(display-mode: ${mode})`).matches);
 }
