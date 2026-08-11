@@ -313,25 +313,23 @@ if (isAndroid()) {
 // FIX-ME: experimental
 // https://developer.mozilla.org/en-US/docs/Web/API/Navigator/getInstalledRelatedApps
 // https://caniuse.com/mdn-api_navigator_getinstalledrelatedapps
-async function isPWAInstalled() {
-    // debugger;
-    // Check for param from manifest:
-    if (new URLSearchParams(window.location.search).get('utm_source') === 'pwa') {
-        showSnackbar("Found utm_source");
-        return true;
-    }
-    showSnackbar("No utm_source");
-    if (new URLSearchParams(window.location.search).has('url')) {
-        return true;
-    }
+function hasParamInstalled() {
+    const paramName = "utm_source";
+    const val = new URLSearchParams(window.location.search).get(paramName);
+    return val === 'pwa';
+}
+function hasParamUrl() {
+    return new URLSearchParams(window.location.search).has('url');
+}
+async function checkInstalledRelatedApps() {
     if ('getInstalledRelatedApps' in navigator) {
         /** @type {Array<{platform: string}>} */
-        const relatedApps = await (/** @type {any} */ (navigator)).getInstalledRelatedApps();
+        const relatedApps = await(/** @type {any} */(navigator)).getInstalledRelatedApps();
 
         // Filter to see if your webapp platform is in the list
         /** @type {boolean} */
         const isInstalled = relatedApps.some(app => app.platform === 'web');
-        alert(`isInstalled==${isInstalled}`);
+        console.log(`isInstalled==${isInstalled}`);
         if (isInstalled) {
             debugger;
             console.log("PWA is installed!");
@@ -344,6 +342,20 @@ async function isPWAInstalled() {
         console.log("The getInstalledRelatedApps API is not supported.");
         return;
     }
+}
+
+async function isPWAInstalled() {
+    // debugger;
+    // Check for param from manifest:
+    if (hasParamInstalled()) {
+        // showSnackbar("Found utm_source");
+        return true;
+    }
+    // showSnackbar("No utm_source");
+    if (hasParamUrl()) {
+        return true;
+    }
+    return (await checkInstalledRelatedApps()) == true;
 }
 
 /**
@@ -930,3 +942,22 @@ function isAndroid() {
     const isAndroid = ua.indexOf("android") > -1;
     return isAndroid;
 }
+
+
+const btnDebug = mkElt("button", undefined, "Debug");
+btnDebug.style = `
+    position: fixed;
+    top: 0;
+    right: 0;
+    `;
+document.body.appendChild(btnDebug);
+btnDebug.addEventListener("click", async evt => {
+    evt.stopPropagation();
+    let str = `
+    isAndroid=="${isAndroid()}"
+    hasParamInstalled()=="${hasParamInstalled()}"
+    hasParamUrl()=="${hasParamUrl()}"
+    checkInstalledRelatedApps()=="${(await checkInstalledRelatedApps())}"
+    `;
+    alert(str);
+})
