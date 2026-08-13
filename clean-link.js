@@ -7,42 +7,20 @@ const errorHandlerAsyncEvent = window["errorHandlerAsyncEvent"];
 
 navigator.serviceWorker.register('./sw.js');
 
-
-// Check snackbar transition-duration, takes less than 0.5ms
-{
-    let strSnackTransDur =
-        window.getComputedStyle(document.documentElement)
-            .getPropertyValue("--snack-trans-dur")
-            .trim();
-    if (strSnackTransDur.length == 0) {
-        debugger;
-        throw Error("--snack-trans-dur not set on :root");
-        strSnackTransDur = "500ms";
-    }
-    if (!strSnackTransDur.endsWith("ms")) {
-        debugger;
-        throw Error("--snack-trans-dur does not end with ms");
-    }
-    strSnackTransDur = strSnackTransDur.slice(0, -2);
-    if (strSnackTransDur.endsWith(" ")) {
-        debugger;
-        throw Error("--snack-trans-dur spance before ms");
-    }
-    if (Number.isNaN(Number(strSnackTransDur))) {
-        debugger;
-        throw Error("--snack-trans-dur does not have a number");
-    }
-    const snackTransDur = parseFloat(strSnackTransDur);
-    if (snackTransDur > 2000) {
-        debugger;
-        throw Error("--snack-trans-dur > 2000ms");
-    }
-}
-
 export { };
 const modBasicUI = await import("https://lborgman.github.io/speech-kb/js/mod/basic-ui.js");
 // console.log({ modBasicUI });
 // debugger;
+
+// Check snackbar transition-duration, takes less than 0.5ms
+const msSnackTransDur = modBasicUI.getCssVarMs("--snack-trans-dur");
+console.log({ snackTransDur: msSnackTransDur });
+if (msSnackTransDur > 2000) {
+    debugger;
+    throw Error(`--snack-trans-dur > 2000ms`);
+}
+
+
 
 const divOutput = document.getElementById("output");
 const divOutputText = document.getElementById("output-text");

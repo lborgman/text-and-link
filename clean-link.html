@@ -207,10 +207,13 @@
         /** basic-ui.js, basic-ui.css ****/
         /*********************************/
 
-        /* ////////////////// Below is suggestions from full Gemini.  */
         :root {
+            --snack-trans-dur: 0.6s;
             --snack-trans-dur: 500ms;
+            --ripple-duration: 6000ms;
         }
+
+        /* ////////////////// Below is suggestions from full Gemini.  */
         #snackbar-popover {
             /* 1. Base positioning & resets */
             position: fixed;
@@ -256,6 +259,51 @@
             #snackbar-popover:popover-open {
                 opacity: 0;
                 transform: translateY(calc(100% + 2rem));
+            }
+        }
+
+        button {
+            position: relative;
+            overflow: hidden;
+        }
+
+        :root {
+            --button-bg-color: #6200ee;
+            --button-bg-color: lightblue;
+            --button-bg-color: white;
+            --button-bg-color: orange;
+            --button-bg-color: #87cefa;
+        }
+        button {
+            position: relative;
+            overflow: hidden;
+            transition: background 400ms;
+            color: #fff;
+            color: contrast-color(var(--button-bg-color));
+            background-color: var(--button-bg-color);
+            padding: 0.7rem 1rem;
+            font-family: 'Roboto', sans-serif;
+            font-size: 1rem;
+            outline: 0;
+            border: 0;
+            border-radius: 0.25rem;
+            box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3);
+            cursor: pointer;
+        }
+
+        span.ripple {
+            position: absolute;
+            border-radius: 50%;
+            transform: scale(0);
+            /* animation: ripple 6000ms linear; */
+            animation: ripple var(--ripple-duration) linear;
+            background-color: color-mix(in srgb, contrast-color(var(--button-bg-color)) 70%, transparent);
+        }
+
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
             }
         }
     </style>
