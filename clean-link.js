@@ -96,6 +96,7 @@ function handleInputLink() {
 const btnCopy = document.getElementById("btn-copy");
 if (btnCopy == null) throw Error("btnCopy == null");
 btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEvent} evt */ async evt => {
+    console.log("---- btnCopy click", evt);
     if (divOutputText == null) throw Error("divOutputText == null");
     const text = divOutputText.textContent;
     if (divOutputLink == null) throw Error("divOutputLink == null");
