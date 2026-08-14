@@ -96,7 +96,8 @@ function handleInputLink() {
 const btnCopy = document.getElementById("btn-copy");
 if (btnCopy == null) throw Error("btnCopy == null");
 btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEvent} evt */ async evt => {
-    console.log("---- btnCopy click", evt);
+    const isDelayedClick = evt.isDelayedClick;
+    console.log("======= btnCopy click", { isDelayedClick });
     if (divOutputText == null) throw Error("divOutputText == null");
     const text = divOutputText.textContent;
     if (divOutputLink == null) throw Error("divOutputLink == null");
@@ -107,10 +108,11 @@ btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEve
         return;
     }
     const allText = `${text}\n${link}`;
-    console.log({ text, link, allText });
+    // console.log({ text, link, allText });
     try {
         await navigator.clipboard.writeText(allText);
-        const elt = mkElt("div", { style: "NOmax-width: clamp(160px, 400px, 70dvw);" }, [
+        // const elt = mkElt("div", { style: "NOmax-width: clamp(160px, 400px, 70dvw);" }, [
+        const elt = mkElt("div", undefined, [
             mkElt("i", { style: "color:blue;" }, "Copied:"),
             mkElt("pre", { style: " overflow-wrap: anywhere; white-space: pre-wrap; " }, allText)
         ]
