@@ -13,12 +13,9 @@ const modBasicUI = await import("https://lborgman.github.io/speech-kb/js/mod/bas
 // debugger;
 
 // Check snackbar transition-duration, takes less than 0.5ms
-const msSnackTransDur = modBasicUI.getCssVarMs("--snack-trans-dur");
-console.log({ snackTransDur: msSnackTransDur });
-if (msSnackTransDur > 2000) {
-    debugger;
-    throw Error(`--snack-trans-dur > 2000ms`);
-}
+// const msSnackTransDur = modBasicUI.getCssVarMs("--snack-trans-dur");
+// console.log({ snackTransDur: msSnackTransDur });
+// if (msSnackTransDur > 2000) { throw Error(`--snack-trans-dur > 2000ms`); }
 
 
 
@@ -97,7 +94,7 @@ const btnCopy = document.getElementById("btn-copy");
 if (btnCopy == null) throw Error("btnCopy == null");
 btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEvent} evt */ async evt => {
     const isDelayedClick = evt.isDelayedClick;
-    console.log("======= btnCopy click", { isDelayedClick });
+    // console.log("======= btnCopy click", { isDelayedClick });
     if (divOutputText == null) throw Error("divOutputText == null");
     const text = divOutputText.textContent;
     if (divOutputLink == null) throw Error("divOutputLink == null");
