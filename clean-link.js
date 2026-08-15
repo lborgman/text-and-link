@@ -917,6 +917,7 @@ function isAndroid() {
 
 const btnDebug = mkElt("button", undefined, "Debug");
 btnDebug.style = `
+    display: none;
     position: fixed;
     top: 0;
     right: 0;

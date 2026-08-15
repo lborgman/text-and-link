@@ -21,12 +21,13 @@
     <link rel="manifest" href="./manifest.json">
 
     <script src="clean-link.js" type="module"></script>
-    <!-- <script src="https://github.com/lborgman/speech-kb/blob/main/js/mod/basic-ui.js" type="module"></script> -->
-    <script src="https://lborgman.github.io/speech-kb/js/mod/basic-ui.js" type="module"></script>
 
+
+    <script src="https://lborgman.github.io/speech-kb/js/mod/basic-ui.js" type="module"></script>
     <!-- Asynchronous non-blocking CSS load -->
-    <link rel="stylesheet" href="https://lborgman.github.io/speech-kb/js/mod/basic-ui.css" media="print"
+    <link href="https://lborgman.github.io/speech-kb/js/mod/basic-ui.css" rel="stylesheet" media="print"
         onload="this.media='all'" />
+
 
     <style>
         *,
@@ -63,7 +64,11 @@
 
 
         a {
+            color: blue;
             color: lightblue;
+        }
+        div.mw-parser-output a {
+            color: blue;
         }
 
         section#main-section {
@@ -88,6 +93,7 @@
             background-size: contain;
             background-repeat: no-repeat;
             cursor: pointer;
+            position: relative;
         }
 
         #logo-info {
@@ -101,6 +107,16 @@
             background-size: contain;
             background-position: center;
             background-repeat: no-repeat;
+        }
+
+        #logo:hover::after {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: 0;
+            bottom: 0;
+            content: "";
+            background-color: #f005;
         }
 
 
@@ -184,13 +200,18 @@
             outline: 2px solid blue;
             background-color: white;
             color: blue;
+            color: red;
         }
 
+        /*
         .snackbar {
             max-width: clamp(160px, 400px, 70dvw);
             outline-color: yellow;
             box-shadow: 0px 0px 20px 4px yellow;
+            color: red;
+            font-size: 2rem;
         }
+        */
 
         .show-here {
             max-width: 150px;
@@ -268,12 +289,13 @@
         }
 
         :root {
-            --button-bg-color: #6200ee;
             --button-bg-color: lightblue;
             --button-bg-color: white;
             --button-bg-color: orange;
             --button-bg-color: #87cefa;
+            --button-bg-color: #6200ee;
         }
+
         button {
             position: relative;
             overflow: hidden;
@@ -312,9 +334,9 @@
 <body>
     <header id="main-header">
         <!-- <p id="logo"> <img src="./clean-link.svg" height="100" /> </p> -->
-        <div id="logo" title="- Help">
+        <button id="logo" title="- Help">
             <div id="logo-info"></div>
-        </div>
+        </button>
         <span>
             <span id="header-title">Clean Link</span>
         </span>
