@@ -67,6 +67,7 @@
             color: blue;
             color: lightblue;
         }
+
         div.mw-parser-output a {
             color: blue;
         }
@@ -101,7 +102,6 @@
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            /* outline: 2px dotted red; */
             background-color: white;
             background-image: url(./info.svg);
             background-size: contain;
@@ -191,7 +191,7 @@
             display: block !important;
         }
 
-        [popover]:popover-open {
+        [nOpopover]:popover-open {
             display: block;
             position: fixed;
             padding: 10px;
@@ -200,18 +200,8 @@
             outline: 2px solid blue;
             background-color: white;
             color: blue;
-            color: red;
         }
 
-        /*
-        .snackbar {
-            max-width: clamp(160px, 400px, 70dvw);
-            outline-color: yellow;
-            box-shadow: 0px 0px 20px 4px yellow;
-            color: red;
-            font-size: 2rem;
-        }
-        */
 
         .show-here {
             max-width: 150px;
@@ -229,13 +219,18 @@
         /*********************************/
 
         :root {
-            --snack-trans-dur: 0.6s;
-            --snack-trans-dur: 500ms;
+            --snackbar-exit-duration: 0.6s;
+            --snackbar-exit-duration: 500ms;
+            --snackbar-exit-duration: 8s;
+            --snackbar-entry-duration: 4s;
+            --snackbar-entry-duration: 2s;
+
             /* --ripple-duration: 6000ms; */
+            --snackbar-bg: yellow;
         }
 
         /* ////////////////// Below is suggestions from full Gemini.  */
-        #snackbar-popover {
+        #OLDsnackbar {
             /* 1. Base positioning & resets */
             position: fixed;
             top: auto;
@@ -244,44 +239,101 @@
             right: auto;
             margin: 0;
             max-width: clamp(160px, 400px, calc(100dvw - 4rem));
+            border-radius: 10px;
+            border: 2px solid;
+            color: blue;
+            box-shadow: 0px 0px 20px 4px var(--snackbar-bg);
 
-            /* 2. Closed / Exit target state */
-            opacity: 0;
+            transition-property: transform, opacity, display, overlay, background-color;
             transform: translateY(-calc(100% + 2rem));
-
-            /* 3. Exit Transition */
-            transition-property: transform, opacity, display, overlay;
-            /* transition-duration: 0.5s; */
-            transition-duration: var(--snack-trans-dur);
+            transition-duration: var(--snackbar-entry-duration);
             transition-timing-function: cubic-bezier(0.3, 0, 1, 1), linear, ease, ease;
             transition-behavior: allow-discrete;
+
+            background-color: red;
+            opacity: 0;
+
+            @starting-style {
+                opacity: 0;
+                background-color: green;
+            }
         }
 
-        /* 4. Active Open State */
-        #snackbar-popover:popover-open {
+        #OLDsnackbar:popover-open {
+            opacity: 1;
+            background-color: green;
+
+            @starting-style {
+                opacity: 0;
+                background-color: red;
+                transform: translateY(calc(100% + 2rem));
+            }
+        }
+
+
+#snackbar {
+    position: fixed;
+    top: auto;
+    bottom: 2rem;
+    left: 2rem;
+    right: auto;
+    margin: 0;
+
+    max-width: clamp(160px, 400px, calc(100dvw - 4rem));
+    border-radius: 10px;
+    border: 2px solid;
+    color: blue;
+
+    box-shadow: 0 0 20px 4px var(--snackbar-bg);
+
+    /* Closed: completely below viewport */
+    transform: translateY(calc(100% + 2rem));
+    opacity: 0;
+    background-color: red;
+
+    transition:
+        transform var(--snackbar-entry-duration) cubic-bezier(0.3, 0, 1, 1),
+        opacity var(--snackbar-entry-duration) linear,
+        background-color var(--snackbar-entry-duration) ease,
+        display var(--snackbar-entry-duration) ease,
+        overlay var(--snackbar-entry-duration) ease;
+
+    transition-behavior: allow-discrete;
+}
+
+#snackbar:popover-open {
+    /* Open: bottom: 2rem determines the position */
+    transform: translateY(0);
+    opacity: 1;
+    background-color: green;
+
+    @starting-style {
+        /* Start completely below viewport */
+        transform: translateY(calc(100% + 2rem));
+        opacity: 0;
+        background-color: red;
+    }
+}
+
+
+
+        #popover:popover-open {
             top: auto;
             bottom: 2rem;
             left: 2rem;
             right: auto;
             margin: 0;
 
-            opacity: 1;
+            opacity: 0;
             transform: translateY(0);
 
-            /* Entry Transition - overriding only the timing functions */
             transition-property: transform, opacity, display, overlay;
-            NOtransition-duration: 4.5s;
+            transition-duration: var(--snackbar-exit-duration);
             transition-timing-function: cubic-bezier(0.05, 0.7, 0.1, 1), linear, ease, ease;
             transition-behavior: allow-discrete;
         }
 
         /* 5. Entry Starting Frame State */
-        @starting-style {
-            #snackbar-popover:popover-open {
-                opacity: 0;
-                transform: translateY(calc(100% + 2rem));
-            }
-        }
 
         button {
             position: relative;

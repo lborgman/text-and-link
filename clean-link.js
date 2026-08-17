@@ -686,7 +686,7 @@ function showOver(txtOrDiv, secTimeout, clientX, clientY) {
  * @param {string|HTMLDivElement} txtOrDiv
  */
 function showSnackbar(txtOrDiv) {
-    return modBasicUI.snackbar(txtOrDiv);
+    return modBasicUI.snackbar(txtOrDiv, 4000);
     // return showOver(txtOrDiv, 3);
 }
 function clearSnackbars() {
