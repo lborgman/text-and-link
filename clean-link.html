@@ -39,7 +39,6 @@
         :root {
             color: white;
             background-color: black;
-            font-family: Arial;
         }
 
 
@@ -221,54 +220,17 @@
         :root {
             --snackbar-exit-duration: 0.6s;
             --snackbar-exit-duration: 500ms;
-            --snackbar-exit-duration: 8s;
+            --snackbar-exit-duration: 2s;
+
             --snackbar-entry-duration: 4s;
-            --snackbar-entry-duration: 2s;
+            --snackbar-entry-duration: 0.5s;
 
             /* --ripple-duration: 6000ms; */
-            --snackbar-bg: yellow;
+            --snackbar-hidden-bg: red;
+            --snackbar-visible-bg: yellow;
         }
 
-        /* ////////////////// Below is suggestions from full Gemini.  */
-        #OLDsnackbar {
-            /* 1. Base positioning & resets */
-            position: fixed;
-            top: auto;
-            bottom: 2rem;
-            left: 2rem;
-            right: auto;
-            margin: 0;
-            max-width: clamp(160px, 400px, calc(100dvw - 4rem));
-            border-radius: 10px;
-            border: 2px solid;
-            color: blue;
-            box-shadow: 0px 0px 20px 4px var(--snackbar-bg);
-
-            transition-property: transform, opacity, display, overlay, background-color;
-            transform: translateY(-calc(100% + 2rem));
-            transition-duration: var(--snackbar-entry-duration);
-            transition-timing-function: cubic-bezier(0.3, 0, 1, 1), linear, ease, ease;
-            transition-behavior: allow-discrete;
-
-            background-color: red;
-            opacity: 0;
-
-            @starting-style {
-                opacity: 0;
-                background-color: green;
-            }
-        }
-
-        #OLDsnackbar:popover-open {
-            opacity: 1;
-            background-color: green;
-
-            @starting-style {
-                opacity: 0;
-                background-color: red;
-                transform: translateY(calc(100% + 2rem));
-            }
-        }
+        /* ////////////////// Below is suggestions from full Gemini and ChatGPT.  */
 
 
 #snackbar {
@@ -284,12 +246,13 @@
     border: 2px solid;
     color: blue;
 
-    box-shadow: 0 0 20px 4px var(--snackbar-bg);
+    box-shadow: 0 0 20px 4px var(--snackbar-visible-bg);
 
     /* Closed: completely below viewport */
     transform: translateY(calc(100% + 2rem));
     opacity: 0;
-    background-color: red;
+    /* background-color: red; */
+    background-color: var(--snackbar-hidden-bg);
 
     transition:
         transform var(--snackbar-entry-duration) cubic-bezier(0.3, 0, 1, 1),
@@ -305,13 +268,14 @@
     /* Open: bottom: 2rem determines the position */
     transform: translateY(0);
     opacity: 1;
-    background-color: green;
+    background-color: var(--snackbar-visible-bg);
 
     @starting-style {
         /* Start completely below viewport */
         transform: translateY(calc(100% + 2rem));
         opacity: 0;
-        background-color: red;
+        /* background-color: red; */
+        background-color: var(--snackbar-visible-bg);
     }
 }
 
@@ -351,12 +315,12 @@
         button {
             position: relative;
             overflow: hidden;
-            transition: background 400ms;
+            /* transition: background 400ms; */
             color: #fff;
             color: contrast-color(var(--button-bg-color));
             background-color: var(--button-bg-color);
             padding: 0.7rem 1rem;
-            font-family: 'Roboto', sans-serif;
+            /* font-family: 'Roboto', sans-serif; */
             font-size: 1rem;
             outline: 0;
             border: 0;
