@@ -917,7 +917,7 @@ function isAndroid() {
 
 const btnDebug = mkElt("button", undefined, "Debug");
 btnDebug.style = `
-    display: none;
+    // display: none;
     position: fixed;
     top: 0;
     right: 0;
@@ -930,7 +930,8 @@ btnDebug.addEventListener("click", async evt => {
     getSearchParamNames()=="${getSearchParamNames().join(',')}"
     isDisplayModePWA()=="${isDisplayModePWA()}"
     `;
-    alert(str);
+    // alert(str);
+    showSnackbar(str);
 });
 
 function getSearchParamNames() {
