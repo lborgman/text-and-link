@@ -682,15 +682,17 @@ function showOver(txtOrDiv, secTimeout, clientX, clientY) {
     return div;
 }
 /**
- * Show txt popup-style in the middle of the screen
+ * Show txt popup-style in the snackbar position of the screen
  * @param {string|HTMLDivElement} txtOrDiv
+ * @param {number} msShow
  */
-function showSnackbar(txtOrDiv) {
-    return modBasicUI.snackbar(txtOrDiv, 4000);
+function showSnackbar(txtOrDiv, msShow = 4000) {
+    return modBasicUI.snackbar(txtOrDiv, msShow);
     // return showOver(txtOrDiv, 3);
 }
 function clearSnackbars() {
-    return; // FIX-ME: to do or not to do
+    console.log("clearSnackbars");
+    // return; // FIX-ME: to do or not to do
     // This is a bit broken:
     modBasicUI.clearSnackbarQueue();
 }
@@ -741,6 +743,7 @@ function addXclose(dialog) {
     return elt;
 }
 
+/*
 document.documentElement.addEventListener("click", evt => {
     const dialog = evt.target;
     if (dialog instanceof HTMLDialogElement) {
@@ -765,9 +768,9 @@ document.documentElement.addEventListener("click", evt => {
     // const onDialog = dialog == currentTarget;
     // if (onDialog) dialog.close();
 });
+*/
 
 /**
- * 
  * @param {HTMLDialogElement} dialog
  */
 function closeDialog(dialog) {
@@ -931,7 +934,7 @@ btnDebug.addEventListener("click", async evt => {
     isDisplayModePWA()=="${isDisplayModePWA()}"
     `;
     // alert(str);
-    showSnackbar(str);
+    showSnackbar(str, 20 * 1000);
 });
 
 function getSearchParamNames() {
