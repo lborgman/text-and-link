@@ -10,7 +10,7 @@ navigator.serviceWorker.register('./sw.js');
 export { };
 const modBasicUI = await import("https://lborgman.github.io/speech-kb/js/mod/basic-ui.js");
 // modBasicUI.applyMaterialTheme("greenyellow");
-modBasicUI.applyMaterialTheme("indigo");
+modBasicUI.applyMaterialTheme("indigo", true);
 
 // console.log({ modBasicUI });
 // debugger;
@@ -410,7 +410,13 @@ async function showWikipediaAsDialog(pageTitle) {
     const html = await fetchWikiArticle(pageTitle);
     showHtmlAsDialog(html, {
         script: scriptAddtWikipediaClickFun,
-        css: "dialog[open] { padding-top:40px; }"
+        css: "dialog[open] { padding-top:40px; }",
+        theme: {
+            // color: "blue",
+            // color: "#2563EB",
+            color: "#0284C7",
+            dark: true
+        }
     });
 }
 window.showWikipediaAsDialog = showWikipediaAsDialog;
@@ -811,11 +817,11 @@ async function showUrlAsDialog(url) {
 
 /**
  * @param {string} strHtml
- * @param {{css?: string, script?: Function, [key:string]:any }} opts
+ * @param {{css?: string, theme?: object, script? : Function, [key:string]:any }} opts
  * @return {HTMLDialogElement}
  */
 function showHtmlAsDialog(strHtml, opts = {}) {
-    const allowedOpts = /** @type {const} */ (["css", "script"]);
+    const allowedOpts = /** @type {const} */ (["css", "script", "theme"]);
     const rest = { ...opts };
     for (const key of allowedOpts) {
         // delete rest[/** @type {keyof typeof rest} */ (key)];
@@ -840,7 +846,11 @@ function showHtmlAsDialog(strHtml, opts = {}) {
         optScript(dialog);
     }
     addXclose(dialog);
-    document.body.appendChild(dialog)
+    document.body.appendChild(dialog);
+    if (opts.theme) {
+        debugger;
+        modBasicUI.applyMaterialTheme(opts.theme.color, opts.theme.dark, dialog);
+    }
     dialog.showModal();
     return dialog;
 }
