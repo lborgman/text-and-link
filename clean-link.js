@@ -9,6 +9,9 @@ navigator.serviceWorker.register('./sw.js');
 
 export { };
 const modBasicUI = await import("https://lborgman.github.io/speech-kb/js/mod/basic-ui.js");
+// modBasicUI.applyMaterialTheme("greenyellow");
+modBasicUI.applyMaterialTheme("indigo");
+
 // console.log({ modBasicUI });
 // debugger;
 
