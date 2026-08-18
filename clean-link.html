@@ -282,6 +282,10 @@
             }
         }
 
+        #snackbar {
+            background-color: var(--inverse-surface) !important;
+            color: contrast-color(var(--inverse-surface)) !important;
+        }
 
 
         #popover:popover-open {
@@ -307,6 +311,7 @@
             overflow: hidden;
         }
 
+        /*
         :root {
             --button-bg-color: lightblue;
             --button-bg-color: white;
@@ -314,14 +319,15 @@
             --button-bg-color: #87cefa;
             --button-bg-color: #6200ee;
         }
+        */
 
         button {
             position: relative;
             overflow: hidden;
             /* transition: background 400ms; */
-            color: #fff;
-            color: contrast-color(var(--button-bg-color));
-            background-color: var(--button-bg-color);
+            /* color: #fff; */
+            /* color: contrast-color(var(--button-bg-color)); */
+            /* background-color: var(--button-bg-color); */
             padding: 0.7rem 1rem;
             /* font-family: 'Roboto', sans-serif; */
             font-size: 1rem;
@@ -346,6 +352,69 @@
                 transform: scale(4);
                 opacity: 0;
             }
+        }
+
+
+
+
+
+
+        /* One rule handles contrast for every role */
+        button,
+        [class*="bg-"] {
+            background-color: var(--bg);
+            color: contrast-color(var(--bg));
+        }
+
+        button {
+            --bg: var(--secondary);
+            --bg: var(--tertiary);
+            --bg: var(--primary);
+        }
+
+        /* Modifier classes just point --bg at a token */
+        .bg-primary {
+            --bg: var(--primary);
+        }
+
+        .bg-primary-container {
+            --bg: var(--primary-container);
+        }
+
+        .bg-secondary {
+            --bg: var(--secondary);
+        }
+
+        .bg-secondary-container {
+            --bg: var(--secondary-container);
+        }
+
+        .bg-tertiary {
+            --bg: var(--tertiary);
+        }
+
+        .bg-tertiary-container {
+            --bg: var(--tertiary-container);
+        }
+
+        .bg-error {
+            --bg: var(--error);
+        }
+
+        .bg-error-container {
+            --bg: var(--error-container);
+        }
+
+        .bg-surface {
+            --bg: var(--surface);
+        }
+
+        .bg-surface-variant {
+            --bg: var(--surface-variant);
+        }
+
+        .bg-background {
+            --bg: var(--background);
         }
     </style>
 </head>
