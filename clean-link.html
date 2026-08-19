@@ -157,12 +157,18 @@
             margin-bottom: 3px;
         }
 
+        #cleaned-label {
+            margin-top: 25px;
+            margin-bottom: 6px;
+        }
+
         #cleaned-info {
             height: 2rem;
             display: flex;
             gap: 40px;
             justify-content: center;
             align-items: center;
+            margin-top: 25px;
         }
 
         #div-cleaned-details {
@@ -549,8 +555,7 @@
             </div>
             <textarea type="text" id="ta-link" placeholder="Link to clean"></textarea>
         </label>
-        <div id="cleaned-info">
-        </div>
+        <div id="cleaned-label">Cleaned link:</div>
         <div id="output" style="visibility: hidden;">
             <div>
                 <div id="output-text"></div>
@@ -560,6 +565,7 @@
                 <button id="btn-copy">Copy</button>
             </div>
         </div>
+        <div id="cleaned-info"> </div>
 
     </section>
     <dialog id="can-be-installed" class="html-dialog bg-primary-container">
