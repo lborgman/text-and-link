@@ -121,10 +121,25 @@
         }
 
 
+        header {
+            background-color: var(--surface-variant);
+            padding: 10px;
+            margin-bottom: 45px;
+
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+
         #header-title {
             font-size: 25px;
-            color: lightblue;
+            color: var(--primary);
+            color: var(--on-surface-variant);
         }
+
+
 
 
         #NOdiv-output {
@@ -165,12 +180,6 @@
             border-radius: 4px;
         }
 
-        #main-header {
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-around;
-        }
 
 
         /* FIX-ME: */
@@ -228,66 +237,13 @@
             --snackbar-entry-duration: 0.5s;
 
             /* --ripple-duration: 6000ms; */
-            --snackbar-hidden-bg: red;
-            --snackbar-visible-bg: yellow;
-            --snackbar-color: red;
-            --snackbar-color: black;
+            /* --snackbar-hidden-bg: red; */
+            /* --snackbar-visible-bg: yellow; */
         }
+
+
 
         /* ////////////////// Below is suggestions from full Gemini and ChatGPT.  */
-
-
-        #snackbarOLD {
-            position: fixed;
-            top: auto;
-            bottom: 2rem;
-            left: 2rem;
-            right: auto;
-            margin: 0;
-
-            max-width: clamp(160px, 400px, calc(100dvw - 4rem));
-            overflow-wrap: anywhere;
-
-            border-radius: 10px;
-            border: 2px solid;
-            color: blue;
-
-            box-shadow: 0 0 20px 4px var(--snackbar-visible-bg);
-
-            /* Closed: completely below viewport */
-            transform: translateY(calc(100% + 2rem));
-            opacity: 0;
-            background-color: var(--snackbar-hidden-bg);
-
-            transition:
-                transform var(--snackbar-entry-duration) cubic-bezier(0.3, 0, 1, 1),
-                opacity var(--snackbar-entry-duration) linear,
-                background-color var(--snackbar-entry-duration) ease,
-                display var(--snackbar-entry-duration) ease,
-                overlay var(--snackbar-entry-duration) ease;
-
-            transition-behavior: allow-discrete;
-        }
-
-        #snackbarOLD:popover-open {
-            /* Open: bottom: 2rem determines the position */
-            transform: translateY(0);
-            opacity: 1;
-            background-color: var(--snackbar-visible-bg);
-
-            @starting-style {
-                /* Start completely below viewport */
-                transform: translateY(calc(100% + 2rem));
-                opacity: 0;
-                /* background-color: red; */
-                background-color: var(--snackbar-visible-bg);
-            }
-        }
-
-        #snackbar {
-            background-color: var(--inverse-surface) !important;
-            color: contrast-color(var(--inverse-surface)) !important;
-        }
 
 
         #popover:popover-open {
@@ -434,17 +390,20 @@
 
         /* Links use Primary color with clear focus/hover feedback */
         a {
-            color: var(--primary);
+            /* color: var(--primary); */
+            color: var(--link-color);
             text-decoration-thickness: 1px;
             text-underline-offset: 3px;
         }
 
         a:hover {
-            color: var(--secondary);
+            /* color: var(--secondary); */
+            color: var(--link-hover);
         }
 
         a:focus-visible {
-            outline: 2px solid var(--primary);
+            /* outline: 2px solid var(--primary); */
+            outline: 2px solid var(--link-color);
             outline-offset: 2px;
             border-radius: 2px;
         }
@@ -461,12 +420,16 @@
             padding: 1.5rem;
             box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
                 0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            max-width: 560px;
+            /* max-width: clamp(300px, 100dvw - 2rem, 550px); */
+            width: calc(100dvw - 1rem);
+            max-width: 550px;
         }
 
         /* Backdrop behind the dialog */
-        dialog::backdrop {
-            background-color: rgba(0, 0, 0, 0.32);
+        dialog[open]::backdrop {
+            /* background-color: rgba(0, 0, 0, 0.32); */
+            /* background-color: var(--backdrop, "red"); */
+            /* background-color: "red"; */
             backdrop-filter: blur(2px);
         }
 
@@ -546,22 +509,16 @@
         /* Code Blocks */
         code,
         pre {
-            background-color: var(--surface-variant);
-            color: contrast-color(var(--surface-variant));
+            /* background-color: var(--surface-variant); */
+            /* color: contrast-color(var(--surface-variant)); */
             border-radius: 6px;
             font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
         }
 
         pre {
-            padding: 1rem;
-            border: 1px solid var(--outline-variant);
+            /* padding: 1rem; */
+            /* border: 1px solid var(--outline-variant); */
             overflow-x: auto;
-        }
-
-        /* Selection Highlight, let the browser handle that! */
-
-        #header-title {
-            color: var(--primary);
         }
     </style>
 </head>

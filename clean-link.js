@@ -8,9 +8,11 @@ const errorHandlerAsyncEvent = window["errorHandlerAsyncEvent"];
 navigator.serviceWorker.register('./sw.js');
 
 export { };
+
+const useDarkTheme = true;
 const modBasicUI = await import("https://lborgman.github.io/speech-kb/js/mod/basic-ui.js");
 // modBasicUI.applyMaterialTheme("greenyellow");
-modBasicUI.applyMaterialTheme("indigo", true);
+modBasicUI.applyMaterialTheme("green", useDarkTheme);
 
 // console.log({ modBasicUI });
 // debugger;
@@ -112,8 +114,8 @@ btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEve
     try {
         await navigator.clipboard.writeText(allText);
         // const elt = mkElt("div", { style: "NOmax-width: clamp(160px, 400px, 70dvw);" }, [
-        const elt = mkElt("div", undefined, [
-            mkElt("i", { style: "color:blue;" }, "Copied:"),
+        const elt = mkElt("div", { style: "padding:8px" }, [
+            mkElt("i", { style: "color:green;" }, "Copied:"),
             mkElt("pre", { style: " overflow-wrap: anywhere; white-space: pre-wrap; " }, allText)
         ]
         );
@@ -402,22 +404,31 @@ async function showHelp() {
     dlg.id = "show-help-dialog";
 }
 
-
 /**
  * @param {string} pageTitle 
  */
 async function showWikipediaAsDialog(pageTitle) {
-    const html = await fetchWikiArticle(pageTitle);
-    showHtmlAsDialog(html, {
+    const htmlOrig = await fetchWikiArticle(pageTitle);
+    const div = mkElt("div");
+    div.innerHTML = htmlOrig;
+    console.log({ div });
+    // debugger;
+    const eltMeta = div.querySelector("table.metadata");
+    eltMeta?.remove();
+    const html = div.innerHTML;
+    // color: "blue",
+    // color: "#2563EB",
+    const color = "#0284C7";
+    const dlg = showHtmlAsDialog(html, {
         script: scriptAddtWikipediaClickFun,
         css: "dialog[open] { padding-top:40px; }",
         theme: {
-            // color: "blue",
-            // color: "#2563EB",
-            color: "#0284C7",
-            dark: true
+            color,
+            dark: useDarkTheme,
         }
     });
+    // debugger;
+    dlg.style.border = `2px solid ${color}`;
 }
 window.showWikipediaAsDialog = showWikipediaAsDialog;
 
@@ -848,7 +859,7 @@ function showHtmlAsDialog(strHtml, opts = {}) {
     addXclose(dialog);
     document.body.appendChild(dialog);
     if (opts.theme) {
-        debugger;
+        // debugger;
         modBasicUI.applyMaterialTheme(opts.theme.color, opts.theme.dark, dialog);
     }
     dialog.showModal();
