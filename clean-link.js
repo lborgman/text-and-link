@@ -81,7 +81,10 @@ function handleInputLink() {
                 const eltCleanedInfo = document.getElementById("cleaned-info");
                 if (!eltCleanedInfo) throw Error("!eltCleanedInfo");
                 if (!eltCleanedInfo.parentElement) throw Error("!eltCleanedInfo.parentElement");
-                eltCleanedInfo.parentElement.insertBefore(divExpandingCleanedInfo, eltCleanedInfo.nextElementSibling);
+
+                // eltCleanedInfo.parentElement.insertBefore(divExpandingCleanedInfo, eltCleanedInfo.nextElementSibling);
+                eltCleanedInfo.appendChild(divExpandingCleanedInfo);
+
                 console.log({ eltCleanedInfo, divExpandingCleanedInfo });
                 setTimeout(() => { divExpandingCleanedInfo.classList.add("expanded") }, 10);
             });
@@ -227,7 +230,9 @@ function removeTrailIds(strUrl, advIds) {
         url = removeUrlParam(url, clickId);
         const hrefOut = url.href;
         if (hrefIn != hrefOut) {
-            advIds.push(clickId);
+            if (url.searchParams.has(clickId)) {
+                advIds.push(clickId);
+            }
         }
     });
     return url.href;

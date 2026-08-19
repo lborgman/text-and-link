@@ -160,10 +160,12 @@
         }
 
         #cleaned-info {
-            height: 2rem;
+            /* height: 2rem; */
+            padding: 10px;
             border-radius: 8px;
             display: flex;
-            gap: 40px;
+            flex-direction: column;
+            gap: 10px;
             justify-content: center;
             align-items: center;
             margin-top: 10px;
@@ -551,7 +553,7 @@
                 Clean link from
                 <a nohref="https://en.wikipedia.org/wiki/Click_identifier"
                     onclick="showWikipediaAsDialog('Click_identifier')" style="text-decoration:underline;">click
-                    identifiers</a>:
+                    identifiers</a>.
             </div>
             <textarea type="text" id="ta-link" placeholder="Link to clean"></textarea>
         </label>
