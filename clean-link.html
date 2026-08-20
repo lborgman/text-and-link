@@ -112,6 +112,27 @@
             background-repeat: no-repeat;
         }
 
+        .icon-image {
+            aspect-ratio: 1 / 1;
+            width: 24px;
+            border-radius: 50%;
+            display: inline-flex;
+            background-color: transparent;
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            /* background-image: url(./info.svg); */
+        }
+
+        #btn-settings {
+            position: fixed;
+            top: 20px;
+            right: 0;
+            /* background: gray; */
+            /* color: white; */
+            /* opacity: 0.5; */
+        }
+
         #logo:hover::after {
             position: absolute;
             left: 0;
@@ -279,15 +300,7 @@
             overflow: hidden;
         }
 
-        /*
-        :root {
-            --button-bg-color: lightblue;
-            --button-bg-color: white;
-            --button-bg-color: orange;
-            --button-bg-color: #87cefa;
-            --button-bg-color: #6200ee;
-        }
-        */
+
 
         button {
             position: relative;
@@ -548,6 +561,93 @@
 
         .scroll-for-text-input {
             outline: 1px dotted blue;
+        }
+
+
+
+
+
+        /** Icon buttons */
+        :root {
+            --md-btn-size-default: 40px;
+            --md-icon-size-default: 24px;
+        }
+
+        .md-icon-button {
+            --btn-size: var(--md-btn-size-default);
+            --icon-size: var(--md-icon-size-default);
+
+            --touch-target-size: max(48px, var(--btn-size));
+
+            position: relative;
+            width: var(--btn-size);
+            height: var(--btn-size);
+            border-radius: 50%;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            outline: none;
+            overflow: visible;
+        }
+
+        @media (pointer: coarse) {
+            .md-icon-button::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: var(--touch-target-size);
+                height: var(--touch-target-size);
+                transform: translate(-50%, -50%);
+                border-radius: 50%;
+                outline: 1px dotted red;
+            }
+        }
+
+        /* --- 3. THE SIZE MODIFIER CLASSES (Just override variables!) --- */
+        .md-icon-button.md-xs {
+            --btn-size: 32px;
+            --icon-size: 18px;
+        }
+
+        /* .md-s matches the :root defaults, no extra code needed unless you want it explicit */
+        .md-icon-button.md-s {
+            --btn-size: 40px;
+            --icon-size: 24px;
+        }
+
+        .md-icon-button.md-m {
+            --btn-size: 56px;
+            --icon-size: 28px;
+        }
+
+        .md-icon-button.md-l {
+            --btn-size: 96px;
+            --icon-size: 48px;
+        }
+
+        .md-icon-button.md-xl {
+            --btn-size: 136px;
+            --icon-size: 64px;
+        }
+
+
+        /* @media (pointer: fine) { */
+        .md-icon-button:hover {
+            background-color: rgba(73, 69, 79, 0.08);
+            background-color: green;
+        }
+
+        /* } */
+
+        .md-icon-button svg {
+            width: var(--icon-size);
+            height: var(--icon-size);
+            fill: currentColor;
+            pointer-events: none;
         }
     </style>
 </head>

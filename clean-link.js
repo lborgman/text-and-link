@@ -947,17 +947,12 @@ function isAndroid() {
 }
 
 
-const btnDebug = mkElt("button", undefined, "Debug");
-btnDebug.style = `
-    position: fixed;
-    top: 20px;
-    right: 0;
-    background: gray;
-    color: white;
-    opacity: 0.5;
-    padding: 6px;
-    border-radius: 6px;
-    `;
+// const btnDebug = mkElt("button", undefined, "Debug");
+// const btnDebug = modBasicUI.mkIconButton("info.svg", "Settings");
+const btnDebug = mkIconButton("./info.svg", "Settings");
+btnDebug.id = "btn-settings";
+btnDebug.classList.add("md-xs");
+
 document.body.appendChild(btnDebug);
 btnDebug.addEventListener("click", handleDebugClick);
 async function handleDebugClick(evt) {
@@ -1029,3 +1024,28 @@ function isDisplayModePWA() {
     return ['fullscreen', 'standalone', 'minimal-ui']
         .some(mode => window.matchMedia(`(display-mode: ${mode})`).matches);
 }
+
+
+
+/**
+ * 
+ * @param {string|HTMLSpanElement} icon 
+ * @param {string} title 
+ * @returns {HTMLButtonElement}
+ */
+function mkIconButton(icon, title) {
+    let eltIcon = icon;
+    if (typeof icon == "string") {
+        const span = mkElt("span", {class:"icon-image"});
+        span.style.backgroundImage = `url(${icon})`;
+        eltIcon = span;
+    }
+    const btn = mkElt("button", undefined, eltIcon);
+    // btn.classList.add("icon-button");
+    btn.classList.add("md-icon-button");
+    // btn.style.padding = "4px";
+    // btn.style.display = "inline-flex";
+    btn.title = title;
+    return btn;
+}
+// background-image
