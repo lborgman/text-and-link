@@ -949,22 +949,72 @@ function isAndroid() {
 
 const btnDebug = mkElt("button", undefined, "Debug");
 btnDebug.style = `
-    // display: none;
     position: fixed;
-    top: 0;
+    top: 20px;
     right: 0;
+    background: gray;
+    color: white;
+    opacity: 0.5;
+    padding: 6px;
+    border-radius: 6px;
     `;
 document.body.appendChild(btnDebug);
-btnDebug.addEventListener("click", async evt => {
+btnDebug.addEventListener("click", handleDebugClick);
+async function handleDebugClick(evt) {
     evt.stopPropagation();
-    let str = `
+    console.log("handleDebugClick");
+
+    const inpColor = mkElt("input", { type: "text", placeholder: "CSS color" });
+    inpColor.style.width = "100px";
+    const lblColor = mkElt("label", undefined, [
+        "Color: ", inpColor
+    ]);
+    const chkDark = mkElt("input", { type: "checkbox" });
+    const lblDark = mkElt("label", undefined, [
+        "Dark:", chkDark
+    ])
+    const btnColor = mkElt("button", undefined, "Apply theme");
+    const divColors = mkElt("p", undefined, [
+        lblColor, lblDark, btnColor
+    ]);
+
+    const btnSnackbar = mkElt("button", undefined, "Snackbar");
+    const divSnackbar = mkElt("p", undefined, [
+        btnSnackbar,
+    ]);
+    const bdy = mkElt("div", undefined, [
+        mkElt("h2", undefined, "Test colors"),
+        divColors,
+        divSnackbar
+    ]);
+
+    btnColor.addEventListener("click", evt => {
+        evt.stopPropagation();
+        const themeColor = inpColor.value.trim();
+        if (themeColor.length > 0) {
+            try {
+                modBasicUI.applyMaterialTheme(themeColor, chkDark.checked);
+            } catch (err) {
+                if (!(err instanceof Error)) { throw err; }
+                modBasicUI.snackbar(err.message);
+            }
+        }
+    });
+
+    // debugger;
+    btnSnackbar.addEventListener("click", evt => {
+        evt.stopPropagation();
+        let str = `
     isAndroid=="${isAndroid()}"
     getSearchParamNames()=="${getSearchParamNames().join(',')}"
     isDisplayModePWA()=="${isDisplayModePWA()}"
     `;
-    // alert(str);
-    showSnackbar(str, 20 * 1000);
-});
+        showSnackbar(str, 20 * 1000);
+    });
+
+    // debugger;
+    modBasicUI.showDialog(bdy);
+}
 
 function getSearchParamNames() {
     // Checking installed: Works, but only when shared to
