@@ -1006,9 +1006,9 @@ async function handleDebugClick(evt) {
 
     inpColor.addEventListener("input", () => {
         const hex = modBasicUI.colorNameToHex(inpColor.value.trim());
-        // console.log({ hex });
-        colorPicker.value = hex;
+        console.log({ hex });
         if (hex) {
+            colorPicker.value = hex;
             currentTheme.color = inpColor.value;
             applyCurrentTheme();
         }
@@ -1070,7 +1070,8 @@ async function handleDebugClick(evt) {
         evt.stopPropagation();
         resetTheme();
         inpColor.value = currentTheme.color;
-        colorPicker.value = currentTheme.color;
+        // colorPicker.value = currentTheme.color;
+        colorPicker.value = modBasicUI.colorNameToHex(currentTheme.color);
         applyCurrentTheme();
     });
 
