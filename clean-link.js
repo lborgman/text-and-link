@@ -9,10 +9,44 @@ navigator.serviceWorker.register('./sw.js');
 
 export { };
 
-const useDarkTheme = true;
 const modBasicUI = await import("https://lborgman.github.io/basic-ui/js/basic-ui.js");
-// modBasicUI.applyMaterialTheme("greenyellow");
-modBasicUI.applyMaterialTheme("green", useDarkTheme);
+
+const storagePrefix = "clean-link";
+const keyTheme = `${storagePrefix}-theme`;
+
+/**
+ * @typedef {Object} ColorTheme
+ * @property {string} color - CSS color
+ * @property {boolean} dark
+ */
+
+function saveTheme() {
+    const strJson = JSON.stringify(currentTheme);
+    localStorage.setItem(keyTheme, strJson);
+}
+/**
+ * @returns {ColorTheme}
+ */
+function retrieveTheme() {
+    const strJson = localStorage.getItem(keyTheme);
+    if (strJson == null) {
+        return { color: "red", dark: true }
+    }
+    const objJson = JSON.parse(strJson)
+    return objJson;
+}
+function resetTheme() {
+    localStorage.removeItem(keyTheme);
+    currentTheme = retrieveTheme();
+}
+
+
+/** @type {ColorTheme} */
+let currentTheme = retrieveTheme();
+applyCurrentTheme();
+function applyCurrentTheme() {
+    modBasicUI.applyMaterialTheme(currentTheme.color, currentTheme.dark);
+}
 
 // console.log({ modBasicUI });
 // debugger;
@@ -429,7 +463,7 @@ async function showWikipediaAsDialog(pageTitle) {
         css: "dialog[open] { padding-top:40px; }",
         theme: {
             color,
-            dark: useDarkTheme,
+            dark: currentTheme.dark,
         }
     });
     // debugger;
@@ -960,40 +994,84 @@ async function handleDebugClick(evt) {
     console.log("handleDebugClick");
 
     const inpColor = mkElt("input", { type: "text", placeholder: "CSS color" });
-    inpColor.style.width = "100px";
-    const lblColor = mkElt("label", undefined, [
-        "Color: ", inpColor
+    inpColor.value = currentTheme.color;
+    inpColor.style.width = "calc(7ch + 30px)";
+    const colorPicker = mkElt("input", { type: "color" });
+    colorPicker.value = currentTheme.color;
+    const eltColor = mkElt("span", undefined, [inpColor, colorPicker]);
+    eltColor.style.display = "inline-flex";
+    const lblColor = mkElt("label", { class: "label-selection-row" }, [
+        "Color", eltColor
     ]);
+
+    inpColor.addEventListener("input", () => {
+        const hex = modBasicUI.colorNameToHex(inpColor.value.trim());
+        // console.log({ hex });
+        colorPicker.value = hex;
+        if (hex) {
+            currentTheme.color = inpColor.value;
+            applyCurrentTheme();
+        }
+    });
+    colorPicker.addEventListener("input", () => {
+        inpColor.value = colorPicker.value;
+        currentTheme.color = inpColor.value;
+        applyCurrentTheme();
+    });
+
     const chkDark = mkElt("input", { type: "checkbox" });
-    const lblDark = mkElt("label", undefined, [
-        "Dark:", chkDark
-    ])
-    const btnColor = mkElt("button", undefined, "Apply theme");
-    const divColors = mkElt("p", undefined, [
-        lblColor, lblDark, btnColor
+    chkDark.checked = currentTheme.dark;
+    chkDark.addEventListener("change", () => {
+        currentTheme.dark = chkDark.checked;
+        applyCurrentTheme();
+    });
+    const lblDark = mkElt("label", { class: "label-selection-row" }, [
+        chkDark,
+        "Dark",
     ]);
+    const btnSetColor = mkElt("button", undefined, "Set");
+    const btnResetColor = mkElt("button", undefined, "Reset");
+    const divButtons = mkElt("div", undefined, [
+        btnSetColor,
+        btnResetColor
+    ]);
+    divButtons.style = `
+        display: flex;
+        gap: 10px;
+    `;
+
+
+    const divColors = mkElt("p", undefined, [
+        lblColor,
+        lblDark,
+        divButtons
+    ]);
+    divColors.style = `
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    `;
 
     const btnSnackbar = mkElt("button", undefined, "Snackbar");
     const divSnackbar = mkElt("p", undefined, [
         btnSnackbar,
     ]);
     const bdy = mkElt("div", undefined, [
-        mkElt("h2", undefined, "Test colors"),
+        mkElt("h2", undefined, "Color Theme"),
         divColors,
-        divSnackbar
+        // divSnackbar
     ]);
 
-    btnColor.addEventListener("click", evt => {
+    btnSetColor.addEventListener("click", evt => {
         evt.stopPropagation();
-        const themeColor = inpColor.value.trim();
-        if (themeColor.length > 0) {
-            try {
-                modBasicUI.applyMaterialTheme(themeColor, chkDark.checked);
-            } catch (err) {
-                if (!(err instanceof Error)) { throw err; }
-                modBasicUI.snackbar(err.message);
-            }
-        }
+        saveTheme();
+    });
+    btnResetColor.addEventListener("click", evt => {
+        evt.stopPropagation();
+        resetTheme();
+        inpColor.value = currentTheme.color;
+        colorPicker.value = currentTheme.color;
+        applyCurrentTheme();
     });
 
     // debugger;
@@ -1036,7 +1114,7 @@ function isDisplayModePWA() {
 function mkIconButton(icon, title) {
     let eltIcon = icon;
     if (typeof icon == "string") {
-        const span = mkElt("span", {class:"icon-image"});
+        const span = mkElt("span", { class: "icon-image" });
         span.style.backgroundImage = `url(${icon})`;
         eltIcon = span;
     }
