@@ -34,18 +34,7 @@
         onload="this.media='all'" />
 
     <style>
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-        }
 
-        /*
-        :root {
-            color: white;
-            background-color: black;
-        }
-        */
 
 
         .expandable-wrapper {
@@ -68,16 +57,6 @@
         }
 
 
-        /*
-        a {
-            color: blue;
-            color: lightblue;
-        }
-
-        div.mw-parser-output a {
-            color: blue;
-        }
-        */
 
         section#main-section {
             max-width: clamp(300px, 90vw, 600px);
@@ -309,10 +288,6 @@
         button {
             position: relative;
             overflow: hidden;
-            /* transition: background 400ms; */
-            /* color: #fff; */
-            /* color: contrast-color(var(--button-bg-color)); */
-            /* background-color: var(--button-bg-color); */
             padding: 0.7rem 1rem;
             /* font-family: 'Roboto', sans-serif; */
             font-size: 1rem;
@@ -323,22 +298,6 @@
             cursor: pointer;
         }
 
-        span.ripple {
-            position: absolute;
-            border-radius: 50%;
-            transform: scale(0);
-            /* animation: ripple 6000ms linear; */
-            animation: ripple var(--ripple-duration) linear;
-            /* background-color: color-mix(in srgb, contrast-color(var(--button-bg-color)) 70%, transparent); */
-            background-color: color-mix(in srgb, contrast-color(var(--primary)) 70%, transparent);
-        }
-
-        @keyframes ripple {
-            to {
-                transform: scale(4);
-                opacity: 0;
-            }
-        }
 
 
 
@@ -573,13 +532,13 @@
 
         /** Icon buttons */
         :root {
-            --md-btn-size-default: 40px;
-            --md-icon-size-default: 24px;
+            --icon-button-size-default: 40px;
+            --icon-size-default: 24px;
         }
 
-        .md-icon-button {
-            --btn-size: var(--md-btn-size-default);
-            --icon-size: var(--md-icon-size-default);
+        .icon-button {
+            --btn-size: var(--icon-button-size-default);
+            --icon-size: var(--icon-size-default);
 
             --touch-target-size: max(48px, var(--btn-size));
 
@@ -598,7 +557,7 @@
         }
 
         @media (pointer: coarse) {
-            .md-icon-button::after {
+            .icon-button::after {
                 content: '';
                 position: absolute;
                 top: 50%;
@@ -612,48 +571,49 @@
         }
 
         /* --- 3. THE SIZE MODIFIER CLASSES (Just override variables!) --- */
-        .md-icon-button.md-xs {
+        .icon-button.md-xs {
             --btn-size: 32px;
             --icon-size: 18px;
         }
 
         /* .md-s matches the :root defaults, no extra code needed unless you want it explicit */
-        .md-icon-button.md-s {
+        .icon-button.md-s {
             --btn-size: 40px;
             --icon-size: 24px;
         }
 
-        .md-icon-button.md-m {
+        .icon-button.md-m {
             --btn-size: 56px;
             --icon-size: 28px;
         }
 
-        .md-icon-button.md-l {
+        .icon-button.md-l {
             --btn-size: 96px;
             --icon-size: 48px;
         }
 
-        .md-icon-button.md-xl {
+        .icon-button.md-xl {
             --btn-size: 136px;
             --icon-size: 64px;
         }
 
 
         /* @media (pointer: fine) { */
-        .md-icon-button:hover {
+        .icon-button:hover {
             background-color: rgba(73, 69, 79, 0.08);
             background-color: green;
         }
+*/
 
-        /* } */
-
-        .md-icon-button svg {
+        .icon-button svg {
             width: var(--icon-size);
             height: var(--icon-size);
             fill: currentColor;
             pointer-events: none;
         }
 
+    </style>
+    <style id="4basic">
         .label-selection-row {
             display: flex;
             align-items: center;
@@ -665,6 +625,9 @@
             height: 40px;
         }
     </style>
+    <div id="moved" style="display:none">
+
+    </div>
 </head>
 
 <body>

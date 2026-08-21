@@ -1105,8 +1105,10 @@ function isDisplayModePWA() {
 
 
 
+
+//////////////////////////////////////////// 4basic
+
 /**
- * 
  * @param {string|HTMLSpanElement} icon 
  * @param {string} title 
  * @returns {HTMLButtonElement}
@@ -1119,11 +1121,7 @@ function mkIconButton(icon, title) {
         eltIcon = span;
     }
     const btn = mkElt("button", undefined, eltIcon);
-    // btn.classList.add("icon-button");
-    btn.classList.add("md-icon-button");
-    // btn.style.padding = "4px";
-    // btn.style.display = "inline-flex";
+    btn.classList.add("icon-button");
     btn.title = title;
     return btn;
 }
-// background-image
