@@ -10,7 +10,7 @@ navigator.serviceWorker.register('./sw.js');
 export { };
 
 const useDarkTheme = true;
-const modBasicUI = await import("https://lborgman.github.io/speech-kb/js/mod/basic-ui.js");
+const modBasicUI = await import("https://lborgman.github.io/basic-ui/js/basic-ui.js");
 // modBasicUI.applyMaterialTheme("greenyellow");
 modBasicUI.applyMaterialTheme("green", useDarkTheme);
 
