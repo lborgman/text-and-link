@@ -1,5 +1,5 @@
 const VERSION = "0.1.2";
-console.log(`here is sharing-params.js, module, ${VERSION}`);
+// console.log(`here is sharing-params.js, module, ${VERSION}`);
 if (document.currentScript) throw Error("Should be imported, is module"); // is module
 
 // https://developer.chrome.com/articles/web-share-target/
@@ -46,7 +46,7 @@ if (!urlIsUrl) {
 }
 if (title == undefined || title == "") { title = text; text = undefined; }
 const sharingParams = { text, title, url };
-console.log(`URL sharing parameters: title: ${title}, text: ${text}, url: ${url}`);
+// console.log(`URL sharing parameters: title: ${title}, text: ${text}, url: ${url}`);
 
 
 // Try to figure out the desired shared parameters

@@ -87,7 +87,7 @@ function handleInputLink() {
     const advIds = [];
     const strOut1 = removeTrailIds(strIn, advIds);
     const strOut = removeByPattern(strOut1, advIds);
-    console.log(strOut, advIds);
+    // console.log(strOut, advIds);
     const numCleaned = advIds.length;
     const eltCleanedInfo = document.getElementById("cleaned-info");
     if (!eltCleanedInfo) throw Error("!eltCleanedInfo");
@@ -108,7 +108,7 @@ function handleInputLink() {
                 btnCleanedInfo.remove();
                 const divCleanedDetails = mkElt("div", { id: "div-cleaned-details" });
                 advIds.sort().forEach(id => {
-                    console.log("removed ", id);
+                    // console.log("removed ", id);
                     divCleanedDetails.appendChild(mkElt("div", undefined, `Removed ${id}`));
                 });
                 const divExpandingCleanedInfo = mkExpandable(divCleanedDetails);
@@ -119,7 +119,7 @@ function handleInputLink() {
                 // eltCleanedInfo.parentElement.insertBefore(divExpandingCleanedInfo, eltCleanedInfo.nextElementSibling);
                 eltCleanedInfo.appendChild(divExpandingCleanedInfo);
 
-                console.log({ eltCleanedInfo, divExpandingCleanedInfo });
+                // console.log({ eltCleanedInfo, divExpandingCleanedInfo });
                 setTimeout(() => { divExpandingCleanedInfo.classList.add("expanded") }, 10);
             });
     }
@@ -209,11 +209,11 @@ function removeByPattern(strUrl, advIds) {
         console.error(err);
         return "";
     }
-    console.log({ url });
+    // console.log({ url });
     const arrNames = [...url.searchParams].map(p => { return p[0]; });
     arrNames.forEach(n => {
         if (n.startsWith("utm_")) {
-            console.log({ n });
+            // console.log({ n });
             url = removeUrlParam(url, n);
             advIds.push(n);
         }
@@ -286,7 +286,7 @@ function removeTrailIds(strUrl, advIds) {
     })
 
     const sharedParams = modShPar.getOurSharedParams();
-    console.log({ sharedParams });
+    // console.log({ sharedParams });
     if (sharedParams) {
         // const divText = mkElt("div", { id: "text-content" });
         const divText = document.getElementById("output-text");
