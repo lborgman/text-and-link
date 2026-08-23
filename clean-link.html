@@ -517,10 +517,6 @@
             overflow-x: auto;
         }
 
-        #snackbar {
-            border: none;
-            border: solid 0.1px #0003;
-        }
 
         .scroll-for-text-input {
             outline: 1px dotted blue;
@@ -530,87 +526,6 @@
 
 
 
-        /** Icon buttons */
-        :root {
-            --icon-button-size-default: 40px;
-            --icon-size-default: 24px;
-        }
-
-        .icon-button {
-            --btn-size: var(--icon-button-size-default);
-            --icon-size: var(--icon-size-default);
-
-            --touch-target-size: max(48px, var(--btn-size));
-
-            position: relative;
-            width: var(--btn-size);
-            height: var(--btn-size);
-            border-radius: 50%;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border: none;
-            cursor: pointer;
-            padding: 0;
-            outline: none;
-            overflow: visible;
-        }
-
-        @media (pointer: coarse) {
-            .icon-button::after {
-                content: '';
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                width: var(--touch-target-size);
-                height: var(--touch-target-size);
-                transform: translate(-50%, -50%);
-                border-radius: 50%;
-                outline: 1px dotted red;
-            }
-        }
-
-        /* --- 3. THE SIZE MODIFIER CLASSES (Just override variables!) --- */
-        .icon-button.md-xs {
-            --btn-size: 32px;
-            --icon-size: 18px;
-        }
-
-        /* .md-s matches the :root defaults, no extra code needed unless you want it explicit */
-        .icon-button.md-s {
-            --btn-size: 40px;
-            --icon-size: 24px;
-        }
-
-        .icon-button.md-m {
-            --btn-size: 56px;
-            --icon-size: 28px;
-        }
-
-        .icon-button.md-l {
-            --btn-size: 96px;
-            --icon-size: 48px;
-        }
-
-        .icon-button.md-xl {
-            --btn-size: 136px;
-            --icon-size: 64px;
-        }
-
-
-        /* @media (pointer: fine) { */
-        .icon-button:hover {
-            background-color: rgba(73, 69, 79, 0.08);
-            background-color: green;
-        }
-*/
-
-        .icon-button svg {
-            width: var(--icon-size);
-            height: var(--icon-size);
-            fill: currentColor;
-            pointer-events: none;
-        }
 
     </style>
     <style id="4basic">
