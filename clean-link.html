@@ -21,12 +21,16 @@
     <link rel="manifest" href="./manifest.json">
 
     <script src="clean-link.js" type="module"></script>
+    <script>
+        document.documentElement.style.opacity = '0';
+        document.documentElement.style.transition = "opacity 0.7s ease";
+    </script>
 
 
     <!-- <script src="https://lborgman.github.io/speech-kb/js/mod/basic-ui.js" type="module"></script> -->
     <!-- Asynchronous non-blocking CSS load -->
     <!-- <link href="https://lborgman.github.io/speech-kb/js/mod/basic-ui.css" rel="stylesheet" media="print" -->
-        <!-- onload="this.media='all'" /> -->
+    <!-- onload="this.media='all'" /> -->
 
     <script src="https://lborgman.github.io/basic-ui/js/basic-ui.js" type="module"></script>
     <!-- Asynchronous non-blocking CSS load -->
@@ -34,9 +38,6 @@
         onload="this.media='all'" />
 
     <style>
-
-
-
         .expandable-wrapper {
             display: grid;
             grid-template-rows: 0fr;
@@ -249,15 +250,11 @@
 
             --snackbar-entry-duration: 4s;
             --snackbar-entry-duration: 0.5s;
-
-            /* --ripple-duration: 6000ms; */
-            /* --snackbar-hidden-bg: red; */
-            /* --snackbar-visible-bg: yellow; */
         }
 
 
 
-        /* ////////////////// Below is suggestions from full Gemini and ChatGPT.  */
+        /************ Below are suggestions from full Gemini and ChatGPT.  */
 
 
         #popover:popover-open {
@@ -276,18 +273,9 @@
             transition-behavior: allow-discrete;
         }
 
-        /* 5. Entry Starting Frame State */
-
-        button {
-            position: relative;
-            overflow: hidden;
-        }
-
 
 
         button {
-            position: relative;
-            overflow: hidden;
             padding: 0.7rem 1rem;
             /* font-family: 'Roboto', sans-serif; */
             font-size: 1rem;
@@ -296,6 +284,9 @@
             border-radius: 0.25rem;
             box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3);
             cursor: pointer;
+            /* For ripple: */
+            position: relative;
+            overflow: hidden;
         }
 
 
@@ -371,9 +362,9 @@
 
 
 
-        /* ==========================================================================
-   Links & Typography
-   ========================================================================== */
+        /**************************/
+        /* Links & Typography */
+        /**************************/
 
         /* Links use Primary color with clear focus/hover feedback */
         a {
@@ -404,9 +395,10 @@
             border-radius: 3px;
         }
 
-        /* ==========================================================================
-   Native <dialog> & Backdrops
-   ========================================================================== */
+
+        /*******************************/
+        /* Native <dialog> & Backdrops */
+        /*******************************/
 
         dialog {
             background-color: var(--surface);
@@ -429,9 +421,10 @@
             backdrop-filter: blur(2px);
         }
 
-        /* ==========================================================================
-   Form Controls (<input>, <select>, <textarea>)
-   ========================================================================== */
+
+        /*************************************************/
+        /* Form Controls (<input>, <select>, <textarea>) */
+        /*************************************************/
 
         input[type="text"],
         input[type="email"],
@@ -462,9 +455,10 @@
             accent-color: var(--primary);
         }
 
-        /* ==========================================================================
-   Buttons (<button>)
-   ========================================================================== */
+
+        /**********************/
+        /* Buttons (<button>) */
+        /**********************/
 
         /* Filled Primary Button */
         button,
@@ -491,9 +485,10 @@
             border: 1px solid var(--outline);
         }
 
-        /* ==========================================================================
-   Other Common Native Elements
-   ========================================================================== */
+
+        /********************************/
+        /* Other Common Native Elements */
+        /********************************/
 
         /* Structural Dividers */
         hr {
@@ -521,12 +516,6 @@
         .scroll-for-text-input {
             outline: 1px dotted blue;
         }
-
-
-
-
-
-
     </style>
     <style id="4basic">
         .label-selection-row {
@@ -534,6 +523,7 @@
             align-items: center;
             gap: 12px;
         }
+
         input[type=color] {
             background: transparent;
             width: 40px;

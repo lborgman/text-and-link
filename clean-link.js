@@ -46,6 +46,7 @@ let currentTheme = retrieveTheme();
 applyCurrentTheme();
 function applyCurrentTheme() {
     modBasicUI.applyMaterialTheme(currentTheme.color, currentTheme.dark);
+    document.documentElement.style.opacity = '1';
 }
 
 // console.log({ modBasicUI });
