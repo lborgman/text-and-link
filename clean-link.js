@@ -9,43 +9,46 @@ navigator.serviceWorker.register('./sw.js');
 
 export { };
 
-const modBasicUI = await import("https://lborgman.github.io/basic-ui/js/basic-ui.js");
+// const modBasicUI = await import("https://lborgman.github.io/basic-ui/js/basic-ui.js");
+const modBasicUI = await import("basic-ui");
 
-const storagePrefix = "clean-link";
-const keyTheme = `${storagePrefix}-theme`;
+// const storagePrefix = "clean-link";
+// const keyColorTheme = `${storagePrefix}-theme`;
 
 /**
  * @typedef {Object} ColorTheme
  * @property {string} color - CSS color
  * @property {boolean} dark
+ * @property {string} variant
  */
 
 function saveTheme() {
     const strJson = JSON.stringify(currentTheme);
-    localStorage.setItem(keyTheme, strJson);
+    localStorage.setItem(globalThis.keyColorTheme, strJson);
 }
 /**
  * @returns {ColorTheme}
  */
-function retrieveTheme() {
-    const strJson = localStorage.getItem(keyTheme);
-    if (strJson == null) {
-        return { color: "red", dark: true }
-    }
-    const objJson = JSON.parse(strJson)
-    return objJson;
+function ourRetrieveTheme() {
+    return retrieveTheme();
 }
 function resetTheme() {
-    localStorage.removeItem(keyTheme);
-    currentTheme = retrieveTheme();
+    localStorage.removeItem(globalThis.keyColorTheme);
+    currentTheme = ourRetrieveTheme();
 }
 
 
 /** @type {ColorTheme} */
-let currentTheme = retrieveTheme();
-applyCurrentTheme();
+let currentTheme = ourRetrieveTheme();
+if (currentTheme) {
+    applyCurrentTheme();
+}
+
 function applyCurrentTheme() {
-    modBasicUI.applyMaterialTheme(currentTheme.color, currentTheme.dark);
+    // modBasicUI.applyMaterialTheme(currentTheme.color, currentTheme.dark);
+    const { color, dark, variant } = currentTheme;
+    const theme = BasicUI_ColorThemes.generateTheme(color, dark, variant);
+    BasicUI_ColorThemes.applyTheme(theme);
     document.documentElement.style.opacity = '1';
 }
 
@@ -1041,10 +1044,38 @@ async function handleDebugClick(evt) {
         gap: 10px;
     `;
 
+    const divVariants = mkElt("div");
+    divVariants.style = `
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 10px;
+    `;
+    divVariants.addEventListener("change", (evt) => {
+        const rad = evt.target;
+        currentTheme.variant = rad.value;
+        applyCurrentTheme();
+    });
+    const mkRad = (nam) => {
+        const rad = mkElt("input", { type: "radio", value: nam, name: "variant" });
+        const lbl = mkElt("label", undefined, [rad, nam]);
+        const currentVariant = currentTheme.variant || "tonalSpot";
+        rad.checked = nam == currentVariant;
+        return lbl
+    }
+    const variants = [
+        'tonalSpot',
+        'vibrant', 'expressive', 'fidelity', 'content', 'fruitSalad', 'rainbow',
+        'monochrome'
+    ];
+    variants.forEach(v => {
+        divVariants.appendChild(mkRad(v));
+    });
 
     const divColors = mkElt("p", undefined, [
         lblColor,
         lblDark,
+        divVariants,
         divButtons
     ]);
     divColors.style = `

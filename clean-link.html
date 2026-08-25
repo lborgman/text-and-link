@@ -20,6 +20,30 @@
     <link rel="icon" type="image/svg+xml" href="./clean-link.svg">
     <link rel="manifest" href="./manifest.json">
 
+    <script src="https://lborgman.github.io/basic-ui/js/basic-ui-color-themes.js"></script>
+    <script>
+        const storagePrefix = "clean-link";
+        const keyColorTheme = `${storagePrefix}-theme`;
+        const savedTheme = retrieveTheme();
+        debugger;
+        const {color, dark, variant} = savedTheme;
+        const colorTheme = globalThis.BasicUI_ColorThemes.generateTheme(color, dark, variant);
+        globalThis.BasicUI_ColorThemes.applyTheme(colorTheme);
+        function retrieveTheme() {
+            const strJson = localStorage.getItem(keyColorTheme);
+            if (strJson == null) {
+                // Default theme:
+                const color = "red";
+                const dark = true;
+                const variant = "monochrome";
+
+                return { color, dark, variant }
+            }
+            const objJson = JSON.parse(strJson)
+            return objJson;
+        }
+    </script>
+
     <script src="clean-link.js" type="module"></script>
     <script>
         document.documentElement.style.opacity = '0';
@@ -32,7 +56,17 @@
     <!-- <link href="https://lborgman.github.io/speech-kb/js/mod/basic-ui.css" rel="stylesheet" media="print" -->
     <!-- onload="this.media='all'" /> -->
 
-    <script src="https://lborgman.github.io/basic-ui/js/basic-ui.js" type="module"></script>
+    <script type="importmap">
+        {
+            "imports": {
+                "basic-ui": "https://lborgman.github.io/basic-ui/js/basic-ui.js"
+            }
+        }
+    </script>
+    <!-- <script src="https://lborgman.github.io/basic-ui/js/basic-ui.js" type="module"></script> -->
+    <!-- <script src="basic-ui" type="module"></script> -->
+    <script type="module"> import "basic-ui"; </script>
+
     <!-- Asynchronous non-blocking CSS load -->
     <link href="https://lborgman.github.io/basic-ui/css/basic-ui.css" rel="stylesheet" media="print"
         onload="this.media='all'" />
