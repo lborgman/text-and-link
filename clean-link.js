@@ -47,7 +47,9 @@ if (currentTheme) {
 function applyCurrentTheme() {
     // modBasicUI.applyMaterialTheme(currentTheme.color, currentTheme.dark);
     const { color, dark, variant } = currentTheme;
+    // @ts-ignore
     const theme = BasicUI_ColorThemes.generateTheme(color, dark, variant);
+    // @ts-ignore
     BasicUI_ColorThemes.applyTheme(theme);
     document.documentElement.style.opacity = '1';
 }
@@ -987,15 +989,15 @@ function isAndroid() {
 
 // const btnDebug = mkElt("button", undefined, "Debug");
 // const btnDebug = modBasicUI.mkIconButton("info.svg", "Settings");
-const btnDebug = mkIconButton("./info.svg", "Settings");
-btnDebug.id = "btn-settings";
-btnDebug.classList.add("md-xs");
+const btnSettings = mkIconButton("./info.svg", "Settings");
+btnSettings.id = "btn-settings";
+btnSettings.classList.add("md-xs");
 
-document.body.appendChild(btnDebug);
-btnDebug.addEventListener("click", handleDebugClick);
-async function handleDebugClick(evt) {
+document.body.appendChild(btnSettings);
+btnSettings.addEventListener("click", handleSettingsClick);
+async function handleSettingsClick(evt) {
     evt.stopPropagation();
-    console.log("handleDebugClick");
+    console.log("handleSettingsClick");
 
     const inpColor = mkElt("input", { type: "text", placeholder: "CSS color" });
     inpColor.value = currentTheme.color;
@@ -1010,12 +1012,17 @@ async function handleDebugClick(evt) {
 
     inpColor.addEventListener("input", () => {
         const hex = modBasicUI.colorNameToHex(inpColor.value.trim());
-        console.log({ hex });
+        // console.log({ hex });
         if (hex) {
+            inpColor.setCustomValidity("");
             colorPicker.value = hex;
             currentTheme.color = inpColor.value;
             applyCurrentTheme();
+        } else {
+            inpColor.setCustomValidity("Invalid color");
         }
+        inpColor.reportValidity();
+        checkCanSave();
     });
     colorPicker.addEventListener("input", () => {
         inpColor.value = colorPicker.value;
@@ -1024,7 +1031,7 @@ async function handleDebugClick(evt) {
     });
 
     const chkDark = mkElt("input", { type: "checkbox" });
-    chkDark.checked = currentTheme.dark;
+    // chkDark.checked = currentTheme.dark;
     chkDark.addEventListener("change", () => {
         currentTheme.dark = chkDark.checked;
         applyCurrentTheme();
@@ -1033,11 +1040,11 @@ async function handleDebugClick(evt) {
         chkDark,
         "Dark",
     ]);
-    const btnSetColor = mkElt("button", undefined, "Set");
-    const btnResetColor = mkElt("button", undefined, "Reset");
+    const btnSaveColorTheme = mkElt("button", undefined, "Save");
+    const btnResetColorTheme = mkElt("button", undefined, "Reset");
     const divButtons = mkElt("div", undefined, [
-        btnSetColor,
-        btnResetColor
+        btnSaveColorTheme,
+        btnResetColorTheme
     ]);
     divButtons.style = `
         display: flex;
@@ -1059,8 +1066,8 @@ async function handleDebugClick(evt) {
     const mkRad = (nam) => {
         const rad = mkElt("input", { type: "radio", value: nam, name: "variant" });
         const lbl = mkElt("label", undefined, [rad, nam]);
-        const currentVariant = currentTheme.variant || "tonalSpot";
-        rad.checked = nam == currentVariant;
+        // const currentVariant = currentTheme.variant || "tonalSpot";
+        // rad.checked = nam == currentVariant;
         return lbl
     }
     const variants = [
@@ -1094,18 +1101,23 @@ async function handleDebugClick(evt) {
         // divSnackbar
     ]);
 
-    btnSetColor.addEventListener("click", evt => {
+    btnSaveColorTheme.addEventListener("click", evt => {
         evt.stopPropagation();
         saveTheme();
     });
-    btnResetColor.addEventListener("click", evt => {
+    btnResetColorTheme.addEventListener("click", evt => {
         evt.stopPropagation();
         resetTheme();
-        inpColor.value = currentTheme.color;
-        // colorPicker.value = currentTheme.color;
-        colorPicker.value = modBasicUI.colorNameToHex(currentTheme.color);
+        fillInTheme(currentTheme);
         applyCurrentTheme();
     });
+    function fillInTheme(theme) {
+        const { color, dark, variant } = theme;
+        inpColor.value = color;
+        colorPicker.value = modBasicUI.colorNameToHex(color);
+        chkDark.checked = dark;
+        divVariants.querySelector(`input[value=${variant}]`).checked = true
+    }
 
     // debugger;
     btnSnackbar.addEventListener("click", evt => {
@@ -1119,6 +1131,21 @@ async function handleDebugClick(evt) {
     });
 
     // debugger;
+    fillInTheme(currentTheme);
+    // btnSaveColorTheme
+    const jsonOldTheme = JSON.stringify(currentTheme);
+    function checkCanSave() {
+        const somethingToSave =
+            inpColor.validity.valid
+            &&
+            jsonOldTheme != JSON.stringify(currentTheme);
+        console.log({ somethingToSave });
+        btnSaveColorTheme.disabled = !somethingToSave;
+    }
+    bdy.addEventListener("change", evt => {
+        checkCanSave();
+    });
+    checkCanSave();
     modBasicUI.showDialog(bdy);
 }
 

@@ -23,19 +23,18 @@
     <script src="https://lborgman.github.io/basic-ui/js/basic-ui-color-themes.js"></script>
     <script>
         const storagePrefix = "clean-link";
-        const keyColorTheme = `${storagePrefix}-theme`;
+        globalThis.keyColorTheme = `${storagePrefix}-theme`;
         const savedTheme = retrieveTheme();
-        debugger;
-        const {color, dark, variant} = savedTheme;
+        const { color, dark, variant } = savedTheme;
         const colorTheme = globalThis.BasicUI_ColorThemes.generateTheme(color, dark, variant);
         globalThis.BasicUI_ColorThemes.applyTheme(colorTheme);
         function retrieveTheme() {
             const strJson = localStorage.getItem(keyColorTheme);
             if (strJson == null) {
                 // Default theme:
-                const color = "red";
+                const color = "green";
                 const dark = true;
-                const variant = "monochrome";
+                const variant = "content";
 
                 return { color, dark, variant }
             }
@@ -562,6 +561,26 @@
             background: transparent;
             width: 40px;
             height: 40px;
+        }
+
+        input[type=text]:invalid {
+            border-color: red;
+            outline: 1px solid red;
+            box-shadow: none;
+        }
+
+        /* Target all disabled form elements */
+        :disabled {
+            background-color: #f3f4f6;
+            /* Light gray background */
+            color: #9ca3af;
+            /* Muted text color */
+            border-color: #e5e7eb;
+            /* Soft border */
+            cursor: not-allowed;
+            /* Changes mouse cursor to a slash/circle */
+            opacity: 0.6;
+            /* Gives a faded visual cue */
         }
     </style>
     <div id="moved" style="display:none">
