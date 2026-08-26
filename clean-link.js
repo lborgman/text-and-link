@@ -1029,6 +1029,10 @@ async function handleSettingsClick(evt) {
         }
         applyTheme(dlgTheme);
     }
+
+
+    // Not the order here!!
+    syncInpTextAndColorPicker(inpColor, colorPicker);
     inpColor.addEventListener("input", () => {
         checkCanSaveNewTheme();
     });
@@ -1036,62 +1040,7 @@ async function handleSettingsClick(evt) {
         applyNewTheme();
         checkCanSaveNewTheme();
     });
-    syncInpTextAndColorPicker(inpColor, colorPicker);
-    /**
-     * Sync user input for an <input type=text> and an <input type=color>
-     *
-     * Note:
-     *   For your input handling put an "input"
-     *   event handler only on inpTypeColor:
-     *      myInputTypeColor.addEventListener("input", () => {
-     *          applyCurrentTheme();
-     *          checkCanSave();
-     *      });
-     *
-     * @param {HTMLInputElement} inpTypeText
-     * @param {HTMLInputElement} inpTypeColor
-     */
-    function syncInpTextAndColorPicker(inpTypeText, inpTypeColor) {
-        if (inpTypeText.tagName != "INPUT") {
-            debugger;
-            throw Error("Not <input>");
-        }
-        if (inpTypeColor.tagName != "INPUT") {
-            debugger;
-            throw Error("Not <input>");
-        }
-        if (inpTypeText.type != "text") {
-            debugger;
-            throw Error("Not <input type=text>");
-        }
-        if (inpTypeColor.type != "color") {
-            debugger;
-            throw Error("Not <input type=color>");
-        }
-        inpTypeText.addEventListener("input", () => {
-            const hex = modBasicUI.colorNameToHex(inpTypeText.value.trim());
-            // console.log({ hex });
-            if (hex) {
-                inpTypeText.setCustomValidity("");
-                if (document.activeElement == inpTypeText) {
-                    inpTypeColor.value = hex;
-                    inpTypeColor.dispatchEvent(new Event('input', { bubbles: true }));
-                }
-                currentTheme.color = inpTypeText.value;
-            } else {
-                inpTypeText.setCustomValidity("Invalid color");
-            }
-            inpTypeText.reportValidity();
-            // checkCanSave();
-        });
-        inpTypeColor.addEventListener("input", () => {
-            if (document.activeElement == inpTypeColor) {
-                inpTypeText.value = inpTypeColor.value;
-                inpTypeText.dispatchEvent(new Event('input', { bubbles: true }));
-            }
-            currentTheme.color = inpTypeText.value;
-        });
-    }
+
 
     const chkDark = mkElt("input", { type: "checkbox" });
     // chkDark.checked = currentTheme.dark;
@@ -1200,6 +1149,7 @@ async function handleSettingsClick(evt) {
     const jsonOldTheme = JSON.stringify(currentTheme);
     function checkCanSaveNewTheme() {
         const hasNewTheme = jsonOldTheme != JSON.stringify(currentTheme);
+        // const somethingToSave = inpColor.validity.valid && hasNewTheme;
         const somethingToSave = inpColor.validity.valid && hasNewTheme;
         // console.log({ somethingToSave });
         btnSaveColorTheme.disabled = !somethingToSave;
@@ -1246,4 +1196,61 @@ function mkIconButton(icon, title) {
     btn.classList.add("icon-button");
     btn.title = title;
     return btn;
+}
+
+/**
+ * Sync user input for an <input type=text> and an <input type=color>
+ *
+ * Note:
+ *   For your input handling put an "input"
+ *   event handler only on inpTypeColor:
+ *      myInputTypeColor.addEventListener("input", () => {
+ *          applyCurrentTheme();
+ *          checkCanSaveNewTheme();
+ *      });
+ *
+ * @param {HTMLInputElement} inpTypeText
+ * @param {HTMLInputElement} inpTypeColor
+ */
+function syncInpTextAndColorPicker(inpTypeText, inpTypeColor) {
+    if (inpTypeText.tagName != "INPUT") {
+        debugger;
+        throw Error("Not <input>");
+    }
+    if (inpTypeColor.tagName != "INPUT") {
+        debugger;
+        throw Error("Not <input>");
+    }
+    if (inpTypeText.type != "text") {
+        debugger;
+        throw Error("Not <input type=text>");
+    }
+    if (inpTypeColor.type != "color") {
+        debugger;
+        throw Error("Not <input type=color>");
+    }
+    inpTypeText.addEventListener("input", () => {
+        const hex = modBasicUI.colorNameToHex(inpTypeText.value.trim());
+        // console.log({ hex });
+        if (hex) {
+            inpTypeText.setCustomValidity("");
+            if (document.activeElement == inpTypeText) {
+                inpTypeColor.value = hex;
+                inpTypeColor.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            currentTheme.color = inpTypeText.value;
+        } else {
+            inpTypeText.setCustomValidity("Invalid color");
+        }
+        inpTypeText.reportValidity();
+        // // Set in a separate input event that runs after this event:
+        // checkCanSaveNewTheme();
+    });
+    inpTypeColor.addEventListener("input", () => {
+        if (document.activeElement == inpTypeColor) {
+            inpTypeText.value = inpTypeColor.value;
+            inpTypeText.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        currentTheme.color = inpTypeText.value;
+    });
 }
