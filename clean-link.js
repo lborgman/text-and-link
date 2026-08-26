@@ -29,28 +29,36 @@ function saveTheme() {
 /**
  * @returns {ColorTheme}
  */
-function ourRetrieveTheme() {
-    return retrieveTheme();
+function retrieveTheme() {
+    return globalThis.retrieveTheme();
 }
 function resetTheme() {
     localStorage.removeItem(globalThis.keyColorTheme);
-    currentTheme = ourRetrieveTheme();
+    currentTheme = retrieveTheme();
 }
 
 
 /** @type {ColorTheme} */
-let currentTheme = ourRetrieveTheme();
-if (currentTheme) {
-    applyCurrentTheme();
+let currentTheme;
+{
+    /** @type {ColorTheme} */
+    const storedTheme = retrieveTheme();
+    if (storedTheme) {
+        applyTheme(storedTheme);
+    }
 }
 
-function applyCurrentTheme() {
-    // modBasicUI.applyMaterialTheme(currentTheme.color, currentTheme.dark);
-    const { color, dark, variant } = currentTheme;
+/**
+ * @param {ColorTheme} theme 
+ */
+function applyTheme(theme) {
+    if (!theme) { console.error("no theme"); debugger; }
+    const { color, dark, variant } = theme;
+    currentTheme = theme;
     // @ts-ignore
-    const theme = BasicUI_ColorThemes.generateTheme(color, dark, variant);
+    const themePalette = BasicUI_ColorThemes.generateTheme(color, dark, variant);
     // @ts-ignore
-    BasicUI_ColorThemes.applyTheme(theme);
+    BasicUI_ColorThemes.applyTheme(themePalette);
     document.documentElement.style.opacity = '1';
 }
 
@@ -470,6 +478,7 @@ async function showWikipediaAsDialog(pageTitle) {
         theme: {
             color,
             dark: currentTheme.dark,
+            variant: currentTheme.variant
         }
     });
     // debugger;
@@ -1010,17 +1019,37 @@ async function handleSettingsClick(evt) {
         "Color", eltColor
     ]);
 
-
+    function applyNewTheme() {
+        /** @type {ColorTheme} */
+        const dlgTheme = {
+            // color: colorPicker.value,
+            color: inpColor.value,
+            dark: chkDark.checked,
+            variant: divVariants.querySelector(`input:checked`).value
+        }
+        applyTheme(dlgTheme);
+    }
+    inpColor.addEventListener("input", () => {
+        checkCanSaveNewTheme();
+    });
     colorPicker.addEventListener("input", () => {
-        applyCurrentTheme();
-        checkCanSave();
+        applyNewTheme();
+        checkCanSaveNewTheme();
     });
     syncInpTextAndColorPicker(inpColor, colorPicker);
     /**
      * Sync user input for an <input type=text> and an <input type=color>
      *
-     * @param {HTMLInputElement} inpTypeText 
-     * @param {HTMLInputElement} inpTypeColor 
+     * Note:
+     *   For your input handling put an "input"
+     *   event handler only on inpTypeColor:
+     *      myInputTypeColor.addEventListener("input", () => {
+     *          applyCurrentTheme();
+     *          checkCanSave();
+     *      });
+     *
+     * @param {HTMLInputElement} inpTypeText
+     * @param {HTMLInputElement} inpTypeColor
      */
     function syncInpTextAndColorPicker(inpTypeText, inpTypeColor) {
         if (inpTypeText.tagName != "INPUT") {
@@ -1049,7 +1078,6 @@ async function handleSettingsClick(evt) {
                     inpTypeColor.dispatchEvent(new Event('input', { bubbles: true }));
                 }
                 currentTheme.color = inpTypeText.value;
-                // applyCurrentTheme();
             } else {
                 inpTypeText.setCustomValidity("Invalid color");
             }
@@ -1062,8 +1090,6 @@ async function handleSettingsClick(evt) {
                 inpTypeText.dispatchEvent(new Event('input', { bubbles: true }));
             }
             currentTheme.color = inpTypeText.value;
-            // applyCurrentTheme();
-            // checkCanSave();
         });
     }
 
@@ -1071,7 +1097,7 @@ async function handleSettingsClick(evt) {
     // chkDark.checked = currentTheme.dark;
     chkDark.addEventListener("change", () => {
         currentTheme.dark = chkDark.checked;
-        applyCurrentTheme();
+        applyNewTheme();
     });
     const lblDark = mkElt("label", { class: "label-selection-row" }, [
         chkDark,
@@ -1098,7 +1124,7 @@ async function handleSettingsClick(evt) {
     divVariants.addEventListener("change", (evt) => {
         const rad = evt.target;
         currentTheme.variant = rad.value;
-        applyCurrentTheme();
+        applyNewTheme();
     });
     const mkRad = (nam) => {
         const rad = mkElt("input", { type: "radio", value: nam, name: "variant" });
@@ -1141,12 +1167,13 @@ async function handleSettingsClick(evt) {
     btnSaveColorTheme.addEventListener("click", evt => {
         evt.stopPropagation();
         saveTheme();
+        btnSaveColorTheme.disabled = true;
     });
     btnResetColorTheme.addEventListener("click", evt => {
         evt.stopPropagation();
         resetTheme();
         fillInTheme(currentTheme);
-        applyCurrentTheme();
+        applyNewTheme(); // FIX-ME: ?
     });
     function fillInTheme(theme) {
         const { color, dark, variant } = theme;
@@ -1171,18 +1198,16 @@ async function handleSettingsClick(evt) {
     fillInTheme(currentTheme);
     // btnSaveColorTheme
     const jsonOldTheme = JSON.stringify(currentTheme);
-    function checkCanSave() {
-        const somethingToSave =
-            inpColor.validity.valid
-            &&
-            jsonOldTheme != JSON.stringify(currentTheme);
+    function checkCanSaveNewTheme() {
+        const hasNewTheme = jsonOldTheme != JSON.stringify(currentTheme);
+        const somethingToSave = inpColor.validity.valid && hasNewTheme;
         // console.log({ somethingToSave });
         btnSaveColorTheme.disabled = !somethingToSave;
     }
     bdy.addEventListener("change", evt => {
-        checkCanSave();
+        checkCanSaveNewTheme();
     });
-    checkCanSave();
+    checkCanSaveNewTheme();
     modBasicUI.showDialog(bdy);
 }
 
