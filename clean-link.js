@@ -1008,157 +1008,7 @@ async function handleSettingsClick(evt) {
     evt.stopPropagation();
     console.log("handleSettingsClick");
 
-    const inpColor = mkElt("input", { type: "text", placeholder: "CSS color" });
-    inpColor.value = currentTheme.color;
-    inpColor.style.width = "calc(7ch + 30px)";
-    const colorPicker = mkElt("input", { type: "color" });
-    colorPicker.value = currentTheme.color;
-    const eltColor = mkElt("span", undefined, [inpColor, colorPicker]);
-    eltColor.style.display = "inline-flex";
-    const lblColor = mkElt("label", { class: "label-selection-row" }, [
-        "Color", eltColor
-    ]);
-
-    function applyNewTheme() {
-        /** @type {ColorTheme} */
-        const dlgTheme = {
-            // color: colorPicker.value,
-            color: inpColor.value,
-            dark: chkDark.checked,
-            variant: divVariants.querySelector(`input:checked`).value
-        }
-        applyTheme(dlgTheme);
-    }
-
-
-    // Not the order here!!
-    syncInpTextAndColorPicker(inpColor, colorPicker);
-    inpColor.addEventListener("input", () => {
-        checkCanSaveNewTheme();
-    });
-    colorPicker.addEventListener("input", () => {
-        applyNewTheme();
-        checkCanSaveNewTheme();
-    });
-
-
-    const chkDark = mkElt("input", { type: "checkbox" });
-    // chkDark.checked = currentTheme.dark;
-    chkDark.addEventListener("change", () => {
-        currentTheme.dark = chkDark.checked;
-        applyNewTheme();
-    });
-    const lblDark = mkElt("label", { class: "label-selection-row" }, [
-        chkDark,
-        "Dark",
-    ]);
-    const btnSaveColorTheme = mkElt("button", undefined, "Save");
-    const btnResetColorTheme = mkElt("button", undefined, "Reset");
-    const divButtons = mkElt("div", undefined, [
-        btnSaveColorTheme,
-        btnResetColorTheme
-    ]);
-    divButtons.style = `
-        display: flex;
-        gap: 10px;
-    `;
-
-    const divVariants = mkElt("div");
-    divVariants.style = `
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-        gap: 10px;
-    `;
-    divVariants.addEventListener("change", (evt) => {
-        const rad = evt.target;
-        currentTheme.variant = rad.value;
-        applyNewTheme();
-    });
-    const mkRad = (nam) => {
-        const rad = mkElt("input", { type: "radio", value: nam, name: "variant" });
-        const lbl = mkElt("label", undefined, [rad, nam]);
-        // const currentVariant = currentTheme.variant || "tonalSpot";
-        // rad.checked = nam == currentVariant;
-        return lbl
-    }
-    const variants = [
-        'tonalSpot',
-        'vibrant', 'expressive', 'fidelity', 'content', 'fruitSalad', 'rainbow',
-        'monochrome'
-    ];
-    variants.forEach(v => {
-        divVariants.appendChild(mkRad(v));
-    });
-
-    const divColors = mkElt("p", undefined, [
-        lblColor,
-        lblDark,
-        divVariants,
-        divButtons
-    ]);
-    divColors.style = `
-        display: flex;
-        flex-direction: column;
-        gap: 10px;
-    `;
-
-    const btnSnackbar = mkElt("button", undefined, "Snackbar");
-    const divSnackbar = mkElt("p", undefined, [
-        btnSnackbar,
-    ]);
-    const bdy = mkElt("div", undefined, [
-        mkElt("h2", undefined, "Color Theme"),
-        divColors,
-        // divSnackbar
-    ]);
-
-    btnSaveColorTheme.addEventListener("click", evt => {
-        evt.stopPropagation();
-        saveTheme();
-        btnSaveColorTheme.disabled = true;
-    });
-    btnResetColorTheme.addEventListener("click", evt => {
-        evt.stopPropagation();
-        resetTheme();
-        fillInTheme(currentTheme);
-        applyNewTheme(); // FIX-ME: ?
-    });
-    function fillInTheme(theme) {
-        const { color, dark, variant } = theme;
-        inpColor.value = color;
-        colorPicker.value = modBasicUI.colorNameToHex(color);
-        chkDark.checked = dark;
-        divVariants.querySelector(`input[value=${variant}]`).checked = true
-    }
-
-    // debugger;
-    btnSnackbar.addEventListener("click", evt => {
-        evt.stopPropagation();
-        let str = `
-    isAndroid=="${isAndroid()}"
-    getSearchParamNames()=="${getSearchParamNames().join(',')}"
-    isDisplayModePWA()=="${isDisplayModePWA()}"
-    `;
-        showSnackbar(str, 20 * 1000);
-    });
-
-    // debugger;
-    fillInTheme(currentTheme);
-    // btnSaveColorTheme
-    const jsonOldTheme = JSON.stringify(currentTheme);
-    function checkCanSaveNewTheme() {
-        const hasNewTheme = jsonOldTheme != JSON.stringify(currentTheme);
-        // const somethingToSave = inpColor.validity.valid && hasNewTheme;
-        const somethingToSave = inpColor.validity.valid && hasNewTheme;
-        // console.log({ somethingToSave });
-        btnSaveColorTheme.disabled = !somethingToSave;
-    }
-    bdy.addEventListener("change", evt => {
-        checkCanSaveNewTheme();
-    });
-    checkCanSaveNewTheme();
-    modBasicUI.showDialog(bdy);
+    dialogColorTheme();
 }
 
 function getSearchParamNames() {
@@ -1201,13 +1051,11 @@ function mkIconButton(icon, title) {
 /**
  * Sync user input for an <input type=text> and an <input type=color>
  *
- * Note:
- *   For your input handling put an "input"
- *   event handler only on inpTypeColor:
- *      myInputTypeColor.addEventListener("input", () => {
- *          applyCurrentTheme();
- *          checkCanSaveNewTheme();
- *      });
+ * @Example
+ *  // Note the order here. This function must be called first.
+ *  syncInpTextAndColorPicker(inpColor, colorPicker);
+ *  inpColor.addEventListener("input", () => { checkCanSaveNewTheme(); });
+ *  colorPicker.addEventListener("input", () => { applyNewTheme(); });
  *
  * @param {HTMLInputElement} inpTypeText
  * @param {HTMLInputElement} inpTypeColor
@@ -1253,4 +1101,145 @@ function syncInpTextAndColorPicker(inpTypeText, inpTypeColor) {
         }
         currentTheme.color = inpTypeText.value;
     });
+}
+
+function dialogColorTheme() {
+    const inpColor = mkElt("input", { type: "text", placeholder: "CSS color" });
+    inpColor.value = currentTheme.color;
+    inpColor.style.width = "calc(7ch + 30px)";
+    const colorPicker = mkElt("input", { type: "color" });
+    colorPicker.value = currentTheme.color;
+    const eltColor = mkElt("span", undefined, [inpColor, colorPicker]);
+    eltColor.style.display = "inline-flex";
+    const lblColor = mkElt("label", { class: "label-selection-row" }, [
+        "Color", eltColor
+    ]);
+
+    function applyDialogTheme() {
+        /** @type {ColorTheme} */
+        const dlgTheme = {
+            color: inpColor.value,
+            dark: chkDark.checked,
+            variant: divVariants.querySelector(`input:checked`).value
+        }
+        applyTheme(dlgTheme);
+    }
+
+
+    syncInpTextAndColorPicker(inpColor, colorPicker);
+    inpColor.addEventListener("input", () => { checkCanSaveNewTheme(); });
+    colorPicker.addEventListener("input", () => { applyDialogTheme(); });
+
+
+    const chkDark = mkElt("input", { type: "checkbox" });
+    chkDark.addEventListener("change", () => {
+        currentTheme.dark = chkDark.checked;
+        applyDialogTheme();
+    });
+    const lblDark = mkElt("label", { class: "label-selection-row" }, [
+        chkDark,
+        "Dark",
+    ]);
+    const btnSaveColorTheme = mkElt("button", undefined, "Save");
+    const btnResetColorTheme = mkElt("button", undefined, "Reset");
+    const divButtons = mkElt("div", undefined, [
+        btnSaveColorTheme,
+        btnResetColorTheme
+    ]);
+    divButtons.style = `
+        display: flex;
+        gap: 10px;
+    `;
+
+    const divVariants = mkElt("div");
+    divVariants.style = `
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 10px;
+    `;
+    divVariants.addEventListener("change", (evt) => {
+        const rad = evt.target;
+        currentTheme.variant = rad.value;
+        applyDialogTheme();
+    });
+    const mkRad = (nam) => {
+        const rad = mkElt("input", { type: "radio", value: nam, name: "variant" });
+        const lbl = mkElt("label", undefined, [rad, nam]);
+        // const currentVariant = currentTheme.variant || "tonalSpot";
+        // rad.checked = nam == currentVariant;
+        return lbl
+    }
+    const variants = [
+        'tonalSpot',
+        'vibrant', 'expressive', 'fidelity', 'content', 'fruitSalad', 'rainbow',
+        'monochrome'
+    ];
+    variants.forEach(v => {
+        divVariants.appendChild(mkRad(v));
+    });
+
+    const divColors = mkElt("p", undefined, [
+        lblColor,
+        lblDark,
+        divVariants,
+        divButtons
+    ]);
+    divColors.style = `
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    `;
+
+    const bdy = mkElt("div", undefined, [
+        mkElt("h2", undefined, "Color Theme"),
+        divColors,
+        // divSnackbar
+    ]);
+
+    btnSaveColorTheme.addEventListener("click", evt => {
+        evt.stopPropagation();
+        saveTheme();
+        btnSaveColorTheme.disabled = true;
+    });
+    btnResetColorTheme.addEventListener("click", evt => {
+        evt.stopPropagation();
+        resetTheme();
+        fillInTheme(currentTheme);
+        applyDialogTheme(); // FIX-ME: ?
+    });
+    function fillInTheme(theme) {
+        const { color, dark, variant } = theme;
+        inpColor.value = color;
+        colorPicker.value = modBasicUI.colorNameToHex(color);
+        chkDark.checked = dark;
+        divVariants.querySelector(`input[value=${variant}]`).checked = true
+    }
+
+    {
+        // For debugging:
+        const btnSnackbar = mkElt("button", undefined, "Snackbar");
+        btnSnackbar.addEventListener("click", evt => {
+            evt.stopPropagation();
+            let str = `
+                isAndroid=="${isAndroid()}"
+                getSearchParamNames()=="${getSearchParamNames().join(',')}"
+                isDisplayModePWA()=="${isDisplayModePWA()}"
+                `;
+            showSnackbar(str, 20 * 1000);
+        });
+    }
+
+    fillInTheme(currentTheme);
+    const jsonOldTheme = JSON.stringify(currentTheme);
+    function checkCanSaveNewTheme() {
+        const hasNewTheme = jsonOldTheme != JSON.stringify(currentTheme);
+        const somethingToSave = inpColor.validity.valid && hasNewTheme;
+        btnSaveColorTheme.disabled = !somethingToSave;
+    }
+    bdy.addEventListener("change", evt => {
+        checkCanSaveNewTheme();
+    });
+    checkCanSaveNewTheme();
+    modBasicUI.showDialog(bdy);
 }
