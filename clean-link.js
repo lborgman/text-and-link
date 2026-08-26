@@ -1010,25 +1010,62 @@ async function handleSettingsClick(evt) {
         "Color", eltColor
     ]);
 
-    inpColor.addEventListener("input", () => {
-        const hex = modBasicUI.colorNameToHex(inpColor.value.trim());
-        // console.log({ hex });
-        if (hex) {
-            inpColor.setCustomValidity("");
-            colorPicker.value = hex;
-            currentTheme.color = inpColor.value;
-            applyCurrentTheme();
-        } else {
-            inpColor.setCustomValidity("Invalid color");
-        }
-        inpColor.reportValidity();
+
+    colorPicker.addEventListener("input", () => {
+        applyCurrentTheme();
         checkCanSave();
     });
-    colorPicker.addEventListener("input", () => {
-        inpColor.value = colorPicker.value;
-        currentTheme.color = inpColor.value;
-        applyCurrentTheme();
-    });
+    syncInpTextAndColorPicker(inpColor, colorPicker);
+    /**
+     * Sync user input for an <input type=text> and an <input type=color>
+     *
+     * @param {HTMLInputElement} inpTypeText 
+     * @param {HTMLInputElement} inpTypeColor 
+     */
+    function syncInpTextAndColorPicker(inpTypeText, inpTypeColor) {
+        if (inpTypeText.tagName != "INPUT") {
+            debugger;
+            throw Error("Not <input>");
+        }
+        if (inpTypeColor.tagName != "INPUT") {
+            debugger;
+            throw Error("Not <input>");
+        }
+        if (inpTypeText.type != "text") {
+            debugger;
+            throw Error("Not <input type=text>");
+        }
+        if (inpTypeColor.type != "color") {
+            debugger;
+            throw Error("Not <input type=color>");
+        }
+        inpTypeText.addEventListener("input", () => {
+            const hex = modBasicUI.colorNameToHex(inpTypeText.value.trim());
+            // console.log({ hex });
+            if (hex) {
+                inpTypeText.setCustomValidity("");
+                if (document.activeElement == inpTypeText) {
+                    inpTypeColor.value = hex;
+                    inpTypeColor.dispatchEvent(new Event('input', { bubbles: true }));
+                }
+                currentTheme.color = inpTypeText.value;
+                // applyCurrentTheme();
+            } else {
+                inpTypeText.setCustomValidity("Invalid color");
+            }
+            inpTypeText.reportValidity();
+            // checkCanSave();
+        });
+        inpTypeColor.addEventListener("input", () => {
+            if (document.activeElement == inpTypeColor) {
+                inpTypeText.value = inpTypeColor.value;
+                inpTypeText.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            currentTheme.color = inpTypeText.value;
+            // applyCurrentTheme();
+            // checkCanSave();
+        });
+    }
 
     const chkDark = mkElt("input", { type: "checkbox" });
     // chkDark.checked = currentTheme.dark;
@@ -1139,7 +1176,7 @@ async function handleSettingsClick(evt) {
             inpColor.validity.valid
             &&
             jsonOldTheme != JSON.stringify(currentTheme);
-        console.log({ somethingToSave });
+        // console.log({ somethingToSave });
         btnSaveColorTheme.disabled = !somethingToSave;
     }
     bdy.addEventListener("change", evt => {
