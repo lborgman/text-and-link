@@ -914,7 +914,12 @@ function showHtmlAsDialog(strHtml, opts = {}) {
     document.body.appendChild(dialog);
     if (opts.theme) {
         // debugger;
-        modBasicUI.applyMaterialTheme(opts.theme.color, opts.theme.dark, dialog);
+        // modBasicUI.applyMaterialTheme(opts.theme.color, opts.theme.dark, dialog);
+        // applyMaterialTheme(opts.theme.color, opts.theme.dark, dialog);
+        // const themePalette = BasicUI_ColorThemes.generateTheme(opts.theme);
+        const {color, dark, variant } = opts.theme;
+        const themePalette = BasicUI_ColorThemes.generateTheme(color, dark, variant);
+        BasicUI_ColorThemes.applyTheme(themePalette);
     }
     dialog.showModal();
     return dialog;
@@ -1191,6 +1196,8 @@ function dialogColorTheme() {
     getCSS_bg_classes().forEach(cls => {
         const eltCls = mkElt("div", { class: cls }, cls.slice(3));
         eltCls.style.padding = "4px";
+        eltCls.style.padding = "3px";
+        eltCls.style.outline = "1px solid gray";
         divBgClasses.appendChild(eltCls);
     });
     const divColors = mkElt("p", undefined, [
