@@ -1179,11 +1179,26 @@ function dialogColorTheme() {
         divVariants.appendChild(mkRad(v));
     });
 
+    const divBgClasses = mkElt("div");
+    divBgClasses.style.display = "flex";
+    divBgClasses.style.flexWrap = "wrap";
+    divBgClasses.style.gap = "8px";
+    divBgClasses.style.padding = "8px";
+    divBgClasses.style.border = "1px solid gray";
+    divBgClasses.style.borderRadius = "4px";
+
+
+    getCSS_bg_classes().forEach(cls => {
+        const eltCls = mkElt("div", { class: cls }, cls.slice(3));
+        eltCls.style.padding = "4px";
+        divBgClasses.appendChild(eltCls);
+    });
     const divColors = mkElt("p", undefined, [
         lblColor,
         lblDark,
         divVariants,
-        divButtons
+        divButtons,
+        divBgClasses
     ]);
     divColors.style = `
         display: flex;
@@ -1242,4 +1257,52 @@ function dialogColorTheme() {
     });
     checkCanSaveNewTheme();
     modBasicUI.showDialog(bdy);
+}
+
+getCSS_bg_classes();
+function getCSS_bg_classes() {
+    return [
+        "bg-background",
+        "bg-error",
+        "bg-error-container",
+        "bg-primary",
+        "bg-primary-container",
+        "bg-secondary",
+        "bg-secondary-container",
+        "bg-surface",
+        "bg-surface-variant",
+        "bg-tertiary",
+        "bg-tertiary-container"
+    ];
+    /*
+    */
+    const allDefinedClasses = new Set();
+
+    // Loop through all loaded stylesheets on the page
+    Array.from(document.styleSheets).forEach(sheet => {
+        try {
+            // Loop through each CSS rule within the stylesheet
+            Array.from(sheet.cssRules || sheet.rules).forEach(rule => {
+                // Check if the rule is a standard style rule and has a selector
+                if (rule.selectorText) {
+                    // Find everything matching a .class pattern using regex
+                    const classes = rule.selectorText.match(/\.[a-zA-Z0-9_-]+/g);
+                    if (classes) {
+                        classes.forEach(c => allDefinedClasses.add(c.replace('.', '')));
+                    }
+                }
+            });
+        } catch (e) {
+            // Cross-origin stylesheets will throw a security error unless CORS is configured
+            console.log("Could not read stylesheet rules due to security restrictions:", sheet.href);
+        }
+    });
+
+    const arr = [...allDefinedClasses];
+    const arr2 = arr.filter(a => { return a.startsWith("bg-"); })
+    // console.log(arr2);
+    // console.log(arr2.join(", "));
+    const arr3 = arr2.map(cls => `"${cls}"`);
+    console.log(arr3.sort().join(",\n"));
+    return arr2;
 }
