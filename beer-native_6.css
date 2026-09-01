@@ -1,0 +1,263 @@
+/*
+
+* beer-native.css
+*
+* Overrides for Beer CSS 5.0.3.
+*
+* The purpose of this file is to make selected native HTML elements
+* behave more like normal HTML controls without requiring Beer CSS's
+* .field wrapper.
+*
+* Load after beer.css.
+  */
+
+/* ==========================================================================
+Native form-control typography
+========================================================================== */
+
+label,
+input,
+textarea,
+select,
+button {
+    font-size: 1rem;
+}
+
+/* ==========================================================================
+Text inputs
+========================================================================== */
+
+input:is([type="text"],
+    [type="email"],
+    [type="url"],
+    [type="tel"],
+    [type="search"],
+    [type="password"],
+    [type="number"]) {
+    box-sizing: border-box;
+
+    ```
+    /* min-block-size: 3rem; */
+
+    margin: 0;
+    padding: 0 0.75rem;
+
+    font: inherit;
+    font-size: 1rem;
+    ```
+}
+
+/* ==========================================================================
+Textarea
+========================================================================== */
+
+textarea {
+    box-sizing: border-box;
+
+    ```
+    /* min-block-size: 6rem; */
+
+    margin: 0;
+    padding: 0.75rem;
+
+    font: inherit;
+    font-size: 1rem;
+    ```
+}
+
+/* ==========================================================================
+Floating-label textarea
+========================================================================== */
+
+/*
+
+* This is deliberately based on Beer's existing label/::after mechanism.
+*
+* Beer uses:
+*
+* .field.label.border:not(.fill) > label::after
+*
+* to create the continuation of the border underneath the floating label.
+*
+* For the no-field version the label itself is the element containing
+* the textarea and its label text.
+*
+* Expected structure:
+*
+* <label>
+* ```
+  Label text
+  ```
+* ```
+  <textarea></textarea>
+  ```
+* </label>
+*
+* The textarea can also be accompanied by other inline content.
+  */
+
+/*
+
+* Establish the same positioning context used by Beer for the
+* floating-label geometry.
+  */
+
+label:has(> textarea) {
+    --_start: 0.75rem;
+
+    ``` position: relative;
+    ```
+}
+
+/*
+
+* The floating label text.
+*
+* The important part here is the inset discovered from the Beer rule:
+*
+* ```
+  inset: -0.5rem 0.9375rem 0 var(--_start);
+  ```
+*
+* We deliberately keep that geometry rather than attempting to
+* reproduce it with a separately positioned pseudo-element.
+  */
+
+label:has(> textarea) {
+    padding-block-start: 0.5rem;
+}
+
+/*
+
+* Beer places the border continuation on label::after.
+*
+* Keep the line as part of the label's normal layout rather than
+* positioning it independently.
+  */
+
+label:has(> textarea)::after {
+    content: "";
+
+    ``` display: block;
+
+    margin: 0.5rem 0 0 0;
+
+    border-block-start: 0.0625rem solid var(--outline);
+
+    block-size: 1rem;
+
+    transition: none;
+
+    flex: auto;
+    ```
+}
+
+/*
+
+* When Beer has its floating label positioned above the control,
+* its label geometry uses this inset.
+*
+* This is intentionally applied to the label itself, because that
+* is where your DevTools experiment showed the correction occurs.
+  */
+
+label:has(> textarea) {
+    inset: -0.5rem 0.9375rem 0 var(--_start);
+}
+
+/*
+
+* The textarea must not inherit the label's offset as part of its
+* normal box dimensions.
+  */
+
+label:has(> textarea)>textarea {
+    position: relative;
+
+    ``` inline-size: 100%;
+
+    padding-block-start: 1.5rem;
+    ```
+}
+
+/* ==========================================================================
+Focused floating-label textarea
+========================================================================== */
+
+/*
+
+* Do not move the line on focus.
+*
+* Beer changes the visual state of the control, but the label/::after
+* geometry should remain stable.
+  */
+
+label:has(> textarea:focus)::after {
+    border-block-start-color: var(--primary);
+}
+
+/* ==========================================================================
+Floating-label text
+========================================================================== */
+
+/*
+
+* If the label contains a dedicated span for its text, make that span
+* the visual floating label without introducing a new class.
+  */
+
+label:has(> textarea)>span {
+    position: absolute;
+
+    ``` inset: -0.5rem 0.9375rem 0 var(--_start);
+
+    z-index: 1;
+
+    padding-inline: 0.25rem;
+
+    background: var(--surface);
+
+    color: var(--on-surface-variant);
+
+    font-size: 1rem;
+    line-height: 1.5;
+
+    pointer-events: none;
+    ```
+}
+
+/* Focused label */
+
+label:has(> textarea:focus)>span {
+    color: var(--primary);
+}
+
+/* ==========================================================================
+Invalid textarea
+========================================================================== */
+
+label:has(> textarea:invalid:not(:focus))>span {
+    color: var(--error);
+}
+
+label:has(> textarea:invalid:not(:focus))::after {
+    border-block-start-color: var(--error);
+}
+
+/* ==========================================================================
+Disabled textarea
+========================================================================== */
+
+label:has(> textarea:disabled) {
+    opacity: 0.5;
+}
+
+/* ==========================================================================
+Reduced motion
+========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    label:has(> textarea)::after {
+        transition: none;
+    }
+}

@@ -1052,6 +1052,16 @@ function mkIconButton(icon, title) {
     btn.title = title;
     return btn;
 }
+function mkButtonBeer(txt) {
+    // The inner element should perhaps always be a <span>? FIX-ME:
+    let eltInner = txt;
+    if (!(eltInner instanceof HTMLSpanElement)) {
+        eltInner = mkElt("span", undefined, txt);
+    }
+    const btn = mkElt("button", undefined, eltInner);
+    btn.classList.add("no-wave");
+    return btn;
+}
 
 /**
  * Sync user input for an <input type=text> and an <input type=color>
@@ -1109,13 +1119,19 @@ function syncInpTextAndColorPicker(inpTypeText, inpTypeColor) {
 }
 
 function dialogColorTheme() {
-    const inpColor = mkElt("input", { type: "text", placeholder: "CSS color" });
+    const inpColor = mkElt("input", { id:"inp-color", type: "text", placeholder: "CSS color" });
     inpColor.value = currentTheme.color;
     inpColor.style.width = "calc(7ch + 30px)";
-    const colorPicker = mkElt("input", { type: "color" });
+    const colorPicker = mkElt("input", { id:"color-picker", type: "color" });
     colorPicker.value = currentTheme.color;
-    const eltColor = mkElt("span", undefined, [inpColor, colorPicker]);
+    const eltColor = mkElt("span", undefined, [
+        // Put a span around to preserve height:
+        mkElt("span", undefined, inpColor),
+        colorPicker
+    ]);
     eltColor.style.display = "inline-flex";
+    eltColor.style.alignItems = "center";
+    eltColor.style.gap = "5px";
     const lblColor = mkElt("label", { class: "label-selection-row" }, [
         "Color", eltColor
     ]);
@@ -1145,8 +1161,10 @@ function dialogColorTheme() {
         chkDark,
         "Dark",
     ]);
-    const btnSaveColorTheme = mkElt("button", undefined, "Save");
-    const btnResetColorTheme = mkElt("button", undefined, "Reset");
+    // const btnSaveColorTheme = mkElt("button", undefined, "Save");
+    const btnSaveColorTheme = mkButtonBeer("Save");
+    // const btnResetColorTheme = mkElt("button", undefined, "Reset");
+    const btnResetColorTheme = mkButtonBeer("Reset");
     const divButtons = mkElt("div", undefined, [
         btnSaveColorTheme,
         btnResetColorTheme
@@ -1194,7 +1212,8 @@ function dialogColorTheme() {
 
 
     getCSS_bg_classes().forEach(cls => {
-        const eltCls = mkElt("div", { class: cls }, cls.slice(3));
+        // const eltCls = mkElt("div", { class: cls }, cls.slice(3));
+        const eltCls = mkElt("div", { class: cls.slice(3) }, cls.slice(3));
         eltCls.style.padding = "4px";
         eltCls.style.padding = "3px";
         eltCls.style.outline = "1px solid gray";
@@ -1270,16 +1289,16 @@ getCSS_bg_classes();
 function getCSS_bg_classes() {
     return [
         "bg-background",
-        "bg-error",
-        "bg-error-container",
+        "bg-surface",
+        "bg-surface-variant",
         "bg-primary",
         "bg-primary-container",
         "bg-secondary",
         "bg-secondary-container",
-        "bg-surface",
-        "bg-surface-variant",
         "bg-tertiary",
-        "bg-tertiary-container"
+        "bg-tertiary-container",
+        "bg-error",
+        "bg-error-container",
     ];
     /*
     */

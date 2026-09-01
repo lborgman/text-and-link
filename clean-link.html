@@ -67,10 +67,13 @@
     <script type="module"> import "basic-ui"; </script>
 
     <!-- Asynchronous non-blocking CSS load -->
-    <link href="https://lborgman.github.io/basic-ui/css/basic-ui.css" rel="stylesheet" media="print"
-        onload="this.media='all'" />
+    <!-- <link href="https://lborgman.github.io/basic-ui/css/basic-ui.css" rel="stylesheet" media="print" onload="this.media='all'" /> -->
 
-    <style>
+    <style id="4-clean-link">
+        :root {
+            font-family: system-ui, sans-serif;
+        }
+
         .expandable-wrapper {
             display: grid;
             grid-template-rows: 0fr;
@@ -100,7 +103,7 @@
 
         #ta-link {
             width: 100%;
-            min-height: 60px;
+            /* min-height: 60px; */
             margin-top: 4px;
             field-sizing: content;
         }
@@ -161,16 +164,6 @@
         }
 
 
-        header {
-            background-color: var(--surface-variant);
-            padding: 10px;
-            margin-bottom: 45px;
-
-            display: flex;
-            flex-direction: row;
-            align-items: center;
-            justify-content: space-around;
-        }
 
 
         #header-title {
@@ -308,19 +301,6 @@
 
 
 
-        button {
-            padding: 0.7rem 1rem;
-            /* font-family: 'Roboto', sans-serif; */
-            font-size: 1rem;
-            outline: 0;
-            border: 0;
-            border-radius: 0.25rem;
-            box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.3);
-            cursor: pointer;
-            /* For ripple: */
-            position: relative;
-            overflow: hidden;
-        }
 
 
 
@@ -328,229 +308,318 @@
 
 
 
-        /* One rule handles contrast for every role */
-        button,
-        [class*="bg-"] {
-            background-color: var(--bg);
-            color: contrast-color(var(--bg));
-        }
-
-        button {
-            --bg: var(--secondary);
-            --bg: var(--tertiary);
-            --bg: var(--primary);
-        }
-
-        /* Modifier classes just point --bg at a token */
-        .bg-primary {
-            --bg: var(--primary);
-        }
-
-        .bg-primary-container {
-            --bg: var(--primary-container);
-        }
-
-        .bg-secondary {
-            --bg: var(--secondary);
-        }
-
-        .bg-secondary-container {
-            --bg: var(--secondary-container);
-        }
-
-        .bg-tertiary {
-            --bg: var(--tertiary);
-        }
-
-        .bg-tertiary-container {
-            --bg: var(--tertiary-container);
-        }
-
-        .bg-error {
-            --bg: var(--error);
-        }
-
-        .bg-error-container {
-            --bg: var(--error-container);
-        }
-
-        .bg-surface {
-            --bg: var(--surface);
-        }
-
-        .bg-surface-variant {
-            --bg: var(--surface-variant);
-        }
-
-        .bg-background {
-            --bg: var(--background);
-        }
-
-
-        html,
-        body {
-            background-color: var(--surface) !important;
-            color: var(--on-surface);
-        }
-
-
-
-        /**************************/
-        /* Links & Typography */
-        /**************************/
-
-        /* Links use Primary color with clear focus/hover feedback */
-        a {
-            /* color: var(--primary); */
-            color: var(--link-color);
-            text-decoration-color: var(--link-color);
-            text-decoration-thickness: 1px;
-            text-underline-offset: 3px;
-        }
-
-        a:hover {
-            /* color: var(--secondary); */
-            color: var(--link-hover);
-        }
-
-
-        /* 1. Hide the outline on mouse click for native buttons and links */
-        button:focus,
-        a:focus {
-            outline: none;
-        }
-
-        /* 2. Apply your custom styling only during keyboard navigation */
-        button:focus-visible,
-        a:focus-visible {
-            outline: 2px solid var(--primary);
-            outline-offset: 2px;
-            border-radius: 3px;
-        }
-
-
-        /*******************************/
-        /* Native <dialog> & Backdrops */
-        /*******************************/
-
-        dialog {
-            background-color: var(--surface);
-            color: contrast-color(var(--surface));
-            border: 1px solid var(--outline-variant);
-            border-radius: 28px;
-            /* padding: 1.5rem; */
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1),
-                0 8px 10px -6px rgba(0, 0, 0, 0.1);
-            /* max-width: clamp(300px, 100dvw - 2rem, 550px); */
-            width: calc(100dvw - 1rem);
-            max-width: 550px;
-        }
-
-        /* Backdrop behind the dialog */
-        dialog[open]::backdrop {
-            /* background-color: rgba(0, 0, 0, 0.32); */
-            /* background-color: var(--backdrop, "red"); */
-            /* background-color: "red"; */
-            backdrop-filter: blur(2px);
-        }
-
-
-        /*************************************************/
-        /* Form Controls (<input>, <select>, <textarea>) */
-        /*************************************************/
-
-        input[type="text"],
-        input[type="email"],
-        input[type="password"],
-        select,
-        textarea {
-            background-color: var(--surface-variant);
-            color: contrast-color(var(--surface-variant));
-            border: 1px solid var(--outline);
-            border-radius: 8px;
-            padding: 0.625rem 0.875rem;
-            font-size: 1rem;
-            transition: border-color 0.15s ease;
-        }
-
-        /* Focused State */
-        input:focus-visible,
-        select:focus-visible,
-        textarea:focus-visible {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 1px var(--primary);
-        }
-
-        /* Checkboxes & Radio Buttons */
-        input[type="checkbox"],
-        input[type="radio"] {
-            accent-color: var(--primary);
-        }
-
-
-        /**********************/
-        /* Buttons (<button>) */
-        /**********************/
-
-        /* Filled Primary Button */
-        button,
-        input[type="submit"] {
-            background-color: var(--primary);
-            color: contrast-color(var(--primary));
-            border: none;
-            border-radius: 9999px;
-            /* Pill shape */
-            padding: 0.625rem 1.25rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: opacity 0.15s ease;
-        }
-
-        button:hover {
-            opacity: 0.9;
-        }
-
-        /* Outlined / Secondary Button Variant */
-        button.secondary {
-            background-color: transparent;
-            color: var(--primary);
-            border: 1px solid var(--outline);
-        }
-
-
-        /********************************/
-        /* Other Common Native Elements */
-        /********************************/
-
-        /* Structural Dividers */
-        hr {
-            border: none;
-            border-top: 1px solid var(--outline-variant);
-            margin: 1.5rem 0;
-        }
-
-        /* Code Blocks */
-        code,
-        pre {
-            /* background-color: var(--surface-variant); */
-            /* color: contrast-color(var(--surface-variant)); */
-            border-radius: 6px;
-            font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-        }
-
-        pre {
-            /* padding: 1rem; */
-            /* border: 1px solid var(--outline-variant); */
-            overflow-x: auto;
-        }
 
 
         .scroll-for-text-input {
             outline: 1px dotted blue;
         }
     </style>
+
+    <!-- <link href="https://cdn.jsdelivr.net/npm/beercss@5.0.3/dist/cdn/beer.min.css" rel="stylesheet"> -->
+    <link href="https://cdn.jsdelivr.net/npm/beercss@5.0.3/dist/cdn/beer.css" rel="stylesheet">
+    <!-- <link href="../beercss/src/cdn/beer.css" rel="stylesheet"> -->
+    <!-- <link href="http://localhost:8086/beercss/src/cdn/beer.css" rel="stylesheet"> -->
+
+    <!-- <link href="./beer-native_9.css" rel="stylesheet"> -->
+
+    <style id="native-radio">
+
+/* ==========================================================================
+   Native radio
+   ========================================================================== */
+
+label:has(> input[type="radio"]) {
+    --_size: 1.5rem;
+
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    min-block-size: var(--_size);
+    padding-inline-start: calc(var(--_size) + 0.25rem);
+    cursor: pointer;
+}
+
+
+/* Hide the native radio, but keep it functional */
+
+label:has(> input[type="radio"]) > input {
+    position: absolute;
+    inline-size: 1px;
+    block-size: 1px;
+    opacity: 0;
+}
+
+
+/* Radio icon */
+
+label:has(> input[type="radio"])::before {
+    content: "radio_button_unchecked";
+
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+
+    inline-size: var(--_size);
+    block-size: var(--_size);
+
+    font-family: var(--font-icon);
+    font-weight: normal;
+    font-style: normal;
+    font-size: var(--_size);
+    line-height: 1;
+
+    letter-spacing: normal;
+    text-transform: none;
+    font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--primary);
+
+    user-select: none;
+}
+
+
+/* Checked */
+
+label:has(> input[type="radio"]:checked)::before {
+    content: "radio_button_checked";
+}
+
+
+/* Disabled */
+
+label:has(> input[type="radio"]:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+/* Focus */
+
+label:has(> input[type="radio"]:focus-visible)::before {
+    outline: 0.125rem solid var(--primary);
+    outline-offset: 0.375rem;
+}
+
+
+/* Hover / focus ripple */
+
+label:has(> input[type="radio"])::after {
+    content: "";
+
+    position: absolute;
+    inset-inline-start: 0;
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+
+    inline-size: var(--_size);
+    block-size: var(--_size);
+
+    border-radius: 50%;
+
+    background-color: currentColor;
+    box-shadow: 0 0 0 0 currentColor;
+    opacity: 0;
+
+    transition: all var(--speed1);
+
+    pointer-events: none;
+}
+
+label:has(> input[type="radio"]:not(:disabled)):hover::after,
+label:has(> input[type="radio"]:not(:disabled):focus)::after {
+    box-shadow: 0 0 0 0.5rem currentColor;
+    opacity: 0.1;
+}
+
+    </style>
+
+    <style id="native-checkbox">
+        /* ==========================================================================
+   Native checkbox
+   ========================================================================== */
+
+        /*
+ * Beer CSS:
+ *
+ * <label class="checkbox">
+ *     <input type="checkbox">
+ *     <span>Checkbox</span>
+ * </label>
+ *
+ * Beer Native:
+ *
+ * <label>
+ *     <input type="checkbox">
+ *     <span>Checkbox</span>
+ * </label>
+ */
+
+        label:has(> input[type="checkbox"]) {
+            --_size: 1.5rem;
+            inline-size: auto;
+            block-size: auto;
+            line-height: normal;
+            white-space: nowrap;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        label:has(> input[type="checkbox"]).small {
+            --_size: 1rem;
+        }
+
+        label:has(> input[type="checkbox"]).large {
+            --_size: 2rem;
+        }
+
+        label:has(> input[type="checkbox"]).extra {
+            --_size: 2.5rem;
+        }
+
+        label:has(> input[type="checkbox"])>input {
+            inline-size: var(--_size);
+            block-size: var(--_size);
+            opacity: 0;
+        }
+
+        label:has(> input[type="checkbox"])>span {
+            display: inline-flex;
+            align-items: center;
+            color: var(--on-surface);
+            font-size: 0.875rem;
+            min-inline-size: 0.25rem;
+            min-block-size: 0.25rem;
+        }
+
+        label:has(> input[type="checkbox"])>span:not(:empty) {
+            padding-inline-start: 0.25rem;
+        }
+
+
+        /* Material Symbols styling */
+
+        label:has(> input[type="checkbox"])>span::before {
+            --_size: inherit;
+
+            content: "";
+            font-family: var(--font-icon);
+            font-weight: normal;
+            font-style: normal;
+            font-size: var(--_size);
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            font-feature-settings: "liga";
+            -webkit-font-smoothing: antialiased;
+            vertical-align: middle;
+            text-align: center;
+            overflow: hidden;
+            inline-size: var(--_size);
+            min-inline-size: var(--_size);
+            block-size: var(--_size);
+            min-block-size: var(--_size);
+            box-sizing: content-box;
+            line-height: normal;
+            border-radius: 0;
+
+            position: absolute;
+            inset: auto auto auto calc(var(--_size, 0) * -1);
+
+            color: var(--primary);
+            user-select: none;
+            z-index: 1;
+        }
+
+        [dir="rtl"] label:has(> input[type="checkbox"])>span::before {
+            inset: auto calc(var(--_size, 0) * -1) auto auto;
+        }
+
+
+        /* Checkbox icon states */
+
+        label:has(> input[type="checkbox"])>span::before {
+            content: "check_box_outline_blank";
+        }
+
+        label:has(> input[type="checkbox"])>input:checked+span::before {
+            content: "check_box";
+            font-variation-settings: "FILL" 1;
+        }
+
+        label:has(> input[type="checkbox"])>input:indeterminate+span::before {
+            content: "indeterminate_check_box";
+        }
+
+
+        /* Ripple / hover / focus */
+
+        label:has(> input[type="checkbox"])>span::after {
+            --_size: inherit;
+
+            content: "";
+            inline-size: var(--_size);
+            block-size: var(--_size);
+            box-sizing: border-box;
+            margin: 0 auto;
+            outline: none;
+            position: absolute;
+            inset: auto auto auto calc(var(--_size, 0) * -1);
+            border-radius: 50%;
+            user-select: none;
+            z-index: 1;
+
+            transition: all var(--speed1);
+            background-color: currentColor;
+            box-shadow: 0 0 0 0 currentColor;
+            opacity: 0;
+        }
+
+        [dir="rtl"] label:has(> input[type="checkbox"])>span::after {
+            inset: auto calc(var(--_size, 0) * -1) auto auto;
+        }
+
+        label:has(> input[type="checkbox"]):is(:hover)>input:not(:disabled)+span::after,
+        label:has(> input[type="checkbox"])>input:not(:disabled):is(:focus)+span::after {
+            box-shadow: 0 0 0 0.5rem currentColor;
+            opacity: 0.1;
+        }
+
+
+        /* Checked / disabled / focus */
+
+        label:has(> input[type="checkbox"])>input:checked+span::before {
+            color: var(--primary);
+        }
+
+        label:has(> input[type="checkbox"])>input:disabled+span {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        label:has(> input[type="checkbox"])>input:focus-visible+span::before {
+            outline: 0.125rem solid var(--primary);
+            outline-offset: 0.375rem;
+        }
+    </style>
     <style id="4basic">
+        /*
+        .field.label>label {
+            inset: -0.2rem 0.9375rem 0 var(--_start);
+        }
+        */
+
         .label-selection-row {
             display: flex;
             align-items: center;
@@ -561,6 +630,11 @@
             background: transparent;
             width: 40px;
             height: 40px;
+            inline-size: 40px;
+            block-size: 40px;
+            opacity: 1;
+            position: static;
+            cursor: pointer;
         }
 
         input[type=text]:invalid {
@@ -568,24 +642,57 @@
             outline: 1px solid red;
             box-shadow: none;
         }
+    </style>
 
-        /* Target all disabled form elements */
-        :disabled {
-            background-color: #f3f4f6;
-            /* Light gray background */
-            color: #9ca3af;
-            /* Muted text color */
-            border-color: #e5e7eb;
-            /* Soft border */
-            cursor: not-allowed;
-            /* Changes mouse cursor to a slash/circle */
-            opacity: 0.6;
-            /* Gives a faded visual cue */
+
+
+    <style id="4bess">
+        :root {
+            --basicUI_ripple-duration: 1s;
+        }
+
+        .x-close {
+            color: currentColor;
+            background: none;
+            border: none;
+            box-shadow: none;
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 32px;
+            height: 32px;
+            padding: 0;
+            /* aspect-ratio: 1 / 1; */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 0;
+        }
+
+        .x-close:hover {
+            background-color: red;
+        }
+
+        /* Disable the click/active stretching effect on buttons */
+        /* button:disabled:active { border-radius: revert !important; } */
+
+        /* Bug reported here: https://github.com/beercss/beercss/issues/650 */
+        button:not(.chip):disabled:active {
+            border-radius: var(--_round) !important;
+        }
+
+        span.basicUI_ripple {
+            position: absolute !important;
         }
     </style>
-    <div id="moved" style="display:none">
 
-    </div>
+    <!-- <div id="moved" style="display:none"> </div> -->
+
+    <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/beercss@5.0.3/dist/cdn/beer.min.js"></script> -->
+
+    <!-- <script type="module" src="https://cdn.jsdelivr.net/npm/material-dynamic-colors@1.1.4/dist/cdn/material-dynamic-colors.min.js"></script> -->
+
+    <!-- <script src="../beercss/dist/cdn/beer.js" type="module"></script> -->
 </head>
 
 <body>
@@ -598,17 +705,21 @@
             <span id="header-title">Clean Link</span>
         </span>
     </header>
-    <section id="main-section">
+    <!-- <section id="main-section"> -->
+    <main>
 
-        <label id="clean-this-link">
+        <div id="clean-this-link">
             <div>
                 Clean link from
                 <a nohref="https://en.wikipedia.org/wiki/Click_identifier"
                     onclick="showWikipediaAsDialog('Click_identifier')" style="text-decoration:underline;">click
                     identifiers</a>.
             </div>
-            <textarea type="text" id="ta-link" placeholder="Link to clean"></textarea>
-        </label>
+            <div class="field label border">
+                <textarea type="text" id="ta-link" placeholder=" "></textarea>
+                <label for="ta-link">Original Link</label>
+            </div>
+        </div>
         <div id="cleaned-label">Cleaned link:</div>
         <div id="output" style="visibility: hidden;">
             <div>
@@ -621,7 +732,47 @@
         </div>
         <div id="cleaned-info" class="bg-tertiary"> </div>
 
-    </section>
+
+
+
+        <div style="outline:4px dotted red">
+            <h3>Testing Beer native</h3>
+            <label class="checkbox">
+                <input type="checkbox">
+                <span> Checkbox checkbox</span>
+            </label>
+            <label>
+                <input type="checkbox">
+                <span> Checkbox native</span>
+            </label>
+
+            <div>
+                <label>
+                    <input type="radio" name="test" value="1">
+                    <span>One</span>
+                </label>
+
+                <label>
+                    <input type="radio" name="test" value="2">
+                    <span>Two</span>
+                </label>
+
+                <label>
+                    <input type="radio" name="test" value="3">
+                    Three (no span)
+                </label>
+            </div>
+            <div>
+                <label>
+                    input text
+                    <input type="text">
+                </label>
+            </div>
+        </div>
+
+
+
+    </main>
     <dialog id="can-be-installed" class="html-dialog bg-primary-container">
         <div>
             <h3>This web page can do more!</h3>

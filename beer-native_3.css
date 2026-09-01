@@ -1,0 +1,514 @@
+/*
+
+* Beer Native
+*
+* Native HTML controls for Beer CSS.
+*
+* Load after beer.css and before application CSS.
+*
+* Philosophy:
+*
+* * Native HTML controls should work without Beer-specific wrappers.
+* * Beer components, including .field, remain available.
+* * Do not impose control dimensions unless needed.
+* * Keep native typography at 1rem by default.
+* * Application CSS loaded afterwards remains the final authority.
+    */
+
+/* ==========================================================================
+Native typography
+========================================================================== */
+
+label,
+input,
+textarea,
+select,
+button,
+output {
+    font-size: 1rem;
+}
+
+/* ==========================================================================
+Text inputs
+========================================================================== */
+
+input:is([type="text"],
+    [type="email"],
+    [type="url"],
+    [type="tel"],
+    [type="search"],
+    [type="password"],
+    [type="number"]) {
+    box-sizing: border-box;
+
+    ```
+    /* min-block-size: 3rem; */
+
+    margin: 0;
+    padding: 0 1rem;
+
+    border: 1px solid var(--outline);
+    border-radius: 4px;
+
+    background: var(--surface);
+    color: var(--on-surface);
+
+    font: inherit;
+    font-size: 1rem;
+    line-height: 1.5;
+
+    outline: none;
+    ```
+}
+
+/* ==========================================================================
+Textarea
+========================================================================== */
+
+textarea {
+    box-sizing: border-box;
+
+    ```
+    /* min-block-size: 6rem; */
+
+    margin: 0;
+    padding: 0.75rem 1rem;
+
+    border: 1px solid var(--outline);
+    border-radius: 4px;
+
+    background: var(--surface);
+    color: var(--on-surface);
+
+    font: inherit;
+    font-size: 1rem;
+    line-height: 1.5;
+
+    outline: none;
+
+    resize: vertical;
+    ```
+}
+
+/* ==========================================================================
+Select
+========================================================================== */
+
+select {
+    box-sizing: border-box;
+
+    ```
+    /* min-block-size: 3rem; */
+
+    margin: 0;
+    padding: 0 1rem;
+
+    border: 1px solid var(--outline);
+    border-radius: 4px;
+
+    background: var(--surface);
+    color: var(--on-surface);
+
+    font: inherit;
+    font-size: 1rem;
+    line-height: 1.5;
+
+    outline: none;
+
+    cursor: pointer;
+    ```
+}
+
+/* ==========================================================================
+Focus
+========================================================================== */
+
+input:is([type="text"],
+    [type="email"],
+    [type="url"],
+    [type="tel"],
+    [type="search"],
+    [type="password"],
+    [type="number"]):focus,
+textarea:focus,
+select:focus {
+    border-color: var(--primary);
+
+    ``` outline: 2px solid var(--primary);
+    outline-offset: -1px;
+    ```
+}
+
+/* ==========================================================================
+Placeholder
+========================================================================== */
+
+input:is([type="text"],
+    [type="email"],
+    [type="url"],
+    [type="tel"],
+    [type="search"],
+    [type="password"],
+    [type="number"])::placeholder,
+textarea::placeholder {
+    color: var(--on-surface-variant);
+    opacity: 1;
+}
+
+/* ==========================================================================
+Disabled
+========================================================================== */
+
+input:is([type="text"],
+    [type="email"],
+    [type="url"],
+    [type="tel"],
+    [type="search"],
+    [type="password"],
+    [type="number"]):disabled,
+textarea:disabled,
+select:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ==========================================================================
+Invalid
+========================================================================== */
+
+input:is([type="text"],
+    [type="email"],
+    [type="url"],
+    [type="tel"],
+    [type="search"],
+    [type="password"],
+    [type="number"]):invalid:not(:focus),
+textarea:invalid:not(:focus),
+select:invalid:not(:focus) {
+    border-color: var(--error);
+}
+
+/* ==========================================================================
+Read-only
+========================================================================== */
+
+input:is([type="text"],
+    [type="email"],
+    [type="url"],
+    [type="tel"],
+    [type="search"],
+    [type="password"],
+    [type="number"]):read-only,
+textarea:read-only {
+    cursor: default;
+}
+
+/* ==========================================================================
+Date and time inputs
+========================================================================== */
+
+input:is([type="date"],
+    [type="datetime-local"],
+    [type="month"],
+    [type="time"],
+    [type="week"]) {
+    box-sizing: border-box;
+
+    ```
+    /* min-block-size: 3rem; */
+
+    margin: 0;
+    padding: 0 1rem;
+
+    border: 1px solid var(--outline);
+    border-radius: 4px;
+
+    background: var(--surface);
+    color: var(--on-surface);
+
+    font: inherit;
+    font-size: 1rem;
+    line-height: 1.5;
+
+    outline: none;
+    ```
+}
+
+input:is([type="date"],
+    [type="datetime-local"],
+    [type="month"],
+    [type="time"],
+    [type="week"]):focus {
+    border-color: var(--primary);
+
+    ``` outline: 2px solid var(--primary);
+    outline-offset: -1px;
+    ```
+}
+
+/* ==========================================================================
+Radio buttons and checkboxes
+========================================================================== */
+
+/*
+
+* Beer CSS's selection styling is retained.
+*
+* Label typography is normalized above.
+  */
+
+/* ==========================================================================
+Supporting text
+========================================================================== */
+
+output {
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+input+output,
+textarea+output,
+select+output {
+    display: block;
+
+    ``` margin-block-start: 0.25rem;
+
+    color: var(--on-surface-variant);
+    ```
+}
+
+input+output.invalid,
+textarea+output.invalid,
+select+output.invalid {
+    color: var(--error);
+}
+
+/* ==========================================================================
+Size modifiers
+========================================================================== */
+
+/*
+
+* These modify padding, not typography.
+*
+* .small does not reduce font-size.
+  */
+
+:is(input, textarea, select).small {
+    padding-inline: 0.75rem;
+}
+
+:is(input, textarea, select).large {
+    padding-inline: 1.25rem;
+}
+
+:is(input, textarea, select).extra {
+    padding-inline: 1.5rem;
+}
+
+/* ==========================================================================
+Fill
+========================================================================== */
+
+:is(input, textarea, select).fill {
+    background: var(--surface-variant);
+}
+
+/* ==========================================================================
+Border
+========================================================================== */
+
+:is(input, textarea, select).border {
+    border-color: var(--outline);
+}
+
+/* ==========================================================================
+Round
+========================================================================== */
+
+:is(input, textarea, select).round,
+:is(input, textarea, select)[class*="round"] {
+    border-radius: 9999px;
+}
+
+/* ==========================================================================
+Native floating-label field
+========================================================================== */
+
+/*
+
+* Example:
+*
+* <label class="native-field">
+* ```
+  <textarea placeholder=" "></textarea>
+  ```
+* ```
+  <span>Description</span>
+  ```
+* </label>
+*
+* No Beer .field wrapper is required.
+  */
+
+.native-field {
+    position: relative;
+
+    ``` display: inline-flex;
+
+    min-inline-size: 0;
+    ```
+}
+
+/* The control occupies the available width. */
+
+.native-field> :is(input,
+    textarea,
+    select) {
+    inline-size: 100%;
+}
+
+/* ==========================================================================
+Floating label
+========================================================================== */
+
+.native-field>span {
+    position: absolute;
+
+    ``` inset-inline-start: 0.75rem;
+    inset-block-start: 0;
+
+    transform: translateY(-50%);
+
+    z-index: 1;
+
+    padding-inline: 0.25rem;
+
+    background: var(--surface);
+    color: var(--on-surface-variant);
+
+    font-size: 1rem;
+    line-height: 1.5;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    pointer-events: none;
+    ```
+}
+
+/* ==========================================================================
+Floating-label border line
+========================================================================== */
+
+/*
+
+* This corresponds to Beer CSS's:
+*
+* .field.label.border:not(.fill) > label::after
+*
+* The line continues the control's border on either side of the label.
+  */
+
+.native-field::after {
+    content: "";
+
+    ``` position: absolute;
+
+    inset-block-start: 0;
+    inset-inline-start: 0.75rem;
+    inset-inline-end: 0.75rem;
+
+    display: block;
+
+    border-block-start: 0.0625rem solid var(--outline);
+
+    pointer-events: none;
+
+    z-index: 0;
+    ```
+}
+
+/*
+
+* The label background covers the part of the line behind the text.
+*
+* The pseudo-element is deliberately behind the label.
+  */
+
+/* ==========================================================================
+Textarea floating label
+========================================================================== */
+
+.native-field:has(> textarea)>textarea {
+    padding-block-start: 1.5rem;
+}
+
+.native-field:has(> textarea)>span {
+    inset-block-start: 0.75rem;
+}
+
+/* ==========================================================================
+Floating state
+========================================================================== */
+
+.native-field:has(> :focus)>span,
+
+.native-field:has(> input[placeholder]:not(:placeholder-shown))>span,
+
+.native-field:has(> textarea[placeholder]:not(:placeholder-shown))>span,
+
+.native-field:has(> select)>span,
+
+.native-field.active>span {
+    color: var(--on-surface-variant);
+}
+
+/* ==========================================================================
+Focused floating label
+========================================================================== */
+
+.native-field:has(> :focus)>span {
+    color: var(--primary);
+}
+
+/* ==========================================================================
+Invalid floating label
+========================================================================== */
+
+.native-field.invalid>span,
+
+.native-field:has(> :invalid:not(:focus))>span {
+    color: var(--error);
+}
+
+/* ==========================================================================
+Filled floating fields
+========================================================================== */
+
+.native-field.fill> :is(input, textarea, select) {
+    background: var(--surface-variant);
+}
+
+.native-field.fill>span {
+    background: var(--surface-variant);
+}
+
+/* ==========================================================================
+Round floating fields
+========================================================================== */
+
+.native-field.round> :is(input, textarea, select) {
+    border-radius: 9999px;
+}
+
+/* ==========================================================================
+Reduced motion
+========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    .native-field>span {
+        transition: none;
+    }
+}

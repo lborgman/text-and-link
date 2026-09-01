@@ -1,0 +1,154 @@
+/*
+
+* beer-native.css
+*
+* Beer CSS 5.0.3 — native HTML controls
+*
+* Load AFTER beer.css:
+*
+* <link href="https://cdn.jsdelivr.net/npm/beercss@5.0.3/dist/cdn/beer.css"
+* ```
+      rel="stylesheet">
+  ```
+* <link href="./beer-native.css" rel="stylesheet">
+*
+* Purpose:
+* Keep Beer CSS styling and typography, while reducing the dependency
+* on the .field wrapper for native form controls.
+  */
+
+/* ==========================================================================
+Base typography
+========================================================================== */
+
+/*
+
+* Beer CSS provides the Material Symbols fonts through @font-face, but
+* does not establish a normal text font family.
+*
+* Material Design uses Roboto, with Noto as a fallback.
+*
+* This deliberately does NOT set font-size, font-weight, line-height, etc.
+* Those remain under Beer CSS control.
+  */
+
+:root {
+    font-family: Roboto, Noto, sans-serif;
+}
+
+/* ==========================================================================
+Native text controls
+========================================================================== */
+
+input:is([type="text"],
+    [type="email"],
+    [type="url"],
+    [type="tel"],
+    [type="search"],
+    [type="password"],
+    [type="number"]),
+textarea,
+select {
+    font-family: inherit;
+}
+
+/* ==========================================================================
+Textarea
+========================================================================== */
+
+/*
+
+* These are the textarea padding adjustments corresponding to Beer CSS's
+* .field textarea rules.
+  */
+
+textarea {
+    --_start: 0.5rem;
+
+    ``` padding-block-start: var(--_start) !important;
+    ```
+}
+
+textarea:focus {
+    padding-block-start:
+        calc(var(--_start, 0) - 0.01rem) !important;
+}
+
+/*
+
+* Border / non-fill textarea.
+  */
+
+textarea {
+    padding-block-start:
+        calc(var(--_start, 0) - 0.5rem) !important;
+}
+
+textarea:focus {
+    padding-block-start:
+        calc(var(--_start, 0) - 0.51rem) !important;
+}
+
+/* ==========================================================================
+Floating label
+========================================================================== */
+
+/*
+
+* Beer CSS:
+*
+* .field.label > label {
+* ```
+  inset: -0.5rem 0.9375rem 0 var(--_start);
+  ```
+* }
+*
+* Your tested correction:
+*
+* ```
+  inset: -0.2rem 0.9375rem 0 var(--_start);
+  ```
+*
+* Keep the rest of Beer CSS's floating-label implementation unchanged.
+  */
+
+.field.label>label {
+    inset: -0.2rem 0.9375rem 0 var(--_start);
+}
+
+/* ==========================================================================
+Floating-label border
+========================================================================== */
+
+/*
+
+* Beer CSS supplies the line through:
+*
+* .field.label.border:not(.fill) > label::after
+*
+* We leave that rule untouched. Its position is affected by the label
+* geometry above.
+  */
+
+/* ==========================================================================
+Native radio / checkbox labels
+========================================================================== */
+
+/*
+
+* Do not introduce a new font-size here.
+*
+* Beer CSS typography should remain in control of these elements.
+  */
+
+/* ==========================================================================
+General native form-control font inheritance
+========================================================================== */
+
+button,
+input,
+textarea,
+select,
+optgroup {
+    font-family: inherit;
+}

@@ -1,0 +1,464 @@
+/*
+
+* beer-native.css
+*
+* Overrides selected Beer CSS defaults so native HTML controls
+* can be used without requiring the Beer CSS .field class.
+*
+* Load after:
+* ```
+  beer.css
+  ```
+
+*/
+
+/* ==========================================================================
+Typography
+========================================================================== */
+
+label,
+input,
+textarea,
+select,
+button {
+    font-size: 1rem;
+}
+
+/* ==========================================================================
+Native field container
+========================================================================== */
+
+/*
+
+* Beer CSS:
+*
+* .field {
+* ```
+  --_input: 3rem;
+  ```
+* ```
+  --_start: 1.2rem;
+  ```
+* ```
+  --_middle: calc(var(--_input, 0) / 2);
+  ```
+* ```
+  ...
+  ```
+* ```
+  min-block-size: var(--_input);
+  ```
+* ```
+  display: flex;
+  ```
+* ```
+  flex-direction: column;
+  ```
+* }
+*
+* We reproduce this for a container containing a form control followed
+* by its label:
+*
+* ```
+  <div>
+  ```
+* ```
+      <textarea></textarea>
+  ```
+* ```
+      <label>Label</label>
+  ```
+* ```
+  </div>
+  ```
+
+*/
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> :is(input, select, textarea) + label) {
+    --_input: 3rem;
+    --_start: 1.2rem;
+    --_middle: calc(var(--_input, 0) / 2);
+
+    ``` min-block-size: var(--_input);
+
+    display: flex;
+    flex-direction: column;
+
+    position: relative;
+    ```
+}
+
+/* ==========================================================================
+Native inputs
+========================================================================== */
+
+input:is([type="text"],
+    [type="email"],
+    [type="url"],
+    [type="tel"],
+    [type="search"],
+    [type="password"],
+    [type="number"]),
+select,
+textarea {
+    box-sizing: border-box;
+
+    ``` position: relative;
+
+    display: flex;
+    align-items: center;
+
+    border: 0.0625rem solid var(--outline);
+    border-radius: 0.25rem;
+
+    padding-inline: 0.9375rem;
+
+    font-family: inherit;
+    font-size: 1rem;
+
+    min-block-size: var(--_input, 3rem);
+
+    outline: none;
+
+    background: none;
+
+    resize: none;
+    text-align: start;
+
+    cursor: text;
+
+    z-index: 1;
+    ```
+}
+
+/* ==========================================================================
+Focus
+========================================================================== */
+
+input:is([type="text"],
+    [type="email"],
+    [type="url"],
+    [type="tel"],
+    [type="search"],
+    [type="password"],
+    [type="number"]):focus,
+select:focus,
+textarea:focus {
+    border: 0.125rem solid var(--primary);
+
+    ``` padding-inline: 0.875rem;
+    ```
+}
+
+/* ==========================================================================
+Textarea
+========================================================================== */
+
+/*
+
+* Direct translation of:
+*
+* .field > textarea {
+* ```
+  padding-block-start: var(--_start) !important;
+  ```
+* }
+*
+* .field.border:not(.fill) > textarea {
+* ```
+  padding-block-start:
+  ```
+* ```
+      calc(var(--_start, 0) - 0.5rem) !important;
+  ```
+* }
+  */
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea + label)>textarea {
+    padding-block-start: var(--_start) !important;
+}
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea + label)>textarea:focus {
+    padding-block-start:
+        calc(var(--_start, 0) - 0.01rem) !important;
+}
+
+/*
+
+* The border/non-fill textarea rule is the one relevant to the
+* floating-label textarea.
+  */
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea + label)>textarea {
+    padding-block-start:
+        calc(var(--_start, 0) - 0.5rem) !important;
+}
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea + label)>textarea:focus {
+    padding-block-start:
+        calc(var(--_start, 0) - 0.51rem) !important;
+}
+
+/* ==========================================================================
+Floating label
+========================================================================== */
+
+/*
+
+* Direct translation of Beer:
+*
+* .field.label > label {
+* ```
+  --_start: 1rem;
+  ```
+* ```
+  position: absolute;
+  ```
+* ```
+  inset: -0.5rem 0.9375rem 0 var(--_start);
+  ```
+* ```
+  display: flex;
+  ```
+* ```
+  block-size: calc(var(--_input, 0) + 1rem);
+  ```
+* ```
+  line-height: calc(var(--_input, 0) + 1rem);
+  ```
+* ```
+  font-size: 1rem;
+  ```
+* ```
+  transition: all 0.2s;
+  ```
+* ```
+  gap: 0.25rem;
+  ```
+* ```
+  white-space: nowrap;
+  ```
+* ```
+  pointer-events: none;
+  ```
+* }
+  */
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea + label)>label {
+    --_start: 1rem;
+
+    ``` position: absolute;
+
+    inset: -0.5rem 0.9375rem 0 var(--_start);
+
+    display: flex;
+
+    block-size: calc(var(--_input, 0) + 1rem);
+
+    line-height: calc(var(--_input, 0) + 1rem);
+
+    font-size: 1rem;
+
+    transition: all 0.2s;
+
+    gap: 0.25rem;
+
+    white-space: nowrap;
+
+    pointer-events: none;
+    ```
+}
+
+/* ==========================================================================
+Floating label when active
+========================================================================== */
+
+/*
+
+* Beer:
+*
+* .field.label > :is(
+* ```
+  label.active,
+  ```
+* ```
+  :focus + label,
+  ```
+* ```
+  [placeholder]:not(:placeholder-shown) + label,
+  ```
+* ```
+  select + label
+  ```
+* ) {
+* ```
+  block-size: 2.5rem;
+  ```
+* ```
+  line-height: 2.5rem;
+  ```
+* ```
+  font-size: 0.75rem;
+  ```
+* }
+  */
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea + label)> :is(textarea:focus + label,
+    textarea[placeholder]:not(:placeholder-shown) + label,
+    label.active) {
+    block-size: 2.5rem;
+
+    ``` line-height: 2.5rem;
+
+    font-size: 0.75rem;
+    ```
+}
+
+/*
+
+* Beer border/non-fill version:
+*
+* .field.label.border:not(.fill) > :is(...) {
+* ```
+  block-size: 1rem;
+  ```
+* ```
+  line-height: 1rem;
+  ```
+* }
+  */
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea + label)> :is(textarea:focus + label,
+    textarea[placeholder]:not(:placeholder-shown) + label,
+    label.active) {
+    block-size: 1rem;
+
+    ``` line-height: 1rem;
+    ```
+}
+
+/* ==========================================================================
+The floating-label border
+========================================================================== */
+
+/*
+
+* This is the Beer rule you identified:
+*
+* .field.label.border:not(.fill) > label::after
+*
+* We reproduce it on the actual label.
+  */
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea + label)>label::after {
+    content: "";
+
+    ``` display: block;
+
+    margin: 0.5rem 0 0 0;
+
+    border-block-start: 0.0625rem solid var(--outline);
+
+    block-size: 1rem;
+
+    transition: none;
+
+    flex: auto;
+    ```
+}
+
+/* Focused border */
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea:focus + label)>label::after {
+    border-block-start: 0.125rem solid var(--primary);
+}
+
+/* ==========================================================================
+Clip the textarea border behind the floating label
+========================================================================== */
+
+/*
+
+* This is another important Beer rule that was missing from our
+* previous attempts.
+*
+* Without this, reproducing label::after alone does NOT reproduce
+* the Beer floating-label appearance.
+  */
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea + label)>textarea:is(:focus,
+    [placeholder]:not(:placeholder-shown),
+    .active) {
+    clip-path: polygon(-2% -2%,
+            0.75rem -2%,
+            0.75rem 0.5rem,
+            calc(100% - 1rem) 0.5rem,
+            calc(100% - 1rem) -2%,
+            102% -2%,
+            102% 102%,
+            -2% 102%);
+}
+
+/* ==========================================================================
+Focus label colour
+========================================================================== */
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea:focus + label)>label {
+    color: var(--primary);
+}
+
+/* ==========================================================================
+Invalid
+========================================================================== */
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea:invalid)>label,
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea:invalid)>label::after {
+    color: var(--error) !important;
+
+    ``` border-color: var(--error) !important;
+    ```
+}
+
+/* ==========================================================================
+Disabled
+========================================================================== */
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea:disabled) {
+    opacity: 0.5;
+
+    ``` cursor: not-allowed;
+    ```
+}
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea:disabled)>textarea {
+    cursor: not-allowed;
+}
+
+/* ==========================================================================
+Sizes
+========================================================================== */
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea + label).small {
+    --_input: 2.5rem;
+    --_start: 1rem;
+}
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea + label).large {
+    --_input: 3.5rem;
+    --_start: 1.4rem;
+}
+
+:where(body, main, section, article, div, span, p, form, fieldset):has(> textarea + label).extra {
+    --_input: 4rem;
+    --_start: 1.6rem;
+}
+
+/* ==========================================================================
+Reduced motion
+========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+    :where(body, main, section, article, div, span, p, form, fieldset):has(> textarea + label)>label {
+        transition: none;
+    }
+}

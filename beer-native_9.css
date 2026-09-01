@@ -1,0 +1,157 @@
+/*
+
+* beer-native.css
+*
+* Beer CSS 5.0.3 — native form controls
+*
+* Load AFTER beer.css.
+*
+* This stylesheet removes/replaces selected Beer CSS assumptions that
+* require a .field wrapper, while otherwise leaving Beer CSS in control.
+  */
+
+/* ==========================================================================
+Typography
+========================================================================== */
+
+:root {
+    font-family: Roboto, Noto, sans-serif;
+}
+
+/* ==========================================================================
+Text inputs
+========================================================================== */
+
+/*
+
+* Native text inputs should retain the Beer CSS input appearance without
+* requiring a .field wrapper.
+  */
+
+input[type="text"],
+input[type="email"],
+input[type="url"],
+input[type="tel"],
+input[type="search"],
+input[type="password"],
+input[type="number"] {
+    display: block;
+
+    ``` width: 100%;
+
+    min-block-size: 3rem;
+
+    padding-block: 0;
+    padding-inline: 0.9375rem;
+
+    border: 0;
+    border-block-end: 0.0625rem solid var(--outline);
+
+    border-radius: 0;
+
+    outline: none;
+
+    background: transparent;
+
+    font-family: inherit;
+
+    color: inherit;
+    ```
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="tel"]:focus,
+input[type="search"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus {
+    border-block-end:
+        0.125rem solid var(--primary);
+}
+
+/* ==========================================================================
+Textarea
+========================================================================== */
+
+textarea {
+    --_start: 0.5rem;
+
+    ``` padding-block-start: var(--_start) !important;
+    ```
+}
+
+textarea:focus {
+    padding-block-start:
+        calc(var(--_start, 0) - 0.01rem) !important;
+}
+
+/*
+
+* Border / non-fill textarea.
+  */
+
+textarea {
+    padding-block-start:
+        calc(var(--_start, 0) - 0.5rem) !important;
+}
+
+textarea:focus {
+    padding-block-start:
+        calc(var(--_start, 0) - 0.51rem) !important;
+}
+
+/* ==========================================================================
+Floating label
+========================================================================== */
+
+/*
+
+* Beer CSS normally uses:
+*
+* .field.label > label {
+* ```
+  inset: -0.5rem 0.9375rem 0 var(--_start);
+  ```
+* }
+*
+* Your tested correction moves the label down.
+*
+* We deliberately leave Beer CSS's other floating-label rules alone.
+  */
+
+.field.label>label {
+    inset: -0.2rem 0.9375rem 0 var(--_start);
+}
+
+/* ==========================================================================
+Native form-control font family
+========================================================================== */
+
+button,
+input,
+textarea,
+select,
+optgroup {
+    font-family: inherit;
+}
+
+/* ==========================================================================
+Radio and checkbox controls
+========================================================================== */
+
+/*
+
+* Do not set font-size here.
+*
+* Beer CSS typography remains responsible for the surrounding label text.
+  */
+
+/* ==========================================================================
+Color input
+========================================================================== */
+
+/*
+
+* Deliberately omitted for now.
+  */
