@@ -1,0 +1,321 @@
+/*
+
+* beer-native.css
+*
+* Native checkbox and radio controls for Beer CSS 5.0.3.
+*
+* Load after Beer CSS:
+*
+* <link
+* ```
+  href="https://cdn.jsdelivr.net/npm/beercss@5.0.3/dist/cdn/beer.css"
+  ```
+* ```
+  rel="stylesheet">
+  ```
+* <link href="./beer-native.css" rel="stylesheet">
+*
+*
+* Supported markup:
+*
+* <label>
+* ```
+    <input type="checkbox">
+  ```
+* ```
+    Checkbox
+  ```
+* </label>
+*
+* <label>
+* ```
+    <input type="radio" name="choice">
+  ```
+* ```
+    Choice
+  ```
+* </label>
+
+*/
+
+/* ==========================================================================
+Checkbox
+========================================================================== */
+
+label:has(> input[type="checkbox"]) {
+    --_size: 1.5rem;
+
+    ``` position: relative;
+
+    display: inline-grid;
+    grid-template-columns: var(--_size) auto;
+    align-items: center;
+    column-gap: 0.25rem;
+
+    cursor: pointer;
+    ```
+}
+
+/*
+
+* Keep the real input functional and focusable, but remove it from the
+* visual layout. The generated icon represents its state.
+  */
+
+label:has(> input[type="checkbox"])>input {
+    position: absolute;
+
+    ``` inline-size: 1px;
+    block-size: 1px;
+
+    opacity: 0;
+    ```
+}
+
+/*
+
+* Checkbox icon.
+  */
+
+label:has(> input[type="checkbox"])::before {
+    content: "check_box_outline_blank";
+
+    ``` grid-column: 1;
+    grid-row: 1;
+
+    inline-size: var(--_size);
+    block-size: var(--_size);
+
+    font-family: var(--font-icon);
+    font-weight: normal;
+    font-style: normal;
+    font-size: var(--_size);
+    line-height: 1;
+
+    letter-spacing: normal;
+    text-transform: none;
+    font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--primary);
+
+    user-select: none;
+    ```
+}
+
+/*
+
+* Checked.
+  */
+
+label:has(> input[type="checkbox"]:checked)::before {
+    content: "check_box";
+    font-variation-settings: "FILL" 1;
+}
+
+/*
+
+* Indeterminate.
+  */
+
+label:has(> input[type="checkbox"]:indeterminate)::before {
+    content: "indeterminate_check_box";
+}
+
+/*
+
+* Disabled.
+  */
+
+label:has(> input[type="checkbox"]:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/*
+
+* Keyboard focus.
+  */
+
+label:has(> input[type="checkbox"]:focus-visible)::before {
+    outline: 0.125rem solid var(--primary);
+    outline-offset: 0.375rem;
+}
+
+/*
+
+* Hover and focus ripple.
+*
+* The ripple is positioned over the first grid column.
+  */
+
+/*
+label:has(> input[type="checkbox"])::after {
+    content: "";
+
+    ``` position: absolute;
+
+    inset-inline-start: 0;
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+
+    inline-size: var(--_size);
+    block-size: var(--_size);
+
+    border-radius: 50%;
+
+    background-color: currentColor;
+    box-shadow: 0 0 0 0 currentColor;
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition: all var(--speed1);
+    ```
+}
+*/
+
+label:has(> input[type="checkbox"]:not(:disabled)):hover::after,
+label:has(> input[type="checkbox"]:not(:disabled):focus)::after {
+    box-shadow: 0 0 0 0.5rem currentColor;
+    opacity: 0.1;
+}
+
+/* ==========================================================================
+Radio
+========================================================================== */
+
+/*
+label:has(> input[type="radio"]) {
+    --_size: 1.5rem;
+
+    ``` position: relative;
+
+    display: inline-grid;
+    grid-template-columns: var(--_size) auto;
+    align-items: center;
+    column-gap: 0.25rem;
+
+    cursor: pointer;
+    ```
+}
+*/
+
+/*
+
+* Keep the real input functional and focusable, but remove it from the
+* visual layout. The generated icon represents its state.
+  */
+
+label:has(> input[type="radio"])>input {
+    position: absolute;
+
+    ``` inline-size: 1px;
+    block-size: 1px;
+
+    opacity: 0;
+    ```
+}
+
+/*
+
+* Radio icon.
+  */
+
+label:has(> input[type="radio"])::before {
+    content: "radio_button_unchecked";
+
+    ``` grid-column: 1;
+    grid-row: 1;
+
+    inline-size: var(--_size);
+    block-size: var(--_size);
+
+    font-family: var(--font-icon);
+    font-weight: normal;
+    font-style: normal;
+    font-size: var(--_size);
+    line-height: 1;
+
+    letter-spacing: normal;
+    text-transform: none;
+    font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--primary);
+
+    user-select: none;
+    ```
+}
+
+/*
+
+* Checked.
+  */
+
+label:has(> input[type="radio"]:checked)::before {
+    content: "radio_button_checked";
+}
+
+/*
+
+* Disabled.
+  */
+
+label:has(> input[type="radio"]:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/*
+
+* Keyboard focus.
+  */
+
+label:has(> input[type="radio"]:focus-visible)::before {
+    outline: 0.125rem solid var(--primary);
+    outline-offset: 0.375rem;
+}
+
+/*
+
+* Hover and focus ripple.
+  */
+
+label:has(> input[type="radio"])::after {
+    content: "";
+
+    ``` position: absolute;
+
+    inset-inline-start: 0;
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+
+    inline-size: var(--_size);
+    block-size: var(--_size);
+
+    border-radius: 50%;
+
+    background-color: currentColor;
+    box-shadow: 0 0 0 0 currentColor;
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition: all var(--speed1);
+    ```
+}
+
+label:has(> input[type="radio"]:not(:disabled)):hover::after,
+label:has(> input[type="radio"]:not(:disabled):focus)::after {
+    box-shadow: 0 0 0 0.5rem currentColor;
+    opacity: 0.1;
+}

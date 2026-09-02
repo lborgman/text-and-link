@@ -320,123 +320,122 @@
     <!-- <link href="../beercss/src/cdn/beer.css" rel="stylesheet"> -->
     <!-- <link href="http://localhost:8086/beercss/src/cdn/beer.css" rel="stylesheet"> -->
 
-    <!-- <link href="./beer-native_9.css" rel="stylesheet"> -->
+    <link href="./beer-native_b.css" rel="stylesheet">
 
+    <!-- 
     <style id="native-radio">
-
-/* ==========================================================================
+        /* ==========================================================================
    Native radio
    ========================================================================== */
 
-label:has(> input[type="radio"]) {
-    --_size: 1.5rem;
+        label:has(> input[type="radio"]) {
+            --_size: 1.5rem;
 
-    position: relative;
-    display: inline-flex;
-    align-items: center;
-    min-block-size: var(--_size);
-    padding-inline-start: calc(var(--_size) + 0.25rem);
-    cursor: pointer;
-}
-
-
-/* Hide the native radio, but keep it functional */
-
-label:has(> input[type="radio"]) > input {
-    position: absolute;
-    inline-size: 1px;
-    block-size: 1px;
-    opacity: 0;
-}
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+            min-block-size: var(--_size);
+            padding-inline-start: calc(var(--_size) + 0.25rem);
+            cursor: pointer;
+        }
 
 
-/* Radio icon */
+        /* Hide the native radio, but keep it functional */
 
-label:has(> input[type="radio"])::before {
-    content: "radio_button_unchecked";
-
-    position: absolute;
-    inset-inline-start: 0;
-    inset-block-start: 50%;
-    transform: translateY(-50%);
-
-    inline-size: var(--_size);
-    block-size: var(--_size);
-
-    font-family: var(--font-icon);
-    font-weight: normal;
-    font-style: normal;
-    font-size: var(--_size);
-    line-height: 1;
-
-    letter-spacing: normal;
-    text-transform: none;
-    font-feature-settings: "liga";
-    -webkit-font-smoothing: antialiased;
-
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    color: var(--primary);
-
-    user-select: none;
-}
+        label:has(> input[type="radio"])>input {
+            position: absolute;
+            inline-size: 1px;
+            block-size: 1px;
+            opacity: 0;
+        }
 
 
-/* Checked */
+        /* Radio icon */
 
-label:has(> input[type="radio"]:checked)::before {
-    content: "radio_button_checked";
-}
+        label:has(> input[type="radio"])::before {
+            content: "radio_button_unchecked";
+
+            position: absolute;
+            inset-inline-start: 0;
+            inset-block-start: 50%;
+            transform: translateY(-50%);
+
+            inline-size: var(--_size);
+            block-size: var(--_size);
+
+            font-family: var(--font-icon);
+            font-weight: normal;
+            font-style: normal;
+            font-size: var(--_size);
+            line-height: 1;
+
+            letter-spacing: normal;
+            text-transform: none;
+            font-feature-settings: "liga";
+            -webkit-font-smoothing: antialiased;
+
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            color: var(--primary);
+
+            user-select: none;
+        }
 
 
-/* Disabled */
+        /* Checked */
 
-label:has(> input[type="radio"]:disabled) {
-    opacity: 0.5;
-    cursor: not-allowed;
-}
-
-
-/* Focus */
-
-label:has(> input[type="radio"]:focus-visible)::before {
-    outline: 0.125rem solid var(--primary);
-    outline-offset: 0.375rem;
-}
+        label:has(> input[type="radio"]:checked)::before {
+            content: "radio_button_checked";
+        }
 
 
-/* Hover / focus ripple */
+        /* Disabled */
 
-label:has(> input[type="radio"])::after {
-    content: "";
+        label:has(> input[type="radio"]:disabled) {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
 
-    position: absolute;
-    inset-inline-start: 0;
-    inset-block-start: 50%;
-    transform: translateY(-50%);
 
-    inline-size: var(--_size);
-    block-size: var(--_size);
+        /* Focus */
 
-    border-radius: 50%;
+        label:has(> input[type="radio"]:focus-visible)::before {
+            outline: 0.125rem solid var(--primary);
+            outline-offset: 0.375rem;
+        }
 
-    background-color: currentColor;
-    box-shadow: 0 0 0 0 currentColor;
-    opacity: 0;
 
-    transition: all var(--speed1);
+        /* Hover / focus ripple */
 
-    pointer-events: none;
-}
+        label:has(> input[type="radio"])::after {
+            content: "";
 
-label:has(> input[type="radio"]:not(:disabled)):hover::after,
-label:has(> input[type="radio"]:not(:disabled):focus)::after {
-    box-shadow: 0 0 0 0.5rem currentColor;
-    opacity: 0.1;
-}
+            position: absolute;
+            inset-inline-start: 0;
+            inset-block-start: 50%;
+            transform: translateY(-50%);
 
+            inline-size: var(--_size);
+            block-size: var(--_size);
+
+            border-radius: 50%;
+
+            background-color: currentColor;
+            box-shadow: 0 0 0 0 currentColor;
+            opacity: 0;
+
+            transition: all var(--speed1);
+
+            pointer-events: none;
+        }
+
+        label:has(> input[type="radio"]:not(:disabled)):hover::after,
+        label:has(> input[type="radio"]:not(:disabled):focus)::after {
+            box-shadow: 0 0 0 0.5rem currentColor;
+            opacity: 0.1;
+        }
     </style>
 
     <style id="native-checkbox">
@@ -613,17 +612,18 @@ label:has(> input[type="radio"]:not(:disabled):focus)::after {
             outline-offset: 0.375rem;
         }
     </style>
-    <style id="4basic">
-        /*
+     -->
+    <style id="4-chatgpt-beer-native">
+        label:has(> input[type="radio"]) {
+            --_size: 1.5rem;
+            display: inline-flex;
+            align-items: center;
+            column-gap: 0.25rem;
+            cursor: pointer;
+        }
+
         .field.label>label {
             inset: -0.2rem 0.9375rem 0 var(--_start);
-        }
-        */
-
-        .label-selection-row {
-            display: flex;
-            align-items: center;
-            gap: 12px;
         }
 
         input[type=color] {
@@ -636,17 +636,21 @@ label:has(> input[type="radio"]:not(:disabled):focus)::after {
             position: static;
             cursor: pointer;
         }
+    </style>
+    <style id="4basic">
+        .label-selection-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
 
         input[type=text]:invalid {
             border-color: red;
             outline: 1px solid red;
             box-shadow: none;
         }
-    </style>
 
-
-
-    <style id="4bess">
         :root {
             --basicUI_ripple-duration: 1s;
         }
@@ -673,16 +677,46 @@ label:has(> input[type="radio"]:not(:disabled):focus)::after {
             background-color: red;
         }
 
-        /* Disable the click/active stretching effect on buttons */
-        /* button:disabled:active { border-radius: revert !important; } */
+        span.basicUI_ripple {
+            position: absolute !important;
+        }
+    </style>
+    <style id="4bess">
+        input[type="text"] {
+            /* all: unset; */
+            box-sizing: border-box;
 
+            position: relative;
+            display: inline-block;
+
+            border: 0.0625rem solid transparent;
+            border-radius: inherit;
+
+            padding: 0 0.9375rem;
+
+            font-family: inherit;
+            font-size: 1rem;
+
+            min-block-size: 3rem;
+
+            outline: none;
+
+            /* background: none; */
+
+            /* color: var(--on-surface); */
+
+            text-align: start;
+            cursor: text;
+        }
+
+        /* input[type="text"] { color: var(--on-surface) !important; } */
+
+        /* input[type="text"] { color: var(--on-surface); } */
+
+        /* Disable the click/active stretching effect on buttons */
         /* Bug reported here: https://github.com/beercss/beercss/issues/650 */
         button:not(.chip):disabled:active {
             border-radius: var(--_round) !important;
-        }
-
-        span.basicUI_ripple {
-            position: absolute !important;
         }
     </style>
 
@@ -734,41 +768,117 @@ label:has(> input[type="radio"]:not(:disabled):focus)::after {
 
 
 
+        <details id="debugVisual" open>
+            <summary style="background:blue;color:white;display:inline;padding:6px;">Debug beer-native</summary>
+            <div style="outline:4px dotted red; padding:4px;" class="surface-variant">
+                <style>
+                    #debugVisual {
+                        h3 {
+                            color: red;
+                        }
 
-        <div style="outline:4px dotted red">
-            <h3>Testing Beer native</h3>
-            <label class="checkbox">
-                <input type="checkbox">
-                <span> Checkbox checkbox</span>
-            </label>
-            <label>
-                <input type="checkbox">
-                <span> Checkbox native</span>
-            </label>
+                        summary {
+                            color: red;
+                            background-color: black;
+                            list-style-type: revert;
+                            padding: 4px;
+                            outline: 1px solid red;
+                            max-width: content;
+                        }
 
-            <div>
-                <label>
-                    <input type="radio" name="test" value="1">
-                    <span>One</span>
-                </label>
+                        input[type=text] {
+                            max-width: 140px;
+                        }
+                    }
+                </style>
+                <h3>Testing Beer native</h3>
+                <details>
+                    <summary> test-checkbox</summary>
+                    <label>
+                        <input type="checkbox">
+                        <span> Checkbox (span)</span>
+                    </label>
+                    <label>
+                        <input type="checkbox">
+                        Checkbox native
+                    </label>
+                    <div>
+                        <label>
+                            <input type="checkbox">
+                            <span>Dark (span)</span>
+                        </label>
+                        <label>
+                            <input type="checkbox">
+                            Dark native
+                        </label>
+                    </div>
+                </details>
+                <details>
+                    <summary>test-radio</summary>
+                    <label>
+                        <input type="radio" name="test" value="1">
+                        <span>One (span)</span>
+                    </label>
 
-                <label>
-                    <input type="radio" name="test" value="2">
-                    <span>Two</span>
-                </label>
+                    <label>
+                        <input type="radio" name="test" value="2">
+                        <span>Two (span)</span>
+                    </label>
 
-                <label>
-                    <input type="radio" name="test" value="3">
-                    Three (no span)
-                </label>
+                    <label>
+                        <input type="radio" name="test" value="3">
+                        Three native
+                    </label>
+                </details>
+                <details>
+                    <summary>test-text</summary>
+                    <section style="
+                            display:flex;
+                            gap:20px;
+                            NOflex-wrap: wrap;
+                            flex-direction:column;
+                            align-items:center;
+                            ">
+                        <div style="outline:1px solid green">
+                            <div>
+                                Just input:
+                            </div>
+                            <input type="text" style="outline: 1px dotted green">
+                        </div>
+
+                        <label>
+                            text native in label
+                            <input type="text">
+                        </label>
+
+                        <label class="field border">
+                            text (label.field.border)
+                            <input type="text">
+                        </label>
+
+                        <div class="field border">
+                            <label>
+                                text (div.field.border, label around)
+                                <input type="text">
+                            </label>
+                        </div>
+
+                        <div class="field border">
+                            <label>
+                                text (div.field.border, label separate)
+                            </label>
+                            <input type="text">
+                        </div>
+
+                        <hr>
+                        <label>
+                            text (div.border BAD)
+                            <input type="text">
+                        </label>
+                    </section>
+                </details>
             </div>
-            <div>
-                <label>
-                    input text
-                    <input type="text">
-                </label>
-            </div>
-        </div>
+        </details>
 
 
 
