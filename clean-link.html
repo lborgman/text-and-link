@@ -320,7 +320,7 @@
     <!-- <link href="../beercss/src/cdn/beer.css" rel="stylesheet"> -->
     <!-- <link href="http://localhost:8086/beercss/src/cdn/beer.css" rel="stylesheet"> -->
 
-    <link href="./beer-native_b.css" rel="stylesheet">
+    <link href="./beer-native_c.css" rel="stylesheet">
 
     <!-- 
     <style id="native-radio">
@@ -614,17 +614,30 @@
     </style>
      -->
     <style id="4-chatgpt-beer-native">
+        :root {
+            input[type="text"] {
+                color: FieldText;
+                background-color: Field;
+            }
+        }
         label:has(> input[type="radio"]) {
-            --_size: 1.5rem;
-            display: inline-flex;
-            align-items: center;
-            column-gap: 0.25rem;
-            cursor: pointer;
+            vertical-align: middle;
         }
 
-        .field.label>label {
-            inset: -0.2rem 0.9375rem 0 var(--_start);
+        label:has(> input[type="checkbox"]) {
+            vertical-align: middle;
         }
+
+        label:has(> input[type="checkbox"])::after {
+            content: none;
+        }
+
+        label:has(> input[type="radio"]) {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        /* .field.label>label { inset: -0.2rem 0.9375rem 0 var(--_start); } */
 
         input[type=color] {
             background: transparent;
