@@ -58,7 +58,8 @@
     <script type="importmap">
         {
             "imports": {
-                "basic-ui": "https://lborgman.github.io/basic-ui/js/basic-ui.js"
+                "basic-ui": "https://lborgman.github.io/basic-ui/js/basic-ui.js",
+                "beer-fields": "./beer-fields.js"
             }
         }
     </script>
@@ -320,7 +321,7 @@
     <!-- <link href="../beercss/src/cdn/beer.css" rel="stylesheet"> -->
     <!-- <link href="http://localhost:8086/beercss/src/cdn/beer.css" rel="stylesheet"> -->
 
-    <link href="./beer-native_c.css" rel="stylesheet">
+    <!-- <link href="./beer-native_c.css" rel="stylesheet"> -->
 
     <!-- 
     <style id="native-radio">
@@ -437,6 +438,8 @@
             opacity: 0.1;
         }
     </style>
+-->
+    <!--
 
     <style id="native-checkbox">
         /* ==========================================================================
@@ -613,13 +616,25 @@
         }
     </style>
      -->
+    <!-- 
     <style id="4-chatgpt-beer-native">
+        /* Floating state (on the top border) */
+        input[type="text"]:focus+label,
+        input[type="text"]:not(:placeholder-shown)+label {
+            inset: -0.5rem auto auto 0.9375rem;
+            /* font-size: 0.75rem; */
+            /* background-color: white; */
+            /* To 'cut' the border line */
+            /* padding: 0 4px; */
+        }
+
         :root {
             input[type="text"] {
                 color: FieldText;
                 background-color: Field;
             }
         }
+
         label:has(> input[type="radio"]) {
             vertical-align: middle;
         }
@@ -649,7 +664,68 @@
             position: static;
             cursor: pointer;
         }
+
+        /*
+        input[type="text"]:focus+label,
+        input[type="text"]:not(:placeholder-shown)+label {
+            inset: -0.5rem auto auto 0.9375rem;
+            font-size: 0.75rem;
+            background-color: red;
+            padding: 0 4px;
+
+        }
+
+        .field>input {
+            background-color: green;
+        }
+
+        .label.border.field {
+            background-color: transparent;
+        }
+        */
     </style>
+    -->
+    <!-- 
+    <style id="4bess">
+        input[type="text"] {
+            /* all: unset; */
+            box-sizing: border-box;
+
+            position: relative;
+            display: inline-block;
+
+            border: 0.0625rem solid transparent;
+            border-radius: inherit;
+
+            padding: 0 0.9375rem;
+
+            font-family: inherit;
+            font-size: 1rem;
+
+            min-block-size: 3rem;
+
+            outline: none;
+
+            /* background: none; */
+
+            /* color: var(--on-surface); */
+
+            text-align: start;
+            cursor: text;
+        }
+
+        /* input[type="text"] { color: var(--on-surface) !important; } */
+
+        /* input[type="text"] { color: var(--on-surface); } */
+
+        /* Disable the click/active stretching effect on buttons */
+        /* Bug reported here: https://github.com/beercss/beercss/issues/650 */
+        button:not(.chip):disabled:active {
+            border-radius: var(--_round) !important;
+        }
+    </style>
+    -->
+
     <style id="4basic">
         .label-selection-row {
             display: flex;
@@ -694,44 +770,8 @@
             position: absolute !important;
         }
     </style>
-    <style id="4bess">
-        input[type="text"] {
-            /* all: unset; */
-            box-sizing: border-box;
-
-            position: relative;
-            display: inline-block;
-
-            border: 0.0625rem solid transparent;
-            border-radius: inherit;
-
-            padding: 0 0.9375rem;
-
-            font-family: inherit;
-            font-size: 1rem;
-
-            min-block-size: 3rem;
-
-            outline: none;
-
-            /* background: none; */
-
-            /* color: var(--on-surface); */
-
-            text-align: start;
-            cursor: text;
-        }
-
-        /* input[type="text"] { color: var(--on-surface) !important; } */
-
-        /* input[type="text"] { color: var(--on-surface); } */
-
-        /* Disable the click/active stretching effect on buttons */
-        /* Bug reported here: https://github.com/beercss/beercss/issues/650 */
-        button:not(.chip):disabled:active {
-            border-radius: var(--_round) !important;
-        }
-    </style>
+    <!-- 
+     -->
 
     <!-- <div id="moved" style="display:none"> </div> -->
 
@@ -788,6 +828,8 @@
                     #debugVisual {
                         h3 {
                             color: red;
+                            font-size: 1.1rem;
+                            margin-bottom: 10px;
                         }
 
                         summary {
@@ -800,11 +842,11 @@
                         }
 
                         input[type=text] {
-                            max-width: 140px;
+                            /* max-width: 140px; */
                         }
                     }
                 </style>
-                <h3>Testing Beer native</h3>
+                <h3>Testing beer-native.js and beer-fields.js</h3>
                 <details>
                     <summary> test-checkbox</summary>
                     <label>
@@ -843,51 +885,106 @@
                         Three native
                     </label>
                 </details>
-                <details>
+                <script type="module">
+                    const modBeerFields = await import("beer-fields");
+                    function insertHere(output) {
+                        document.currentScript.parentNode.insertBefore(output, document.currentScript);
+                    }
+                    const eltTestText = document.getElementById("test-text");
+                    const eltExampleSection = eltTestText.querySelector("section");
+                    setTimeout(() => {
+                        eltTestText.addEventListener("change", evt => {
+                            const target = evt.target;
+                            if (target.tagName != "INPUT") {
+                                return;
+                                debugger;
+                            }
+                            if (target.type != "checkbox") {
+                                return;
+                                debugger;
+                            }
+                            const divCont = target.closest("div");
+                            const myDiv = divCont
+                                .lastElementChild
+                                .firstElementChild
+                                .firstElementChild
+                                ;
+                            myDiv.classList.toggle("field");
+                        })
+                    }, 1000);
+                    const setOpts = new Set();
+                    [false, true].forEach(border => {
+                        [false, true].forEach(label => {
+                            [false, true].forEach(fill => {
+                                const fieldOpts = {};
+                                if (border) { fieldOpts.border = true; }
+                                if (label) { fieldOpts.label = true; }
+                                if (fill) { fieldOpts.fill = true; }
+                                const jsonOpts = JSON.stringify(fieldOpts);
+                                if (setOpts.has(jsonOpts)) {
+                                    debugger;
+                                }
+                                setOpts.add(jsonOpts);
+                                console.log({ border, label, fill, fieldOpts });
+                                addTextExample(fieldOpts);
+                            })
+                        })
+                    });
+                    console.log(setOpts);
+                    debugger;
+                    function addTextExample(fieldOpts) {
+                        // debugger;
+                        const { field, input } = modBeerFields.createTextField(fieldOpts);
+                        console.log({ field, input });
+                        let fieldClass = field.getAttribute("class");
+                        fieldClass = fieldClass.replace("field", "");
+                        const divFieldClass = mkElt("div", undefined, fieldClass);
+                        divFieldClass.style = `
+                            background: blue;
+                            color: white;
+                            padding: 4px;
+                            `;
+                        const divOpts = mkElt("div", undefined, JSON.stringify(fieldOpts));
+                        divOpts.style = `
+                            background: red;
+                            color: yellow;
+                            overflow-wrap: break-word;
+                            `;
+                        field.style.margin = "0";
+                        const divTestTest = mkElt("div", undefined, [
+                            divFieldClass,
+                            divOpts,
+                            field
+                        ]);
+                        divTestTest.style = `
+                            max-width: 30%;
+                            max-width: 150px;
+                            outline: blue dotted 4px;
+                        `;
+                        // eltTestText.appendChild(divTestTest);
+                        // section
+                        eltExampleSection.appendChild(divTestTest);
+                    }
+                </script>
+                <details open id="test-text">
                     <summary>test-text</summary>
                     <section style="
                             display:flex;
+                            flex-direction: row;
+                            flex-wrap: wrap;
                             gap:20px;
-                            NOflex-wrap: wrap;
-                            flex-direction:column;
-                            align-items:center;
                             ">
-                        <div style="outline:1px solid green">
-                            <div>
-                                Just input:
-                            </div>
-                            <input type="text" style="outline: 1px dotted green">
-                        </div>
-
-                        <label>
-                            text native in label
-                            <input type="text">
-                        </label>
-
-                        <label class="field border">
-                            text (label.field.border)
-                            <input type="text">
-                        </label>
-
-                        <div class="field border">
-                            <label>
-                                text (div.field.border, label around)
-                                <input type="text">
-                            </label>
-                        </div>
-
-                        <div class="field border">
-                            <label>
-                                text (div.field.border, label separate)
-                            </label>
-                            <input type="text">
-                        </div>
-
-                        <hr>
-                        <label>
-                            text (div.border BAD)
-                            <input type="text">
-                        </label>
+                        <style>
+                            #test-text {
+                                section>div {
+                                    display: flex;
+                                    flex-direction: column;
+                                    outline: 4px dotted blue;
+                                    padding: 8px;
+                                    max-width: 250px;
+                                }
+                            }
+                        </style>
                     </section>
                 </details>
             </div>
