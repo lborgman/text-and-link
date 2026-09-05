@@ -913,12 +913,12 @@
                         })
                     }, 1000);
                     const setOpts = new Set();
-                    [false, true].forEach(border => {
-                        [false, true].forEach(label => {
+                    [false, "Testing"].forEach(label => {
+                        [false, true].forEach(border => {
                             [false, true].forEach(fill => {
                                 const fieldOpts = {};
                                 if (border) { fieldOpts.border = true; }
-                                if (label) { fieldOpts.label = true; }
+                                if (label) { fieldOpts.label = label; }
                                 if (fill) { fieldOpts.fill = true; }
                                 const jsonOpts = JSON.stringify(fieldOpts);
                                 if (setOpts.has(jsonOpts)) {
@@ -931,7 +931,7 @@
                         })
                     });
                     console.log(setOpts);
-                    debugger;
+                    // debugger;
                     function addTextExample(fieldOpts) {
                         // debugger;
                         const { field, input } = modBeerFields.createTextField(fieldOpts);
@@ -973,6 +973,7 @@
                             flex-direction: row;
                             flex-wrap: wrap;
                             gap:20px;
+                            background-color: var(--surface)
                             ">
                         <style>
                             #test-text {

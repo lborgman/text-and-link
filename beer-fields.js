@@ -66,18 +66,28 @@ function wireFloatingLabel(control, labelEl) {
  */
 function buildField({ label, border, fill, size }, isTextarea) {
     const field = document.createElement('div');
+    // if (label) { debugger; }
     field.className = [
         'field',
         label && 'label',
-        fill ? 'fill' : border && 'border',
-        isTextarea && 'textarea',
-        size,
+        // fill ? 'fill' : border && 'border',
+        border && "border",
+        fill && "fill",
+        // isTextarea && 'textarea',
+        // size,
     ]
-        .filter(Boolean)
+        // .filter(Boolean)
         .join(' ');
 
     let labelEl = null;
     if (label) {
+        const tofLabel = typeof label;
+        if ("string" != tofLabel) {
+            const msg = `options.label should be string, is "${tofLabel}"`;
+            console.error(msg);
+            debugger;
+            throw Error(msg);
+        }
         labelEl = document.createElement('label');
         labelEl.textContent = label;
     }
