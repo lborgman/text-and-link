@@ -1027,10 +1027,11 @@
                 <script>
                     // BeerCSS’s smaller subset (from GitHub) typically includes:
                     function insertIcon(iconName) {
-                        console.log({ iconName });
-                        // const eltIcon = mkElt("span", undefined, iconName);
+                        // console.log({ iconName });
                         const eltIcon = mkElt("i", undefined, iconName);
-                        myDiv.appendChild(eltIcon);
+                        // myDiv.appendChild(eltIcon);
+                        const eltTextIcon = mkElt("div", undefined, [iconName, ": ", eltIcon]);
+                        myDiv.appendChild(eltTextIcon);
                     }
                     const myDiv = document.getElementById("test-icons").querySelector("div");
                     myDiv.style.display = "flex";
