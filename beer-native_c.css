@@ -60,7 +60,7 @@ Native checkbox
 label:has(> input[type="checkbox"]) {
     --_size: 1.5rem;
 
-    ``` position: relative;
+    position: relative;
 
     /*
  * Important:
@@ -75,7 +75,6 @@ label:has(> input[type="checkbox"]) {
     column-gap: 0.25rem;
 
     cursor: pointer;
-    ```
 }
 
 /*

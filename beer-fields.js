@@ -105,29 +105,32 @@ function buildField({ label, border, fill, size }, isTextarea) {
  * @returns {{ field: HTMLDivElement, input: HTMLInputElement }}
  */
 export function createTextField({
-    type = 'text',
     value = '',
     name,
     onInput,
     ...rest
 } = {}) {
     const { field, label } = buildField(rest, false);
+    const fieldType = rest.type || 'input';
 
-    const input = document.createElement('input');
-    input.type = type;
-    input.value = value;
-    if (name) input.name = name;
+    let eltText;
+    if (fieldType == "input") {
+        eltText = document.createElement('input');
+        eltText.type = "text";
+    }
+    eltText.value = value;
+    if (name) eltText.name = name;
 
-    field.append(input);
+    field.append(eltText);
     if (label) field.append(label);
 
-    wireFloatingLabel(input, label);
+    wireFloatingLabel(eltText, label);
 
     if (onInput) {
-        input.addEventListener('input', () => onInput(input.value));
+        eltText.addEventListener('input', () => onInput(eltText.value));
     }
 
-    return { field, input };
+    return { field, input: eltText };
 }
 
 // ---------------------------------------------------------------------------
