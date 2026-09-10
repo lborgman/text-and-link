@@ -1,0 +1,37 @@
+@font-face {
+    font-family: "Material Symbols Rounded";
+    src: url("./ext/beercss/material-symbols-subset-icons-28-53.woff2") format("woff2");
+    font-weight: normal;
+    font-style: normal;
+}
+
+.material-symbols-rounded {
+    font-family: 'Material Symbols Rounded';
+    font-variation-settings:
+        "FILL" 1,
+        /* outline */
+        "wght" 400,
+        /* normal stroke weight */
+        "GRAD" 0,
+        /* neutral grade */
+        "opsz" 12;
+    /* optical size */
+}
+
+/*
+The small font file linked above does not come with Beer CSS.
+It was created from the link below. It is only 5kB.
+(The comment is a citation from an AI. I am not sure it is entirely correct.)
+
+Google provides a subset API specifically for Material Symbols.
+This API is used internally by Google’s own Material Web Components. It generates a small,
+ligature‑enabled, correct .woff2 file containing only the icons listed.
+
+https://fonts.googleapis.com/css2
+  ?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@24,400,0,0
+  &icon_names=
+    add,cancel,check,clear,close,delete,done,download,edit,error,
+    favorite,filter_list,help,info,menu,print,remove,
+    search,share,sort,star,upload,visibility,visibility_off,warning
+
+*/

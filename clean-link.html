@@ -326,31 +326,7 @@
     <!-- <link href="http://localhost:8086/beercss/src/cdn/beer.css" rel="stylesheet"> -->
 
     <link href="./beer-native_b.css" rel="stylesheet">
-    <style>
-        @font-face {
-            font-family: "Material Symbols Outlined";
-            src: url("./ext/beercss/material-symbols-subset-icons.woff2") format("woff2");
-            font-weight: normal;
-            font-style: normal;
-        }
-        /*
-            This font file does not come with Beer CSS.
-            It was created from the link below.
-
-            (The comments are citations from an AI.
-            I am not sure they are entirely correct.)
-
-            Google provides a subset API specifically for Material Symbols:
-
-              https://fonts.googleapis.com/css2
-                ?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0
-                &icon_names=home,menu,search,close,check,add,remove,edit,delete,arrow_back,arrow_forward,expand_more,expand_less,more_vert,more_horiz,settings,info,warning,error,done,favorite,favorite_border,login,logout,person,person_add,person_remove,visibility,visibility_off,lock,lock_open,help,refresh,upload,download,share,print,filter_list,sort,star,star_border,check_circle,cancel,radio_button_checked,radio_button_unchecked,toggle_on,toggle_off
-
-            This API is used internally by Google’s own Material Web Components.
-            It generates a small, ligature‑enabled, correct .woff2 file containing only the icons listed.
-
-        */
-    </style>
+    <link href="./beer-icons.css" rel="stylesheet">
 
     <!-- 
     <style id="native-radio">
@@ -1027,10 +1003,8 @@
                 <script>
                     // BeerCSS’s smaller subset (from GitHub) typically includes:
                     function insertIcon(iconName) {
-                        // console.log({ iconName });
                         const eltIcon = mkElt("i", undefined, iconName);
-                        // myDiv.appendChild(eltIcon);
-                        const eltTextIcon = mkElt("div", undefined, [iconName, ": ", eltIcon]);
+                        const eltTextIcon = mkElt("div", undefined, [iconName, ":", eltIcon]);
                         myDiv.appendChild(eltTextIcon);
                     }
                     const myDiv = document.getElementById("test-icons").querySelector("div");
@@ -1039,6 +1013,7 @@
                     myDiv.style.gap = "10px";
                     myDiv.style.padding = "10px";
                     myDiv.style.outline = "dotted blue 4px";
+                    /*
                     // Basic UI icons
                     "home, menu, close, search, settings"
                         .split(",")
@@ -1067,7 +1042,37 @@
                     "visibility, visibility_off"
                         .split(",")
                         .map(n => n.trim())
-                        .forEach(n => insertIcon(n))
+                        .forEach(n => insertIcon(n));
+                    */
+                    [
+                        "add",
+                        "cancel",
+                        "check",
+                        "clear",
+                        "close",
+                        "delete",
+                        "done",
+                        "download",
+                        "edit",
+                        "error",
+                        "favorite",
+                        "filter_list",
+                        "help",
+                        "info",
+                        "menu",
+                        "print",
+                        "remove",
+                        "search",
+                        "share",
+                        "sort",
+                        "star",
+                        "upload",
+                        "visibility",
+                        "visibility_off",
+                        "warning"
+                    ]
+                        .forEach(n => insertIcon(n));
+
                 </script>
             </div>
         </details>
