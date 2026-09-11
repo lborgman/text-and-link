@@ -1,7 +1,13 @@
+/* .material-symbols, */
+/* i.material-symbols, */
+i {
+    font-family: "Material Symbols Rounded" !important;
+}
+
 @font-face {
     font-family: "Material Symbols Rounded";
     src: url("./ext/beercss/material-symbols-subset-icons-28-53.woff2") format("woff2");
-    font-weight: normal;
+    font-weight: 400;
     font-style: normal;
 }
 

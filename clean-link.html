@@ -55,10 +55,11 @@
     <!-- <link href="https://lborgman.github.io/speech-kb/js/mod/basic-ui.css" rel="stylesheet" media="print" -->
     <!-- onload="this.media='all'" /> -->
 
+    <!-- "basic-ui": "https://lborgman.github.io/basic-ui/js/basic-ui.js", -->
     <script type="importmap">
         {
             "imports": {
-                "basic-ui": "https://lborgman.github.io/basic-ui/js/basic-ui.js",
+                "basic-ui": "./basic-ui/new-basic-ui.js",
                 "beer-fields": "./beer-fields.js"
             }
         }
@@ -1004,7 +1005,10 @@
                     // BeerCSS’s smaller subset (from GitHub) typically includes:
                     function insertIcon(iconName) {
                         const eltIcon = mkElt("i", undefined, iconName);
-                        const eltTextIcon = mkElt("div", undefined, [iconName, ":", eltIcon]);
+                        const spanName = mkElt("span", undefined, `${iconName}:`);
+                        // const eltTextIcon = mkElt("div", undefined, [iconName, ":", eltIcon]);
+                        spanName.style.opacity = "0.5";
+                        const eltTextIcon = mkElt("div", undefined, [spanName, eltIcon]);
                         myDiv.appendChild(eltTextIcon);
                     }
                     const myDiv = document.getElementById("test-icons").querySelector("div");
