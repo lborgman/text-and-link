@@ -1001,8 +1001,6 @@ function isAndroid() {
 }
 
 
-// const btnDebug = mkElt("button", undefined, "Debug");
-// const btnDebug = modBasicUI.mkIconButton("info.svg", "Settings");
 const btnSettings = mkIconButton("./info.svg", "Settings");
 btnSettings.id = "btn-settings";
 btnSettings.classList.add("md-xs");

@@ -1,13 +1,36 @@
 /*
-    Color themes can not be implemented as ES6 modules since they
-    must be applied before JavaScript modules are loaded.
+    Color themes can not be implemented as ES6 modules
+    since JavsScript modules are not exectued like this:
 
-    This implementation instead defines a global object:
+        Even if your ES Modules are completely downloaded,
+        parsed, and ready to go in memory, the JavaScript
+        engine will refuse to execute the module code
+        until all preceding page CSS has finished loading
+        and parsing into the CSSOM (CSS Object Model)
+
+    So this JavaScript file is not loaded as a module.
+    Load it like this:
+
+      <script src="PATH/basic-ui-color-theme-loader.js"
+        blocking="rendering"></scipt>
+
+    To avoid cluttering the global name space this file
+    defines only a single global object:
+
         globalThis.BasicUI_ColorThemes
 
     Nothing else is added to globalThis!
+
+    Usage:
+        const { color, dark, variant } = getYourSavedTheme();
+        const themePalette = BasicUI_ColorThemes.generateTheme(color, dark, variant);
+        BasicUI_ColorThemes.applyTheme(themePalette);
+
+    For more info see jsDoc below for those two functions.
+
 */
 (function () {
+    console.log("basic-ui-color-themes-loader is here!!!");
     // Define your public methods
     const publicAPI = {
         /**

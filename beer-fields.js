@@ -113,9 +113,9 @@ export function createTextField({
     const { field, label } = buildField(rest, false);
     const fieldType = rest.type || 'input';
 
-    let eltText;
+    const eltText = document.createElement(fieldType);
     if (fieldType == "input") {
-        eltText = document.createElement('input');
+        // eltText = document.createElement('input');
         eltText.type = "text";
     }
     eltText.value = value;
