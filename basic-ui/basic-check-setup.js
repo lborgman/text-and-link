@@ -294,6 +294,39 @@ const detailsDebugVisual = mkElt("details", { id: "debugVisual", open: "" }, [
 export function getEltDebugVisual() {
     return detailsDebugVisual;
 }
+export function doTheTests() {
+    setTimeout(() => {
+        const dv = document.getElementById("debugVisual");
+        doTheTestsInternal(dv);
+    }, 1000);
+}
+function doTheTestsInternal(dv) {
+    const dvResult = document.getElementById("testVisual-result");
+
+    // const dv = document.getElementById("debugVisual");
+    const cb = dv.querySelector("input[type=checkbox]");
+    const cbRect = cb.getBoundingClientRect();
+    // console.log({ cb, cbRect });
+    if (cbRect.width > 8) {
+        const eltErr = mkElt("p", undefined, "beer-native.css not loaded correctly");
+        dvResult.append(eltErr);
+        dvResult.style.display = "block";
+    }
+    const iIcon = dv.querySelector("i");
+    const iRect = iIcon.getBoundingClientRect();
+    console.log({ iIcon, iRect });
+    if (iRect.width != iRect.height) {
+        // This can be better. Check for woff2, etc.
+        if (iRect.width > iRect.height * 1.3) {
+            const eltErr = mkElt("p", undefined, "beer-icons.css not loaded correctly");
+            dvResult.append(eltErr);
+        } else {
+            const eltErr = mkElt("p", undefined, "beer.css not loaded correctly");
+            dvResult.append(eltErr);
+        }
+        dvResult.style.display = "block";
+    }
+}
 
 // Append wherever needed, e.g.:
 // document.body.appendChild(detailsDebugVisual);
