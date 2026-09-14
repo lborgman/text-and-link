@@ -41,7 +41,8 @@ const scriptModuleText = `
     function insertHere(output) {
         document.currentScript.parentNode.insertBefore(output, document.currentScript);
     }
-    const eltTestText = document.getElementById("test-text");
+    // const eltTestText = document.getElementById("test-text");
+    const eltTestText = await globalThis.waitUntilQuerySelector("#test-text");
     const eltExampleSection = eltTestText.querySelector("section");
     setTimeout(() => {
         eltTestText.addEventListener("change", evt => {
@@ -294,14 +295,14 @@ const detailsDebugVisual = mkElt("details", { id: "debugVisual", open: "" }, [
 export function getEltDebugVisual() {
     return detailsDebugVisual;
 }
-export function doTheTests() {
-    setTimeout(() => {
-        const dv = document.getElementById("debugVisual");
-        doTheTestsInternal(dv);
-    }, 1000);
+export async function doTheTests() {
+    const dv = await globalThis.waitUntilQuerySelector("#debugVisual",);
+    doTheTestsInternal(dv);
 }
-function doTheTestsInternal(dv) {
-    const dvResult = document.getElementById("testVisual-result");
+
+async function doTheTestsInternal(dv) {
+    // const dvResult = document.getElementById("testVisual-result");
+    const dvResult = await globalThis.waitUntilQuerySelector("#testVisual-result");
 
     // const dv = document.getElementById("debugVisual");
     const cb = dv.querySelector("input[type=checkbox]");
@@ -327,6 +328,47 @@ function doTheTestsInternal(dv) {
         dvResult.style.display = "block";
     }
 }
+
+/**
+ * Waits for an element to be rendered in the DOM.
+ * (https://www.sitelint.com/blog/javascript-and-wait-until-dom-element-exists)
+ *
+ * @param {string} CSSselector - The element or selector to wait for.
+ * @param {number} [timeout=1000] - The timeout in milliseconds.
+ * @returns {Promise<HTMLElement|null>} A Promise that resolves with the element or null if the timeout is reached.
+ */
+
+function waitUntilQuerySelector(CSSselector, timeout) {
+    timeout = typeof timeout === "number" ? timeout : 1000;
+    const tofSelector = typeof CSSselector
+    if (tofSelector !== "string") {
+        const msg = `typeof CSSselector should be "string", but is "${tofSelector}"`;
+        console.error(msg);
+        debugger;
+        throw Error(msg);
+    }
+
+    const waitForElement = (resolve) => {
+        const startTime = window.performance.now();
+        const checkElement = () => {
+            const currentTime = window.performance.now();
+            if (currentTime - startTime >= timeout) {
+                resolve(null);
+                return;
+            }
+            const element = document.querySelector(CSSselector);
+            if (element) {
+                resolve(element);
+                return;
+            }
+            window.requestAnimationFrame(checkElement);
+        };
+        window.requestAnimationFrame(checkElement);
+    };
+
+    return new Promise(waitForElement);
+}
+globalThis.waitUntilQuerySelector = waitUntilQuerySelector;
 
 // Append wherever needed, e.g.:
 // document.body.appendChild(detailsDebugVisual);
