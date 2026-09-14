@@ -9,6 +9,8 @@ navigator.serviceWorker.register('./sw.js');
 
 export { };
 
+const modBeerHtml = await import("beer-html");
+
 // const modBasicUI = await import("https://lborgman.github.io/basic-ui/js/basic-ui.js");
 const modBasicUI = await import("basic-ui");
 
@@ -917,7 +919,7 @@ function showHtmlAsDialog(strHtml, opts = {}) {
         // modBasicUI.applyMaterialTheme(opts.theme.color, opts.theme.dark, dialog);
         // applyMaterialTheme(opts.theme.color, opts.theme.dark, dialog);
         // const themePalette = BasicUI_ColorThemes.generateTheme(opts.theme);
-        const {color, dark, variant } = opts.theme;
+        const { color, dark, variant } = opts.theme;
         const themePalette = BasicUI_ColorThemes.generateTheme(color, dark, variant);
         BasicUI_ColorThemes.applyTheme(themePalette);
     }
@@ -1001,9 +1003,15 @@ function isAndroid() {
 }
 
 
-const btnSettings = mkIconButton("./info.svg", "Settings");
+// const btnSettings = mkIconButton("./info.svg", "Settings");
+const btnSettings = modBeerHtml.createButton({
+    icon: "settings", 
+    shape: "circle",
+    // transparent: true
+});
 btnSettings.id = "btn-settings";
-btnSettings.classList.add("md-xs");
+btnSettings.title = "- Settings";
+// btnSettings.classList.add("md-xs");
 
 document.body.appendChild(btnSettings);
 btnSettings.addEventListener("click", handleSettingsClick);
@@ -1117,10 +1125,10 @@ function syncInpTextAndColorPicker(inpTypeText, inpTypeColor) {
 }
 
 function dialogColorTheme() {
-    const inpColor = mkElt("input", { id:"inp-color", type: "text", placeholder: "CSS color" });
+    const inpColor = mkElt("input", { id: "inp-color", type: "text", placeholder: "CSS color" });
     inpColor.value = currentTheme.color;
     inpColor.style.width = "calc(7ch + 30px)";
-    const colorPicker = mkElt("input", { id:"color-picker", type: "color" });
+    const colorPicker = mkElt("input", { id: "color-picker", type: "color" });
     colorPicker.value = currentTheme.color;
     const eltColor = mkElt("span", undefined, [
         // Put a span around to preserve height:

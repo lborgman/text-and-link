@@ -560,3 +560,95 @@ export function createTabs({ tabs, initial = 0, onChange }) {
 
     return { nav, panelsContainer, select };
 }
+
+
+/**
+ * Creates a Beer CSS styled button.
+ * @param {object} [options]
+ * @param {string} [options.label] - Button text.
+ * @param {string} [options.icon] - Material icon name shown before the label. Ignored if `image` is set.
+ * @param {string} [options.image] - Image URL shown instead of an icon (e.g. avatar, logo). Takes priority over `icon`.
+ * @param {string} [options.imageAlt=''] - Alt text for `image`. Ignored if `decorative` is true.
+ * @param {boolean} [options.decorative=false] - Marks `image` as purely ornamental (empty alt, hidden from assistive tech) rather than meaningful content.
+ * @param {boolean} [options.border=false] - Outlined style instead of filled.
+ * @param {boolean} [options.transparent=false] - Shape reveals only on hover/press; common for icon-only nav buttons.
+ * @param {boolean} [options.extend=false] - FAB shows icon + label together instead of icon-only.
+ * @param {'round'|'square'|'circle'|'small-round'} [options.shape]
+ * @param {'small'|'large'|'extra'} [options.size]
+ * @param {string} [options.color] - Color role class, e.g. 'primary', 'secondary', 'error', 'tertiary'.
+ * @param {boolean} [options.responsive=false] - Full width on small screens.
+ * @param {boolean} [options.noWave=false] - Disables the ripple/wave click effect.
+ * @param {string|number} [options.badge] - Optional badge content overlaid on the button.
+ * @param {string} [options.type='button'] - Native button type.
+ * @param {() => void} [options.onClick]
+ * @returns {HTMLButtonElement}
+ */
+export function createButton({
+    label,
+    icon,
+    image,
+    imageAlt = '',
+    decorative = false,
+    border = false,
+    transparent = false,
+    extend = false,
+    shape,
+    size,
+    color,
+    responsive = false,
+    noWave = false,
+    badge,
+    type = 'button',
+    onClick,
+} = {}) {
+    const button = document.createElement('button');
+    button.type = type;
+    button.className = [
+        border && 'border',
+        transparent && 'transparent',
+        extend && 'extend',
+        shape,
+        size,
+        color,
+        responsive && 'responsive',
+        noWave && 'no-wave',
+    ]
+        .filter(Boolean)
+        .join(' ');
+
+    if (image) {
+        const imgEl = document.createElement('img');
+        imgEl.className = 'responsive';
+        imgEl.src = image;
+        if (decorative) {
+            imgEl.alt = '';
+            imgEl.setAttribute('aria-hidden', 'true');
+        } else {
+            imgEl.alt = imageAlt;
+        }
+        button.append(imgEl);
+    } else if (icon) {
+        const iconEl = document.createElement('i');
+        iconEl.textContent = icon;
+        button.append(iconEl);
+    }
+
+    if (label) {
+        const span = document.createElement('span');
+        span.textContent = label;
+        button.append(span);
+    }
+
+    if (badge !== undefined) {
+        const badgeEl = document.createElement('div');
+        badgeEl.className = 'badge';
+        badgeEl.textContent = String(badge);
+        button.append(badgeEl);
+    }
+
+    if (onClick) {
+        button.addEventListener('click', onClick);
+    }
+
+    return button;
+}
