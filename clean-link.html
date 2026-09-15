@@ -466,6 +466,7 @@
 
 
         <div id="debugVisual-container">
+            <!-- 
             <details id="OLDdebugVisual" open>
                 <summary style="background:blue;color:white;display:inline;padding:6px;">Debug beer-native</summary>
                 <div style="outline:4px dotted red; padding:4px;" class="surface-variant">
@@ -530,18 +531,18 @@
                         function insertHere(output) {
                             document.currentScript.parentNode.insertBefore(output, document.currentScript);
                         }
-                        const eltTestText = document.getElementById("test-text");
-                        const eltExampleSection = eltTestText.querySelector("section");
+                        // const eltTestText = document.getElementById("test-text");
+                        const eltTestText = await globalThis.waitUntilQuerySelector("#test-text");
+                        // const eltExampleSection = eltTestText.querySelector("section");
+                        const eltExampleSection = await globalThis.waitUntilQuerySelector("section", eltTestText);
                         setTimeout(() => {
                             eltTestText.addEventListener("change", evt => {
                                 const target = evt.target;
                                 if (target.tagName != "INPUT") {
                                     return;
-                                    debugger;
                                 }
                                 if (target.type != "checkbox") {
                                     return;
-                                    debugger;
                                 }
                                 const divCont = target.closest("div");
                                 const myDiv = divCont
@@ -576,10 +577,7 @@
                         const opts = {
                             // <textarea name="" id=""></textarea>
                         }
-                        // console.log(setOpts);
-                        // debugger;
                         function addTextExample(fieldOpts) {
-                            // debugger;
                             const { field, input } = modBeerHtml.createTextField(fieldOpts);
                             // console.log({ field, input });
                             let fieldClass = field.getAttribute("class");
@@ -718,16 +716,16 @@
                     </script>
                 </div>
             </details>
+            -->
         </div>
         <script type="module">
             const OLDdv = document.getElementById("OLDdebugVisual");
-            OLDdv.remove();
+            OLDdv?.remove();
             const modCheck = await import("basic-check");
             const container = document.getElementById("debugVisual-container");
             const newDv = modCheck.getEltDebugVisual();
             console.log({ modCheck, container, OLDdv, newDv });
             container.append(newDv);
-            // setTimeout(modCheck.doTheTests, 1000);
             modCheck.doTheTests();
         </script>
 

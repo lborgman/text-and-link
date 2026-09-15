@@ -1,3 +1,10 @@
+/*
+    For testing basic-UI loading etc.
+
+    Loading this file will define globalThis.waitUntilQuerySelector
+*/
+
+
 // ---- style text for #debugVisual ----
 const cssDebugVisual = `
     #debugVisual {
@@ -127,6 +134,7 @@ const scriptModuleText = `
 
 // ---- icons script text ----
 const scriptIconsText = `
+// debugger; // script
     // BeerCSS’s smaller subset (from GitHub) typically includes:
     function insertIcon(iconName) {
         const eltIcon = mkElt("i", undefined, iconName);
@@ -334,12 +342,12 @@ async function doTheTestsInternal(dv) {
  * (https://www.sitelint.com/blog/javascript-and-wait-until-dom-element-exists)
  *
  * @param {string} CSSselector - The element or selector to wait for.
+ * @param {HTMLElement} fromElt - The element to query from
  * @param {number} [timeout=1000] - The timeout in milliseconds.
  * @returns {Promise<HTMLElement|null>} A Promise that resolves with the element or null if the timeout is reached.
  */
 
-function waitUntilQuerySelector(CSSselector, timeout) {
-    timeout = typeof timeout === "number" ? timeout : 1000;
+function waitUntilQuerySelector(CSSselector, fromElt, timeout) {
     const tofSelector = typeof CSSselector
     if (tofSelector !== "string") {
         const msg = `typeof CSSselector should be "string", but is "${tofSelector}"`;
@@ -347,6 +355,8 @@ function waitUntilQuerySelector(CSSselector, timeout) {
         debugger;
         throw Error(msg);
     }
+    fromElt = fromElt || document.documentElement;
+    timeout = typeof timeout === "number" ? timeout : 1000;
 
     const waitForElement = (resolve) => {
         const startTime = window.performance.now();

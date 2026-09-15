@@ -230,17 +230,17 @@ function openModalAndEnsureKeyboard(bdy) {
  * @returns {Promise<any>}
  * @category Visual helpers
  */
-export async function showDialog(bdy, valFun, buttons, dialogClass) {
-    if (valFun != undefined) {
-        if (typeof valFun !== 'function') {
+export async function showDialog(bdy, retValFun, buttons, dialogClass) {
+    if (retValFun != undefined) {
+        if (typeof retValFun !== 'function') {
             debugger;
             throw TypeError('Parameter "valFun" must be a function');
         }
-        if (valFun.constructor.name !== 'AsyncFunction') {
+        if (retValFun.constructor.name !== 'AsyncFunction') {
             debugger;
             throw TypeError('Function "valFun" must be async');
         }
-        if (valFun.length !== 0) {
+        if (retValFun.length !== 0) {
             debugger;
             throw RangeError('Async function "valFun" must take 0 parameters');
         }
@@ -297,13 +297,13 @@ export async function showDialog(bdy, valFun, buttons, dialogClass) {
     syncViewport();
     // openModalAndEnsureKeyboard(bdy);
 
-    if (!valFun) return;
+    if (!retValFun) return;
     const promClose = new Promise(resolve => {
         dlg.addEventListener("close", evt => { resolve("close"); });
     });
     // debugger;
     // const ans = await valFun();
-    const ans = await Promise.race([valFun(), promClose]);
+    const ans = await Promise.race([retValFun(), promClose]);
     const tofAns = typeof ans;
     if (tofAns != "boolean" && ans != "close") {
         debugger;
