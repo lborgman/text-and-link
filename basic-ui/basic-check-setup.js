@@ -4,10 +4,11 @@
     Loading this file will define globalThis.waitUntilQuerySelector
 */
 
+const modBasic = await import("basic-ui");
 
-// ---- style text for #debugVisual ----
+// ---- style text for #basic-ui_debugVisual ----
 const cssDebugVisual = `
-    #debugVisual {
+    #basic-ui_debugVisual {
         h3 {
             color: red;
             font-size: 1.1rem;
@@ -292,19 +293,21 @@ const divSurfaceVariant = mkElt("div", {
     // scriptIcons
 ]);
 
-// ---- top-level details#debugVisual ----
-const detailsDebugVisual = mkElt("details", { id: "debugVisual", open: "" }, [
+// ---- top-level details#basic-ui_debugVisual ----
+const detailsDebugVisual = mkElt("details", { id: "basic-ui_debugVisual", open: "" }, [
     mkElt("summary", {
         style: "background:blue;color:white;display:inline;padding:6px;"
     }, "Debug beer-native"),
     divSurfaceVariant
 ]);
+// Append wherever needed, e.g.:
+// document.body.appendChild(detailsDebugVisual);
 
 export function getEltDebugVisual() {
     return detailsDebugVisual;
 }
 export async function doTheTests() {
-    const dv = await globalThis.waitUntilQuerySelector("#debugVisual",);
+    const dv = await globalThis.waitUntilQuerySelector("#basic-ui_debugVisual",);
     doTheTestsInternal(dv);
 }
 
@@ -376,27 +379,27 @@ async function doTheTestsInternal(dv) {
             color: white;
             padding: 4px;
             `;
-        const divOpts = mkElt("div", undefined, JSON.stringify(fieldOpts));
-        divOpts.style = `
+            const divOpts = mkElt("div", undefined, JSON.stringify(fieldOpts));
+            divOpts.style = `
             background: red;
             color: yellow;
             overflow-wrap: break-word;
             `;
-        field.style.margin = "0";
-        const divTestTest = mkElt("div", undefined, [
-            divFieldClass,
-            divOpts,
-            field
-        ]);
-        divTestTest.style = `
+            field.style.margin = "0";
+            const divTestTest = mkElt("div", undefined, [
+                divFieldClass,
+                divOpts,
+                field
+            ]);
+            divTestTest.style = `
             max-width: 30%;
             max-width: 150px;
             outline: blue dotted 4px;
         `;
-        // eltTestText.appendChild(divTestTest);
-        // section
-        eltExampleSection.appendChild(divTestTest);
-    }
+            // eltTestText.appendChild(divTestTest);
+            // section
+            eltExampleSection.appendChild(divTestTest);
+        }
 
     }
     // scriptIcons
@@ -405,7 +408,7 @@ async function doTheTestsInternal(dv) {
         // BeerCSS’s smaller subset (from GitHub) typically includes:
         function insertIcon(iconName) {
             const eltIcon = mkElt("i", undefined, iconName);
-            const spanName = mkElt("span", undefined, `${ iconName }: `);
+            const spanName = mkElt("span", undefined, `${iconName}: `);
             // const eltTextIcon = mkElt("div", undefined, [iconName, ":", eltIcon]);
             spanName.style.opacity = "0.5";
             const eltTextIcon = mkElt("div", undefined, [spanName, eltIcon]);
@@ -463,8 +466,9 @@ async function doTheTestsInternal(dv) {
     // const dvResult = document.getElementById("testVisual-result");
     const dvResult = await globalThis.waitUntilQuerySelector("#testVisual-result");
 
-    // const dv = document.getElementById("debugVisual");
-    const cb = dv.querySelector("input[type=checkbox]");
+    // const dv = document.getElementById("basic-ui_debugVisual");
+    // const cb = dv.querySelector("input[type=checkbox]");
+    const cb = await globalThis.waitUntilQuerySelector("input[type=checkbox]", dv);
     const cbRect = cb.getBoundingClientRect();
     // console.log({ cb, cbRect });
     if (cbRect.width > 8) {
@@ -472,7 +476,8 @@ async function doTheTestsInternal(dv) {
         dvResult.append(eltErr);
         dvResult.style.display = "block";
     }
-    const iIcon = dv.querySelector("i");
+    // const iIcon = dv.querySelector("i");
+    const iIcon = await globalThis.waitUntilQuerySelector("i", dv);
     const iRect = iIcon.getBoundingClientRect();
     console.log({ iIcon, iRect });
     if (iRect.width != iRect.height) {
@@ -531,5 +536,14 @@ function waitUntilQuerySelector(CSSselector, fromElt, timeout) {
 }
 globalThis.waitUntilQuerySelector = waitUntilQuerySelector;
 
-// Append wherever needed, e.g.:
-// document.body.appendChild(detailsDebugVisual);
+export function checkSetupDialog() {
+    const dv = detailsDebugVisual;
+    const bdy = mkElt("div", undefined, [
+        mkElt("h3", undefined, "basic-ui check"),
+        dv.lastElementChild
+    ]);
+    bdy.id = "basic-ui_debugVisual";
+    // export showDialog(bdy, retValFun, buttons, dialogClass) {
+    modBasic.showDialog(bdy, undefined, undefined, "large");
+    doTheTestsInternal(dv);
+}

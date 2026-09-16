@@ -465,13 +465,13 @@
 
 
 
-        <div id="debugVisual-container">
+        <div id="basic-ui_debugVisual-container">
             <!-- 
             <details id="OLDdebugVisual" open>
                 <summary style="background:blue;color:white;display:inline;padding:6px;">Debug beer-native</summary>
                 <div style="outline:4px dotted red; padding:4px;" class="surface-variant">
                     <style>
-                        #debugVisual {
+                        #basic-ui_debugVisual {
                             h3 {
                                 color: red;
                                 font-size: 1.1rem;
@@ -722,11 +722,21 @@
             const OLDdv = document.getElementById("OLDdebugVisual");
             OLDdv?.remove();
             const modCheck = await import("basic-check");
-            const container = document.getElementById("debugVisual-container");
-            const newDv = modCheck.getEltDebugVisual();
-            console.log({ modCheck, container, OLDdv, newDv });
-            container.append(newDv);
-            modCheck.doTheTests();
+            const container = document.getElementById("basic-ui_debugVisual-container");
+            const useDialog = confirm("Test basic-ui result as dialog?");
+            if (!useDialog) {
+                const newDv = modCheck.getEltDebugVisual();
+                console.log({ modCheck, container, OLDdv, newDv });
+                container.append(newDv);
+                modCheck.doTheTests();
+            } else {
+                const btnTest = mkElt("button", undefined, "Test setup");
+                container.appendChild(btnTest);
+                btnTest.addEventListener("click", evt => {
+                    evt.stopPropagation();
+                    modCheck.checkSetupDialog();
+                });
+            }
         </script>
 
 
