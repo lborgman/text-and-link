@@ -286,7 +286,7 @@ const divSurfaceVariant = mkElt("div", {
     }),
     detailsCheckbox,
     detailsRadio,
-    scriptModule,
+    // scriptModule,
     detailsTestText,
     detailsTestIcons,
     // scriptIcons
@@ -309,13 +309,103 @@ export async function doTheTests() {
 }
 
 async function doTheTestsInternal(dv) {
+    // scriptModule
+    {
+        const modBeerHtml = await import("beer-html");
+        function insertHere(output) {
+            document.currentScript.parentNode.insertBefore(output, document.currentScript);
+        }
+        // const eltTestText = document.getElementById("test-text");
+        const eltTestText = await globalThis.waitUntilQuerySelector("#test-text");
+        const eltExampleSection = eltTestText.querySelector("section");
+        setTimeout(() => {
+            eltTestText.addEventListener("change", evt => {
+                const target = evt.target;
+                if (target.tagName != "INPUT") {
+                    return;
+                    debugger;
+                }
+                if (target.type != "checkbox") {
+                    return;
+                    debugger;
+                }
+                const divCont = target.closest("div");
+                const myDiv = divCont
+                    .lastElementChild
+                    .firstElementChild
+                    .firstElementChild
+                    ;
+                myDiv.classList.toggle("field");
+            })
+        }, 1000);
+        const setOpts = new Set();
+        ["input", "textarea"].forEach(txtType => {
+            [false, "Testing"].forEach(label => {
+                [false, true].forEach(border => {
+                    [false, true].forEach(fill => {
+                        const fieldOpts = {};
+                        fieldOpts.type = txtType;
+                        if (border) { fieldOpts.border = true; }
+                        if (label) { fieldOpts.label = label; }
+                        if (fill) { fieldOpts.fill = true; }
+                        const jsonOpts = JSON.stringify(fieldOpts);
+                        if (setOpts.has(jsonOpts)) {
+                            debugger;
+                        }
+                        setOpts.add(jsonOpts);
+                        // console.log({ border, label, fill, fieldOpts });
+                        addTextExample(fieldOpts);
+                    })
+                })
+            })
+        });
+        const opts = {
+            // <textarea name="" id=""></textarea>
+        }
+        // console.log(setOpts);
+        // debugger;
+        function addTextExample(fieldOpts) {
+            // debugger;
+            const { field, input } = modBeerHtml.createTextField(fieldOpts);
+            // console.log({ field, input });
+            let fieldClass = field.getAttribute("class");
+            fieldClass = fieldClass.replace("field", "");
+            const divFieldClass = mkElt("div", undefined, fieldClass);
+            divFieldClass.style = `
+            background: blue;
+            color: white;
+            padding: 4px;
+            `;
+        const divOpts = mkElt("div", undefined, JSON.stringify(fieldOpts));
+        divOpts.style = `
+            background: red;
+            color: yellow;
+            overflow-wrap: break-word;
+            `;
+        field.style.margin = "0";
+        const divTestTest = mkElt("div", undefined, [
+            divFieldClass,
+            divOpts,
+            field
+        ]);
+        divTestTest.style = `
+            max-width: 30%;
+            max-width: 150px;
+            outline: blue dotted 4px;
+        `;
+        // eltTestText.appendChild(divTestTest);
+        // section
+        eltExampleSection.appendChild(divTestTest);
+    }
+
+    }
     // scriptIcons
     {
         // debugger; // script
         // BeerCSS’s smaller subset (from GitHub) typically includes:
         function insertIcon(iconName) {
             const eltIcon = mkElt("i", undefined, iconName);
-            const spanName = mkElt("span", undefined, `${iconName}:`);
+            const spanName = mkElt("span", undefined, `${ iconName }: `);
             // const eltTextIcon = mkElt("div", undefined, [iconName, ":", eltIcon]);
             spanName.style.opacity = "0.5";
             const eltTextIcon = mkElt("div", undefined, [spanName, eltIcon]);
