@@ -271,7 +271,7 @@ const detailsTestIcons = mkElt("details", { open: "", id: "test-icons" }, [
 ]);
 
 // ---- icons script element ----
-const scriptIcons = mkElt("script", { type: "module" }, scriptIconsText);
+// const scriptIcons = mkElt("script", { type: "module" }, scriptIconsText);
 
 // ---- inner div.surface-variant ----
 const divSurfaceVariant = mkElt("div", {
@@ -289,7 +289,7 @@ const divSurfaceVariant = mkElt("div", {
     scriptModule,
     detailsTestText,
     detailsTestIcons,
-    scriptIcons
+    // scriptIcons
 ]);
 
 // ---- top-level details#debugVisual ----
@@ -309,6 +309,67 @@ export async function doTheTests() {
 }
 
 async function doTheTestsInternal(dv) {
+    // scriptIcons
+    {
+        // debugger; // script
+        // BeerCSS’s smaller subset (from GitHub) typically includes:
+        function insertIcon(iconName) {
+            const eltIcon = mkElt("i", undefined, iconName);
+            const spanName = mkElt("span", undefined, `${iconName}:`);
+            // const eltTextIcon = mkElt("div", undefined, [iconName, ":", eltIcon]);
+            spanName.style.opacity = "0.5";
+            const eltTextIcon = mkElt("div", undefined, [spanName, eltIcon]);
+            myDiv.appendChild(eltTextIcon);
+        }
+        const myDiv = document.getElementById("test-icons").querySelector("div");
+        myDiv.style.display = "flex";
+        myDiv.style.flexWrap = "wrap";
+        myDiv.style.gap = "10px";
+        myDiv.style.padding = "10px";
+        myDiv.style.outline = "dotted blue 4px";
+        /*
+        // Basic UI icons
+        "home, menu, close, search, settings"
+        // Navigation icons
+        "arrow_back, arrow_forward, expand_more"
+        // Common action icons
+        "add, delete, edit, check, clear"
+        // Status icons
+        "info, warning, error"
+        // Form icons
+        "visibility, visibility_off"
+        */
+        [
+            "add",
+            "cancel",
+            "check",
+            "clear",
+            "close",
+            "delete",
+            "done",
+            "download",
+            "edit",
+            "error",
+            "favorite",
+            "filter_list",
+            "help",
+            "info",
+            "menu",
+            "print",
+            "remove",
+            "search",
+            "share",
+            "sort",
+            "star",
+            "upload",
+            "visibility",
+            "visibility_off",
+            "warning"
+        ]
+            .forEach(n => insertIcon(n));
+
+    }
+
     // const dvResult = document.getElementById("testVisual-result");
     const dvResult = await globalThis.waitUntilQuerySelector("#testVisual-result");
 
