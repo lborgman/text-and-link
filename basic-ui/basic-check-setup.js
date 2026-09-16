@@ -283,7 +283,7 @@ const divSurfaceVariant = mkElt("div", {
     mkElt("h3", undefined, "Testing beer-native.js and beer-fields.js"),
     mkElt("div", {
         id: "testVisual-result",
-        style: "display:none; background-color:yellow; color:red; padding:8px;"
+        style: "display:none; background-color:yellow; color:red; padding:8px; border-radius: 0;"
     }),
     detailsCheckbox,
     detailsRadio,
@@ -463,33 +463,29 @@ async function doTheTestsInternal(dv) {
 
     }
 
-    // const dvResult = document.getElementById("testVisual-result");
     const dvResult = await globalThis.waitUntilQuerySelector("#testVisual-result");
-
-    // const dv = document.getElementById("basic-ui_debugVisual");
-    // const cb = dv.querySelector("input[type=checkbox]");
-    const cb = await globalThis.waitUntilQuerySelector("input[type=checkbox]", dv);
-    const cbRect = cb.getBoundingClientRect();
-    // console.log({ cb, cbRect });
-    if (cbRect.width > 8) {
-        const eltErr = mkElt("p", undefined, "beer-native.css not loaded correctly");
+    const problem = (txt) => {
+        console.error("problem: ", txt);
+        debugger;
+        const eltErr = mkElt("p", undefined, txt);
         dvResult.append(eltErr);
         dvResult.style.display = "block";
     }
-    // const iIcon = dv.querySelector("i");
+
+    const cb = await globalThis.waitUntilQuerySelector("input[type=checkbox]", dv);
+    const cbRect = cb.getBoundingClientRect();
+    if (cbRect.width > 2) { problem("Is beer.css loaded?"); }
+    if (cbRect.width > 8) { problem("Is beer-native.css loaded after beer.css?"); }
     const iIcon = await globalThis.waitUntilQuerySelector("i", dv);
     const iRect = iIcon.getBoundingClientRect();
     console.log({ iIcon, iRect });
     if (iRect.width != iRect.height) {
         // This can be better. Check for woff2, etc.
         if (iRect.width > iRect.height * 1.3) {
-            const eltErr = mkElt("p", undefined, "beer-icons.css not loaded correctly");
-            dvResult.append(eltErr);
+            problem("Is beer-icons.css correct and loaded?");
         } else {
-            const eltErr = mkElt("p", undefined, "beer.css not loaded correctly");
-            dvResult.append(eltErr);
+            problem("beer.css not loaded correctly");
         }
-        dvResult.style.display = "block";
     }
 }
 

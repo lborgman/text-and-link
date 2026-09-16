@@ -723,7 +723,8 @@
             OLDdv?.remove();
             const modCheck = await import("basic-check");
             const container = document.getElementById("basic-ui_debugVisual-container");
-            const useDialog = confirm("Test basic-ui result as dialog?");
+            // const useDialog = confirm("Test basic-ui result as dialog?");
+            const useDialog = true;
             if (!useDialog) {
                 const newDv = modCheck.getEltDebugVisual();
                 console.log({ modCheck, container, OLDdv, newDv });
