@@ -213,7 +213,7 @@ const scriptIconsText = `
 `;
 
 // ---- test-checkbox block ----
-const detailsCheckbox = mkElt("details", undefined, [
+const detailsCheckbox = () => mkElt("details", undefined, [
     mkElt("summary", undefined, " test-checkbox"),
     mkElt("label", undefined, [
         mkElt("input", { type: "checkbox" }),
@@ -228,7 +228,7 @@ const detailsCheckbox = mkElt("details", undefined, [
 ]);
 
 // ---- test-radio block ----
-const detailsRadio = mkElt("details", undefined, [
+const detailsRadio = () => mkElt("details", undefined, [
     mkElt("summary", undefined, "test-radio"),
     mkElt("label", undefined, [
         mkElt("input", { type: "radio", name: "test", value: "1" }),
@@ -250,7 +250,7 @@ const detailsRadio = mkElt("details", undefined, [
 const scriptModule = mkElt("script", { type: "module" }, scriptModuleText);
 
 // ---- test-text block ----
-const detailsTestText = mkElt("details", { id: "test-text" }, [
+const detailsTestText = () => mkElt("details", { id: "test-text" }, [
     mkElt("summary", undefined, "test-text"),
     mkElt("section", {
         style: `
@@ -266,7 +266,7 @@ const detailsTestText = mkElt("details", { id: "test-text" }, [
 ]);
 
 // ---- test-icons block ----
-const detailsTestIcons = mkElt("details", { open: "", id: "test-icons" }, [
+const detailsTestIcons = () => mkElt("details", { open: "", id: "test-icons" }, [
     mkElt("summary", undefined, "test-icons"),
     mkElt("div", undefined, [])
 ]);
@@ -275,7 +275,7 @@ const detailsTestIcons = mkElt("details", { open: "", id: "test-icons" }, [
 // const scriptIcons = mkElt("script", { type: "module" }, scriptIconsText);
 
 // ---- inner div.surface-variant ----
-const divSurfaceVariant = mkElt("div", {
+const divSurfaceVariant = () => mkElt("div", {
     style: "outline:4px dotted red; padding:4px;",
     class: "surface-variant"
 }, [
@@ -285,29 +285,30 @@ const divSurfaceVariant = mkElt("div", {
         id: "testVisual-result",
         style: "display:none; background-color:yellow; color:red; padding:8px; border-radius: 0;"
     }),
-    detailsCheckbox,
-    detailsRadio,
+    detailsCheckbox(),
+    detailsRadio(),
     // scriptModule,
-    detailsTestText,
-    detailsTestIcons,
+    detailsTestText(),
+    detailsTestIcons(),
     // scriptIcons
 ]);
 
 // ---- top-level details#basic-ui_debugVisual ----
-const detailsDebugVisual = mkElt("details", { id: "basic-ui_debugVisual", open: "" }, [
+const detailsDebugVisual = () => mkElt("details", { id: "basic-ui_debugVisual", open: "" }, [
     mkElt("summary", {
         style: "background:blue;color:white;display:inline;padding:6px;"
     }, "Debug beer-native"),
-    divSurfaceVariant
+    divSurfaceVariant()
 ]);
 // Append wherever needed, e.g.:
 // document.body.appendChild(detailsDebugVisual);
 
 export function getEltDebugVisual() {
-    return detailsDebugVisual;
+    return detailsDebugVisual();
 }
 export async function doTheTests() {
     const dv = await globalThis.waitUntilQuerySelector("#basic-ui_debugVisual",);
+    debugger;
     doTheTestsInternal(dv);
 }
 
@@ -515,6 +516,8 @@ function waitUntilQuerySelector(CSSselector, fromElt, timeout) {
         const checkElement = () => {
             const currentTime = window.performance.now();
             if (currentTime - startTime >= timeout) {
+                // debugger;
+                throw Error(`Did not find "${CSSselector}"`);
                 resolve(null);
                 return;
             }
@@ -533,12 +536,17 @@ function waitUntilQuerySelector(CSSselector, fromElt, timeout) {
 globalThis.waitUntilQuerySelector = waitUntilQuerySelector;
 
 export function checkSetupDialog() {
-    const dv = detailsDebugVisual;
+    const dv = detailsDebugVisual();
     const bdy = mkElt("div", undefined, [
         mkElt("h3", undefined, "basic-ui check"),
         dv.lastElementChild
     ]);
     bdy.id = "basic-ui_debugVisual";
+    const oldBdy = document.getElementById(bdy.id);
+    if (oldBdy) {
+        const oldDialog = oldBdy.closest("dialog");
+        oldDialog.remove();
+    }
     // export showDialog(bdy, retValFun, buttons, dialogClass) {
     modBasic.showDialog(bdy, undefined, undefined, "large");
     doTheTestsInternal(dv);
