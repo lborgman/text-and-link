@@ -45,10 +45,28 @@ document.documentElement.addEventListener("click",
     evt => {
         // if (!evt.target) return;
 
-        const target = /** @type {Element} */ (evt.target);
 
-        const dialog = target;
-        if (dialog instanceof HTMLDialogElement) {
+        //// Click on ::backdrop does not work when delegated
+        //// because ::backdrop is a pseudo-element!
+        // const target = /** @type {Element} */ (evt.target);
+        // const dialog = target;
+        // const isOnDialog = target instanceof HTMLDialogElement;
+
+        const openDialog = document.querySelector("dialog[open]");
+        const isOnDialogBackdrop = (() => {
+            if (openDialog == null) { return false; }
+            const rect = openDialog.getBoundingClientRect();
+            const clickedOutside =
+                evt.clientX < rect.left ||
+                evt.clientX > rect.right ||
+                evt.clientY < rect.top ||
+                evt.clientY > rect.bottom;
+            return clickedOutside;
+
+        })();
+
+        if (isOnDialogBackdrop) {
+            const dialog = openDialog;
             // FIX-ME: NOTE: first child element must covers the whole <dialog>
             const rect = dialog.getBoundingClientRect();
             const scrollbarWidth = dialog.offsetWidth - dialog.clientWidth;
@@ -63,6 +81,7 @@ document.documentElement.addEventListener("click",
             return;
         }
 
+        const target = /** @type {Element} */ (evt.target);
         const button = target.closest("button")
         if (button) {
             // console.log("----- button click", evt);
@@ -75,7 +94,9 @@ document.documentElement.addEventListener("click",
             }
             return;
         }
-    }, { capture: true });
+    },
+    { capture: true }
+);
 
 function addRippleAndClickDelayed(event, button) {
     const currentRipple = button.getElementsByClassName("basicUI_ripple")[0];
