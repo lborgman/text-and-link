@@ -1,17 +1,23 @@
+/* Functionality */
 #snackbar {
     position: fixed;
     inset: auto;
     left: 50%;
     /* margin: 0; */
-    padding: 0.5rem;
-    /* box-shadow: var(--elevate2); */
-    box-shadow: 0 0.25rem 0.5rem var(--primary);
 
     bottom: 2rem;
     translate: -50% 0;
 
     opacity: 0;
     /* visibility: hidden; */
+}
+
+/* Layout */
+#snackbar {
+    padding: 0.5rem;
+    border-radius: 4px;
+    /* box-shadow: var(--elevate2); */
+    box-shadow: 0 0.25rem 0.5rem var(--primary);
 }
 
 #snackbar[data-state="closed"] {
@@ -21,7 +27,7 @@
 }
 
 #snackbar[data-state="opening"] {
-    animation: snackbar-opening 2000ms ease-out forwards;
+    animation: snackbar-opening 400ms ease-out forwards;
 }
 
 #snackbar[data-state="open"] {

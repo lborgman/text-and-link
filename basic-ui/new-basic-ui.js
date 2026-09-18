@@ -922,7 +922,12 @@ function getEltSnackbar() {
     let elt = document.getElementById("snackbar");
     if (!elt) {
         // Native popover element configured manually so it doesn't light-dismiss
-        elt = mkElt("div", { id: "snackbar", popover: "manual", class: "inverse-primary" });
+        elt = mkElt("div", {
+            id: "snackbar",
+            popover: "manual",
+            // class: "inverse-primary"
+            class: "surface"
+        });
         if (elt == null) { throw ReferenceError("elt == null"); }
         elt.addEventListener("click", evt => {
             evt.stopPropagation();
@@ -1104,7 +1109,7 @@ function hideSnackbar() {
         snackbar.hidePopover();
     });
 }
-setTimeout(() => { snackbar("Hi, welcome!", 3); }, 100);
+setTimeout(() => { snackbar("Hi, welcome!", 3); }, 700);
 /*
 setTimeout(() => {
     const elt = mkElt("span", undefined, "Hi again...");
