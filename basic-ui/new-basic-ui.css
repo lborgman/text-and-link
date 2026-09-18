@@ -1,0 +1,58 @@
+#snackbar {
+    position: fixed;
+    inset: auto;
+    left: 50%;
+    /* margin: 0; */
+    padding: 0.5rem;
+    /* box-shadow: var(--elevate2); */
+    box-shadow: 0 0.25rem 0.5rem var(--primary);
+
+    bottom: 2rem;
+    translate: -50% 0;
+
+    opacity: 0;
+    /* visibility: hidden; */
+}
+
+#snackbar[data-state="closed"] {
+    opacity: 0;
+    /* transform: translateY(100%); */
+    transform: translateY(calc(100vh + 2rem));
+}
+
+#snackbar[data-state="opening"] {
+    animation: snackbar-opening 2000ms ease-out forwards;
+}
+
+#snackbar[data-state="open"] {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+#snackbar[data-state="closing"] {
+    animation: snackbar-closing 2000ms ease-in forwards;
+}
+
+@keyframes snackbar-opening {
+    from {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes snackbar-closing {
+    from {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    to {
+        opacity: 0;
+        transform: translateY(100%);
+    }
+}

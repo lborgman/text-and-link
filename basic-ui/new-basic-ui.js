@@ -415,415 +415,7 @@ export function nextPaint(fun) {
 
 
 
-/////////////
-// Snackbars
-/////////////
 
-/**
- * @returns {HTMLDivElement}
- * @throws {ReferenceError}
- */
-function getEltSnackbar() {
-    let elt = document.getElementById("snackbar");
-    if (!elt) {
-        // Native popover element configured manually so it doesn't light-dismiss
-        elt = mkElt("div", { id: "snackbar", popover: "manual" });
-        if (elt == null) { throw ReferenceError("elt == null"); }
-        elt.addEventListener("click", evt => {
-            evt.stopPropagation();
-            toast.clearQueue();
-        });
-        document.body.appendChild(elt);
-    }
-    return /** @type {HTMLDivElement} */ (elt);
-}
-class SnackbarQueue {
-    constructor() {
-        this.snackbarPopover = getEltSnackbar();
-        // this.queue = /** @type {string[]} */ [];
-        /** @type {string[]} */
-        this.queue = [];
-        this.isDisplaying = false;
-
-        // Allow clicking to dismiss early
-        this.snackbarPopover.addEventListener('click', () => this.dismissCurrent());
-    }
-
-    /**
-     * @param {string|HTMLDivElement} message
-     * @param {number} duration
-     */
-    showBar(message, duration = 3000) {
-        // Avoid queuing duplicate back-to-back messages
-        if (this.queue.some(item => item.message === message)) return;
-
-        this.queue.push({ message, duration });
-        if (!this.isDisplaying) {
-            this.processQueue();
-        }
-    }
-
-    async processQueue() {
-        if (this.queue.length === 0) {
-            this.isDisplaying = false;
-            console.log("processQueue: snackbar queue was empty");
-            return;
-        }
-
-        this.isDisplaying = true;
-        const { message, duration } = this.queue.shift();
-        // console.log("processQueue: snackbar duration", duration);
-
-        // Set text directly on the popover container
-        this.snackbarPopover = getEltSnackbar();
-        this.snackbarPopover.textContent = "";
-        this.snackbarPopover.append(message);
-        this.snackbarPopover.showPopover();
-
-        // Wait for display duration or manual click
-        await new Promise((resolve) => {
-            this.currentResolver = resolve;
-            this.timeoutId = setTimeout(resolve, duration);
-        });
-
-
-
-        // From Gemini:
-        dismissSnackbar(this.snackbarPopover);
-        async function dismissSnackbar(popoverEl) {
-            // Play the Material Design fast exit animation
-            const animation = popoverEl.animate([
-                { opacity: 1, transform: 'translateY(0)' },
-                { opacity: 0, transform: 'translateY(calc(100% + 2rem))' }
-            ], {
-                duration: 2000,
-                easing: 'cubic-bezier(0.3, 0, 1, 1)'
-            });
-
-            // Wait for animation to finish before native hide
-            await animation.finished;
-            popoverEl.hidePopover();
-            popoverEl.remove();
-        }
-
-
-
-
-        // Brief pause for CSS fade-out before showing the next snackbar
-        setTimeout(() => this.processQueue(), 150);
-    }
-
-    dismissCurrent() {
-        console.log("SnackbarQueue, dismissCurrent");
-        if (this.currentResolver) {
-            clearTimeout(this.timeoutId);
-            this.currentResolver();
-        }
-    }
-
-    clearQueue() {
-        console.log("SnackbarQueue, clearQueue");
-        this.queue.length = 0;
-        this.dismissCurrent();
-        this.snackbarPopover.hidePopover();
-    }
-}
-
-// Usage:
-const toast = new SnackbarQueue();
-// toast.show('Microphone enabled');
-
-
-
-
-/**
- * @param {string|HTMLDivElement} message
- * @param {number} duration
- *
- * @category Visual elements
- * @example
- *   snackbar('Microphone enabled');
- */
-export function snackbar(message, duration) {
-    toast.showBar(message, duration);
-}
-
-export function clearSnackbarQueue() {
-    toast.clearQueue();
-}
-
-// Module-level variable to track the active timer
-let tmrSnackbar = null;
-
-
-setTimeout(() => { snackbar("Hi, welcome!", 8) }, 500);
-// setTimeout(() => { snackbar("Hi, welcome!", 3, { bg: "red", clr: "yellow" }) }, 500);
-
-
-
-
-// A native Web Component mimicking Google's Material Design Components Text Field.
-// Supports both 'filled' and 'outlined' variants using clean CSS :has() logic.
-// (Made by Gemini from a prompt in an incognito tab.)
-
-class MdcInput extends HTMLElement {
-    #internalValue = '';
-
-    constructor() {
-        super();
-        this.attachShadow({ mode: 'open' });
-        this.renderShell();
-    }
-
-    static get observedAttributes() {
-        return ['label', 'type', 'value', 'required', 'pattern', 'variant'];
-    }
-
-    // Exposes the underlying native HTMLInputElement.
-    get inputElement() {
-        return this.shadowRoot.querySelector('.mdc-text-field__input');
-    }
-
-    // Gets or sets the live value of the input field.
-    get value() {
-        return this.inputElement ? this.inputElement.value : this.#internalValue;
-    }
-
-    set value(val) {
-        this.#internalValue = val;
-        const input = this.inputElement;
-        if (input) {
-            input.value = val;
-        }
-    }
-
-    // Gets or sets the floating label display text.
-    get label() {
-        return this.getAttribute('label') || '';
-    }
-
-    set label(/** @type {string} */ val) {
-        this.setAttribute('label', val);
-    }
-
-    // Gets or sets the component's custom error styling state.
-    get error() {
-        return this.inputElement ? this.inputElement.classList.contains('has-error') : false;
-    }
-
-    set error(val) {
-        const input = this.inputElement;
-        if (input) {
-            if (val) {
-                input.classList.add('has-error');
-            } else {
-                input.classList.remove('has-error');
-            }
-        }
-    }
-
-    connectedCallback() {
-        if (this.hasAttribute('value')) {
-            this.value = this.getAttribute('value');
-        }
-
-        // Sync the initial text content for the label tag safely
-        const labelText = this.shadowRoot.querySelector('.mdc-floating-label');
-        if (labelText) {
-            labelText.textContent = this.getAttribute('label') || '';
-        }
-
-        this.setupListeners();
-    }
-
-    attributeChangedCallback(name, oldValue, newValue) {
-        if (oldValue === newValue) return;
-
-        if (name === 'value') {
-            this.value = newValue;
-            return;
-        }
-
-        const input = this.inputElement;
-        const labelText = this.shadowRoot.querySelector('.mdc-floating-label');
-
-        if (name === 'label' && labelText) labelText.textContent = newValue;
-        if (name === 'type' && input) input.type = newValue;
-
-        if (name === 'required' && input) {
-            this.hasAttribute('required') ? input.setAttribute('required', '') : input.removeAttribute('required');
-        }
-        if (name === 'pattern' && input) {
-            input.setAttribute('pattern', newValue);
-        }
-    }
-
-    setupListeners() {
-        const input = this.inputElement;
-        if (!input) return;
-
-        input.addEventListener('input', () => {
-            this.#internalValue = input.value;
-            // Dispatch standard input event so developers can listen directly to <mdc-input>
-            this.dispatchEvent(new Event('input', { bubbles: true, composed: true }));
-        });
-    }
-
-    renderShell() {
-        this.shadowRoot.innerHTML = `
-      <style>
-        :host {
-          display: inline-block;
-          width: 100%;
-          max-width: 300px;
-          --primary-color: #6200ee;
-          --text-color: #333;
-          --bg-color: #f5f5f5;
-          --border-color: rgba(0, 0, 0, 0.42);
-          --error-color: #b00020;
-          /* Page surface color for the outlined text cutout */
-          --surface-color: #ffffff; 
-          /* Configurable component height property */
-          --input-height: 48px; 
-        }
-        
-        /* BASE CONTAINER STYLES (FILLED VARIANT) */
-        .mdc-text-field {
-          position: relative;
-          display: flex;
-          width: 100%;
-          height: var(--input-height);
-          background-color: var(--bg-color);
-          border-top-left-radius: 4px;
-          border-top-right-radius: 4px;
-          box-sizing: border-box;
-          cursor: text;
-        }
-
-        .mdc-text-field__input {
-          width: 100%;
-          border: none;
-          border-bottom: 1px solid var(--border-color);
-          background-color: transparent;
-          /* Use a percentage or flexible calculation for vertical padding alignment */
-          padding: calc(var(--input-height) * 0.35) 16px 4px;
-          font-size: 16px;
-          color: var(--text-color);
-          outline: none;
-          box-sizing: border-box;
-          height: 100%;
-        }
-
-        /* FLOATING LABEL ARCHITECTURE */
-        .mdc-floating-label {
-          position: absolute;
-          left: 16px;
-          top: 50%;
-          transform: translateY(-50%);
-          color: rgba(0, 0, 0, 0.6);
-          font-size: 16px;
-          transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), 
-                      color 0.15s cubic-bezier(0.4, 0, 0.2, 1),
-                      background-color 0.15s ease,
-                      padding 0.15s ease;
-          pointer-events: none;
-          transform-origin: left top;
-          /* Assures label draws correctly through parent container boundaries */
-          z-index: 2; 
-        }
-
-        .mdc-line-ripple {
-          position: absolute;
-          bottom: 0;
-          left: 0;
-          width: 100%;
-          height: 2px;
-          background-color: var(--primary-color);
-          transform: scaleX(0);
-          transition: transform 0.18s cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        /* ------------------------------------------------------------- */
-        /* OUTLINED STYLE CONFIGURATION */
-        /* ------------------------------------------------------------- */
-        :host([variant="outlined"]) .mdc-text-field {
-          background-color: transparent;
-          border: 1px solid var(--border-color);
-          border-radius: 4px;
-        }
-
-        :host([variant="outlined"]) .mdc-text-field__input {
-          border-bottom: none;
-          padding: 0 16px; /* Let flexbox grid vertical orientation align input value */
-        }
-
-        :host([variant="outlined"]) .mdc-line-ripple {
-          display: none;
-        }
-
-        :host([variant="outlined"]) .mdc-text-field:has(.mdc-text-field__input:focus) {
-          border: 2px solid var(--primary-color);
-        }
-
-        /* ------------------------------------------------------------- */
-        /* CSS :has() ANIMATION LOGIC (HANDLES BOTH VARIANTS) */
-        /* ------------------------------------------------------------- */
-        
-        /* Default Filled Active Float Condition */
-        .mdc-text-field:has(.mdc-text-field__input:focus) .mdc-floating-label,
-        .mdc-text-field:has(.mdc-text-field__input:not(:placeholder-shown)) .mdc-floating-label {
-          transform: translateY(-100%) scale(0.75);
-          color: var(--primary-color);
-        }
-
-        /* Absolute pixel displacement overrides for the Outlined active float position */
-        :host([variant="outlined"]) .mdc-text-field:has(.mdc-text-field__input:focus) .mdc-floating-label,
-        :host([variant="outlined"]) .mdc-text-field:has(.mdc-text-field__input:not(:placeholder-shown)) .mdc-floating-label {
-          /* translateY(-24px) moves the text directly onto the horizontal line stroke regardless of field height */
-          transform: translateY(-24px) scale(0.75);
-          background-color: var(--surface-color);
-          padding: 0 4px;
-          margin-left: -4px;
-        }
-
-        /* Keep label text soft if field has value but is blurred */
-        .mdc-text-field:has(.mdc-text-field__input:not(:placeholder-shown)):not(:has(.mdc-text-field__input:focus)) .mdc-floating-label {
-          color: rgba(0, 0, 0, 0.6);
-        }
-
-        /* Enable bottombasicUI_ripple accent bar on focus (Filled layout only) */
-        .mdc-text-field:has(.mdc-text-field__input:focus) .mdc-line-ripple {
-          transform: scaleX(1);
-        }
-
-        /* ------------------------------------------------------------- */
-        /* COMPLEX VALIDATION SYSTEM */
-        /* ------------------------------------------------------------- */
-        .mdc-text-field:has(.mdc-text-field__input:user-invalid),
-        .mdc-text-field:has(.mdc-text-field__input.has-error) {
-          border-color: var(--error-color) !important;
-        }
-        .mdc-text-field:has(.mdc-text-field__input:user-invalid) .mdc-text-field__input,
-        .mdc-text-field:has(.mdc-text-field__input.has-error) .mdc-text-field__input {
-          border-bottom-color: var(--error-color);
-        }
-        .mdc-text-field:has(.mdc-text-field__input:user-invalid) .mdc-floating-label,
-        .mdc-text-field:has(.mdc-text-field__input.has-error) .mdc-floating-label {
-          color: var(--error-color) !important;
-        }
-      </style>
-
-      <label class="mdc-text-field">
-        <!-- space-placeholder is essential here to capture raw :placeholder-shown element state queries -->
-        <input type="text" class="mdc-text-field__input" placeholder=" ">
-        <span class="mdc-floating-label"></span>
-        <div class="mdc-line-ripple"></div>
-      </label>
-    `;
-    }
-}
-
-customElements.define('mdc-input', MdcInput);
 
 
 /**
@@ -1315,3 +907,208 @@ export function colorNameToHex(colorName) {
 // applyMaterialTheme("#f97316"); // Generates and applies the Orange theme
 // applyMaterialTheme("#00ff00");
 // applyMaterialTheme("yellow", true);
+
+
+
+/////////////
+// Snackbars
+/////////////
+
+/**
+ * @returns {HTMLDivElement}
+ * @throws {ReferenceError}
+ */
+function getEltSnackbar() {
+    let elt = document.getElementById("snackbar");
+    if (!elt) {
+        // Native popover element configured manually so it doesn't light-dismiss
+        elt = mkElt("div", { id: "snackbar", popover: "manual", class: "inverse-primary" });
+        if (elt == null) { throw ReferenceError("elt == null"); }
+        elt.addEventListener("click", evt => {
+            evt.stopPropagation();
+            toast.clearQueue();
+        });
+        elt.dataset.state = "closed";
+        document.body.appendChild(elt);
+    }
+    return /** @type {HTMLDivElement} */ (elt);
+}
+
+/*
+class SnackbarQueue {
+    constructor() {
+        this.snackbarPopover = getEltSnackbar();
+        // this.queue = /** @type {string[]} * / [];
+        /** @type {string[]} * /
+        this.queue = [];
+        this.isDisplaying = false;
+
+        // Allow clicking to dismiss early
+        this.snackbarPopover.addEventListener('click', () => this.dismissCurrent());
+    }
+
+    /**
+     * @param {string|HTMLDivElement} message
+     * @param {number} duration
+     * /
+    showBar(message, duration = 3000) {
+        // Avoid queuing duplicate back-to-back messages
+        if (this.queue.some(item => item.message === message)) return;
+
+        this.queue.push({ message, duration });
+        if (!this.isDisplaying) {
+            this.processQueue();
+        }
+    }
+
+    async processQueue() {
+        if (this.queue.length === 0) {
+            this.isDisplaying = false;
+            console.log("processQueue: snackbar queue was empty");
+            return;
+        }
+
+        this.isDisplaying = true;
+        const { message, duration } = this.queue.shift();
+        // console.log("processQueue: snackbar duration", duration);
+
+        // Set text directly on the popover container
+        this.snackbarPopover = getEltSnackbar();
+        this.snackbarPopover.textContent = "";
+        this.snackbarPopover.append(message);
+        this.snackbarPopover.showPopover();
+
+        // Wait for display duration or manual click
+        await new Promise((resolve) => {
+            this.currentResolver = resolve;
+            this.timeoutId = setTimeout(resolve, duration);
+        });
+
+
+
+        // From Gemini:
+        dismissSnackbar(this.snackbarPopover);
+        async function dismissSnackbar(popoverEl) {
+            // Play the Material Design fast exit animation
+            const animation = popoverEl.animate([
+                { opacity: 1, transform: 'translateY(0)' },
+                { opacity: 0, transform: 'translateY(calc(100% + 2rem))' }
+            ], {
+                duration: 2000,
+                easing: 'cubic-bezier(0.3, 0, 1, 1)'
+            });
+
+            // Wait for animation to finish before native hide
+            await animation.finished;
+            popoverEl.hidePopover();
+            popoverEl.remove();
+        }
+
+
+
+
+        // Brief pause for CSS fade-out before showing the next snackbar
+        setTimeout(() => this.processQueue(), 150);
+    }
+
+    dismissCurrent() {
+        console.log("SnackbarQueue, dismissCurrent");
+        if (this.currentResolver) {
+            clearTimeout(this.timeoutId);
+            this.currentResolver();
+        }
+    }
+
+    clearQueue() {
+        console.log("SnackbarQueue, clearQueue");
+        this.queue.length = 0;
+        this.dismissCurrent();
+        this.snackbarPopover.hidePopover();
+    }
+}
+
+// Usage:
+const toast = new SnackbarQueue();
+// toast.show('Microphone enabled');
+
+
+
+
+/**
+ * @param {string|HTMLDivElement} message
+ * @param {number} duration
+ *
+ * @category Visual elements
+ * @example
+ *   snackbar('Microphone enabled');
+ * /
+export function snackbar(message, duration) {
+    toast.showBar(message, duration);
+}
+
+export function clearSnackbarQueue() {
+    toast.clearQueue();
+}
+
+// Module-level variable to track the active timer
+let tmrSnackbar = null;
+*/
+
+// const snackbar = document.querySelector('#snackbar');
+
+/**
+ * @param {string|HTMLSpanElement} msg
+ * @param {number} [secDur]
+ */
+export function snackbar(msg, secDur = 4) {
+    showSnackbar(msg, secDur);
+}
+
+/**
+ * @param {string|HTMLSpanElement} msg
+ * @param {number} secDur
+ */
+function showSnackbar(msg, secDur) {
+    console.log("showSnackbar");
+    setTimeout(() => hideSnackbar(), secDur * 1000);
+    const snackbar = getEltSnackbar();
+    snackbar.textContent = "";
+    const eltMsg = (typeof msg == "string") ? mkElt("span", undefined, msg) : msg;
+    snackbar.appendChild(eltMsg);
+    snackbar.dataset.state = 'opening';
+    snackbar.showPopover();
+    console.log({ snackbar });
+    console.log(snackbar.dataset.state);
+    console.log(getComputedStyle(snackbar).animationName);
+
+    snackbar.addEventListener('animationend', function onAnimationEnd(event) {
+        console.log("snackbar at animationend");
+        if (event.animationName !== 'snackbar-opening') return;
+        console.log("snackbar at animationName == snackbar-opening");
+
+
+        snackbar.removeEventListener('animationend', onAnimationEnd);
+        snackbar.dataset.state = 'open';
+    });
+}
+
+function hideSnackbar() {
+    const snackbar = getEltSnackbar();
+    snackbar.dataset.state = 'closing';
+
+    snackbar.addEventListener('animationend', function onAnimationEnd(event) {
+        if (event.animationName !== 'snackbar-closing') return;
+
+        snackbar.removeEventListener('animationend', onAnimationEnd);
+        snackbar.dataset.state = 'closed';
+        snackbar.hidePopover();
+    });
+}
+setTimeout(() => { snackbar("Hi, welcome!", 3); }, 100);
+/*
+setTimeout(() => {
+    const elt = mkElt("span", undefined, "Hi again...");
+    elt.style.color = "red";
+    snackbar(elt);
+}, 500);
+*/
