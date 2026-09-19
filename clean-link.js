@@ -1154,7 +1154,7 @@ function dialogColorTheme() {
 
 
     syncInpTextAndColorPicker(inpColor, colorPicker);
-    inpColor.addEventListener("input", () => { checkCanSaveNewTheme(); });
+    inpColor.addEventListener("input", () => { checkCanSaveNewTheme(true); });
     colorPicker.addEventListener("input", () => { applyDialogTheme(); });
 
 
@@ -1279,15 +1279,20 @@ function dialogColorTheme() {
 
     fillInTheme(currentTheme);
     const jsonOldTheme = JSON.stringify(currentTheme);
-    function checkCanSaveNewTheme() {
+
+    /**
+     * 
+     * @param {boolean} canSurelySave 
+     */
+    function checkCanSaveNewTheme(canSurelySave) {
         const hasNewTheme = jsonOldTheme != JSON.stringify(currentTheme);
-        const somethingToSave = inpColor.validity.valid && hasNewTheme;
+        const somethingToSave = canSurelySave || inpColor.validity.valid && hasNewTheme;
         btnSaveColorTheme.disabled = !somethingToSave;
     }
     bdy.addEventListener("change", evt => {
-        checkCanSaveNewTheme();
+        checkCanSaveNewTheme(true);
     });
-    checkCanSaveNewTheme();
+    checkCanSaveNewTheme(false);
     modBasicUI.showDialog(bdy);
 }
 
