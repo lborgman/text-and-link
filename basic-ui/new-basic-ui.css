@@ -62,3 +62,35 @@
         transform: translateY(100%);
     }
 }
+
+
+
+
+/* Backdrop closed state */
+dialog::backdrop {
+    visibility: visible;
+    opacity: 0;
+    background-color: rgba(0, 0, 0, 0.32);
+    backdrop-filter: blur(3px);
+    transition-property: opacity;
+    /* transition-duration: 150ms; from MD3, too short for web! */
+    transition-duration: 500ms;
+    transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* Backdrop open state:
+    "fade-backdrop" must be added when opening the dialog
+
+    dialog.showModal();
+    requestAnimationFrame(() => dlg.classList.add("fade-backdrop"));
+*/
+dialog.fade-backdrop::backdrop {
+    /*
+      Chromium’s rendering pipeline treats backdrop-filter as a dependent effect:
+      It renders the background behind the element.
+       It applies the filter.
+       It composites the filtered layer using the element’s opacity.
+      So the filtered layer is multiplied by the element’s opacity.
+    */
+    opacity: 1;
+}

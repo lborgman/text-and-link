@@ -208,6 +208,7 @@ function openModalAndEnsureKeyboard(bdy) {
 
     // 1. Open the modal normally (browser will focus the Save button)
     dlg.showModal();
+    requestAnimationFrame(() => dlg.classList.add("fade-backdrop"));
 
     // 2. Wait a split second for the mobile browser to process the focus change
     setTimeout(() => {
@@ -318,6 +319,7 @@ export async function showDialog(bdy, retValFun, buttons, dialogClass) {
 
     document.documentElement.appendChild(dlg);
     dlg.showModal();
+    requestAnimationFrame(() => dlg.classList.add("fade-backdrop"));
     syncViewport();
     // openModalAndEnsureKeyboard(bdy);
 
@@ -603,6 +605,7 @@ export function displayMenu(dialogMenu, objDialogPosition) {
         dialogMenu.style.right = `${distanceFromRightEdge}px`;
     }
     dialogMenu.showModal();
+    requestAnimationFrame(() => dlg.classList.add("fade-backdrop"));
 }
 
 
