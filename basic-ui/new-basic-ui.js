@@ -54,6 +54,10 @@ document.documentElement.addEventListener("click",
 
         const openDialog = document.querySelector("dialog[open]");
         const isOnDialogBackdrop = (() => {
+            // Syntetic click:
+            if (0 == evt.clientX + evt.clientY) { return false; }
+            // if (!evt.isDelayedClick) { return false; }
+
             if (openDialog == null) { return false; }
             const rect = openDialog.getBoundingClientRect();
             const clickedOutside =
@@ -62,7 +66,6 @@ document.documentElement.addEventListener("click",
                 evt.clientY < rect.top ||
                 evt.clientY > rect.bottom;
             return clickedOutside;
-
         })();
 
         if (isOnDialogBackdrop) {
@@ -1109,7 +1112,8 @@ function hideSnackbar() {
         snackbar.hidePopover();
     });
 }
-setTimeout(() => { snackbar("Hi, welcome!", 3); }, 700);
+setTimeout(() => { snackbar("Hi, welcome!", 2); }, 700);
+// setTimeout(() => { snackbar("Sorry!", 2); }, 2000);
 /*
 setTimeout(() => {
     const elt = mkElt("span", undefined, "Hi again...");
