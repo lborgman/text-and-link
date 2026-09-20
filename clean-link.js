@@ -853,7 +853,6 @@ function closeDialog(dialog) {
     // console.log("closeDialog", dialog);
     dialog.close();
     if (!dialog.classList.contains("html-dialog")) {
-        // console.log("closeDialog remove");
         dialog.remove();
     }
 }

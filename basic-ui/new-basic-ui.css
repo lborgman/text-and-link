@@ -65,6 +65,33 @@
 
 
 
+:root {
+    /* MD3‑correct for blur */
+    --backdrop-duration: 300ms;
+    /* scrim + blur */
+    --backdrop-duration: 2300ms;
+    --dialog-duration: 250ms;
+    --dialog-duration: 2250ms;
+    /* dialog surface fade */
+}
+
+dialog {
+    opacity: 0;
+    /* transition: opacity var(--dialog-duration) cubic-bezier(0.2, 0, 0, 1); */
+    transition-property: opacity;
+    transition-duration: var(--dialog-duration);
+    transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
+}
+
+dialog.fade-backdrop {
+    opacity: 1;
+}
+
+dialog:not(.fade-backdrop) {
+    opacity: 0;
+}
+
+
 
 /* Backdrop closed state */
 dialog::backdrop {
@@ -73,8 +100,7 @@ dialog::backdrop {
     background-color: rgba(0, 0, 0, 0.32);
     backdrop-filter: blur(3px);
     transition-property: opacity;
-    /* transition-duration: 150ms; from MD3, too short for web! */
-    transition-duration: 500ms;
+    transition-duration: var(--backdrop-duration);
     transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
 }
 

@@ -22,7 +22,9 @@ export function mkXclose(funClose) {
             funClose();
             return;
         }
-        (xClose.closest("dialog"))?.close();
+        // (xClose.closest("dialog"))?.close();
+        const dlg = xClose.closest("dialog");
+        closeDialog(dlg);
     });
     return xClose;
 }
@@ -153,7 +155,7 @@ for (const button of buttons) {
  * 
  * @param {HTMLDialogElement} dialog 
  */
-function closeDialog(dialog) {
+function OLDcloseDialog(dialog) {
     console.log("closeDialog", dialog);
     dialog.close();
     if (!dialog.classList.contains("html-dialog")) {
@@ -207,8 +209,9 @@ function openModalAndEnsureKeyboard(bdy) {
     document.documentElement.appendChild(dlg);
 
     // 1. Open the modal normally (browser will focus the Save button)
-    dlg.showModal();
-    requestAnimationFrame(() => dlg.classList.add("fade-backdrop"));
+    // dlg.showModal();
+    // requestAnimationFrame(() => dlg.classList.add("fade-backdrop"));
+    openDialog(dlg);
 
     // 2. Wait a split second for the mobile browser to process the focus change
     setTimeout(() => {
@@ -318,8 +321,10 @@ export async function showDialog(bdy, retValFun, buttons, dialogClass) {
 
 
     document.documentElement.appendChild(dlg);
-    dlg.showModal();
-    requestAnimationFrame(() => dlg.classList.add("fade-backdrop"));
+    // dlg.showModal();
+    // requestAnimationFrame(() => dlg.classList.add("fade-backdrop"));
+    openDialog(dlg);
+
     syncViewport();
     // openModalAndEnsureKeyboard(bdy);
 
@@ -604,8 +609,9 @@ export function displayMenu(dialogMenu, objDialogPosition) {
         const distanceFromRightEdge = window.innerWidth - bcrParent.right + bcr.x;
         dialogMenu.style.right = `${distanceFromRightEdge}px`;
     }
-    dialogMenu.showModal();
-    requestAnimationFrame(() => dlg.classList.add("fade-backdrop"));
+    // dialogMenu.showModal();
+    // requestAnimationFrame(() => dlg.classList.add("fade-backdrop"));
+    openDialog(dlg);
 }
 
 
@@ -1124,3 +1130,33 @@ setTimeout(() => {
     snackbar(elt);
 }, 500);
 */
+
+
+
+
+
+function openDialog(dialog) {
+    dialog.showModal();
+
+    // Allow the backdrop to exist before transitioning
+    requestAnimationFrame(() => {
+        dialog.classList.add("fade-backdrop");
+    });
+}
+
+function closeDialog(dialog) {
+    dialog.classList.remove("fade-backdrop");
+
+    // Read the CSS variable from :root
+    const rootStyles = getComputedStyle(document.documentElement);
+    const duration = parseFloat(rootStyles.getPropertyValue("--backdrop-duration"));
+
+    // Convert ms → ms (parseFloat already gives the number)
+    setTimeout(() => {
+        dialog.close();
+        if (!dialog.classList.contains("html-dialog")) {
+            console.log("closeDialog remove");
+            dialog.remove();
+        }
+    }, duration);
+}
