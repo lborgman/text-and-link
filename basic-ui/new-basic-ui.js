@@ -31,7 +31,7 @@ export function mkXclose(funClose) {
 /**
  * 
  * @param {HTMLDialogElement} dialog 
- * @returns {HTMLButtonElement}
+ * returns {HTMLButtonElement}
  * @category Visual elements
  */
 export function addXclose(dialog) {
@@ -39,7 +39,7 @@ export function addXclose(dialog) {
     if (btnClose) { return; }
     const elt = mkXclose();
     dialog.appendChild(elt);
-    return elt;
+    // return elt;
 }
 
 document.documentElement.addEventListener("click",
@@ -54,11 +54,31 @@ document.documentElement.addEventListener("click",
         // const dialog = target;
         // const isOnDialog = target instanceof HTMLDialogElement;
 
-        const openDialog = document.querySelector("dialog[open]");
+
+        // const openDialog = /** @type {HTMLDialogElement|null} */ (document.querySelector("dialog[open]"));
+        // const openDialog = document.querySelector("dialog[open]") instanceof HTMLDialogElement ?  document.querySelector("dialog[open]") : null;
+        /**
+         * @template {HTMLElement} T
+         * @param {string} selector
+         * @param {new (...args: any[]) => T} type
+         * @returns {T | null}
+         */
+        // const queryAs = (selector, type) => {
+        function queryAs(selector, type) {
+            const el = document.querySelector(selector);
+            return el instanceof type ? el : null;
+        };
+
+        // Usage:
+        const openDialog = queryAs("dialog[open]", HTMLDialogElement);
+
+
+
         const isOnDialogBackdrop = (() => {
             // Syntetic click:
-            if (0 == evt.clientX + evt.clientY) { return false; }
+            // if (0 == evt.clientX + evt.clientY) { return false; }
             // if (!evt.isDelayedClick) { return false; }
+            if (!evt.isTrusted) { return false; }
 
             if (openDialog == null) { return false; }
             const rect = openDialog.getBoundingClientRect();
@@ -71,10 +91,10 @@ document.documentElement.addEventListener("click",
         })();
 
         if (isOnDialogBackdrop) {
-            const dialog = openDialog;
+            if (!openDialog) { throw Error("isOpenDialogBackdrop but not openDialog"); }
             // FIX-ME: NOTE: first child element must covers the whole <dialog>
-            const rect = dialog.getBoundingClientRect();
-            const scrollbarWidth = dialog.offsetWidth - dialog.clientWidth;
+            const rect = openDialog.getBoundingClientRect();
+            const scrollbarWidth = openDialog.offsetWidth - openDialog.clientWidth;
             const xFromRight = rect.right - evt.clientX;
             // Ignore if click is in scrollbar area
             if (xFromRight <= scrollbarWidth && xFromRight > 0) {
@@ -82,7 +102,7 @@ document.documentElement.addEventListener("click",
             }
             evt.stopPropagation();
             evt.preventDefault();
-            closeDialog(dialog);
+            closeDialog(openDialog);
             return;
         }
 
@@ -90,7 +110,8 @@ document.documentElement.addEventListener("click",
         const button = target.closest("button")
         if (button) {
             // console.log("----- button click", evt);
-            if (!evt.isDelayedClick) {
+            // if (!evt.isDelayedClick) {
+            if (evt.isTrusted) {
                 evt.stopImmediatePropagation();
                 evt.preventDefault();
                 // console.log("----- button click, !evt.isDelayedClick");
@@ -136,33 +157,13 @@ function addRippleAndClickDelayed(event, button) {
             cancelable: true,
             view: window
         });
-        delayedClick.isDelayedClick = true;
+        // delayedClick.isDelayedClick = true;
         button.dispatchEvent(delayedClick)
     }
-    // getProperty
-
     button.appendChild(circle);
 }
 
-/*
-const buttons = document.getElementsByTagName("button");
-for (const button of buttons) {
-  button.addEventListener("click", createRipple);
-}
-*/
 
-/**
- * 
- * @param {HTMLDialogElement} dialog 
- */
-function OLDcloseDialog(dialog) {
-    console.log("closeDialog", dialog);
-    dialog.close();
-    if (!dialog.classList.contains("html-dialog")) {
-        console.log("closeDialog remove");
-        dialog.remove();
-    }
-}
 
 
 /**
@@ -172,7 +173,7 @@ function OLDcloseDialog(dialog) {
  * @returns {HTMLButtonElement}
  * @category Visual elements
  */
-export function mkFabButton(icon, title, small) {
+export function OLDmkFabButton(icon, title, small) {
     const btn = mkElt("button", undefined, icon);
     btn.classList.add("fab-button");
     btn.title = title;
@@ -189,7 +190,7 @@ export function mkFabButton(icon, title, small) {
  * @returns {HTMLButtonElement}
  * @category Visual elements
  */
-export function mkIconButton(icon, title) {
+export function OLDmkIconButton(icon, title) {
     const btn = mkElt("button", undefined, icon);
     btn.classList.add("icon-button");
     btn.title = title;
@@ -250,7 +251,7 @@ function openModalAndEnsureKeyboard(bdy) {
  * Show a dialog.
  * To remove the upper right X close button
  * add CSS class "no-x-close-button" to bdy.
- * 
+ *
  * @param {HTMLDivElement} bdy 
  * @param {function|undefined} [retValFun]
  * @param {undefined|HTMLButtonElement[]} [buttons]
@@ -296,7 +297,7 @@ export async function showDialog(bdy, retValFun, buttons, dialogClass) {
         });
         dlg.appendChild(eltButtons);
     }
-    const eltX = addXclose(dlg);
+    addXclose(dlg);
 
     // Look exclusively inside this dialog for the text element
     const textInput = dlg.querySelector(
@@ -615,54 +616,6 @@ export function displayMenu(dialogMenu, objDialogPosition) {
 }
 
 
-// Global Mobile Viewport & Virtual Keyboard Handler
-function OLDmonitorVisualViewPort() {
-    console.log("OLDmonitorVisualViewPort");
-    snackbar("OLDmonitorVisualViewPort", 8);
-    if (window.visualViewport) {
-        let isPending = false;
-
-        // 1. The Core Measuring Function
-        const globalSyncViewport = () => {
-            if (isPending) return;
-            isPending = true;
-
-            requestAnimationFrame(() => {
-                isPending = false;
-
-                console.log("setting height variables");
-
-                const visualHeight = window.visualViewport.height;
-                const totalHeight = window.innerHeight;
-                const keyboardHeight = Math.max(0, totalHeight - visualHeight);
-
-                // Write values globally to the root <html> element
-                document.documentElement.style.setProperty('--visible-height', `${visualHeight}px`);
-                document.documentElement.style.setProperty('--keyboard-height', `${keyboardHeight}px`);
-            });
-        };
-
-        // 2. Continuous Listeners (Handles orientation flips, zooming, and standard keyboards)
-        window.visualViewport.addEventListener('resize', globalSyncViewport);
-        window.visualViewport.addEventListener('scroll', globalSyncViewport);
-
-        // Initialize the values immediately on page load
-        globalSyncViewport();
-
-        // 3. Global Fallback for GBoard / Stuck Focus Bugs
-        // Captures taps on any input or editable field globally
-        document.addEventListener('pointerup', (event) => {
-            const el = event.target;
-            const isInput = el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || el.isContentEditable;
-
-            if (isInput) {
-                // Short delay lets GBoard finish sliding out before measuring
-                setTimeout(globalSyncViewport, 150);
-            }
-        });
-    }
-}
-// OLDmonitorVisualViewPort();
 
 
 let resizeTimeout;

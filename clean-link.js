@@ -19,9 +19,9 @@ const modBasicUI = await import("basic-ui");
 
 /**
  * @typedef {Object} ColorTheme
- * @property {string} color - CSS color
- * @property {boolean} dark
- * @property {string} variant
+ * @property {string} [color] - CSS color
+ * @property {boolean} [dark]
+ * @property {string} [variant]
  */
 
 function saveTheme() {
@@ -151,7 +151,9 @@ function handleInputLink() {
 const btnCopy = document.getElementById("btn-copy");
 if (btnCopy == null) throw Error("btnCopy == null");
 btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEvent} evt */ async evt => {
-    const isDelayedClick = evt.isDelayedClick;
+    // FIX-ME:
+    // const isDelayedClick = evt.isDelayedClick;
+    const isDelayedClick = !evt.isTrusted;
     // console.log("======= btnCopy click", { isDelayedClick });
     if (divOutputText == null) throw Error("divOutputText == null");
     const text = divOutputText.textContent;
@@ -883,7 +885,7 @@ async function showUrlAsDialog(url) {
 
 /**
  * @param {string} strHtml
- * @param {{css?: string, theme?: object, script? : Function, [key:string]:any }} opts
+ * @param {{css?: string, theme?: ColorTheme, script? : Function, [key:string]:any }} opts
  * @return {HTMLDialogElement}
  */
 function showHtmlAsDialog(strHtml, opts = {}) {
@@ -914,10 +916,6 @@ function showHtmlAsDialog(strHtml, opts = {}) {
     addXclose(dialog);
     document.body.appendChild(dialog);
     if (opts.theme) {
-        // debugger;
-        // modBasicUI.applyMaterialTheme(opts.theme.color, opts.theme.dark, dialog);
-        // applyMaterialTheme(opts.theme.color, opts.theme.dark, dialog);
-        // const themePalette = BasicUI_ColorThemes.generateTheme(opts.theme);
         const { color, dark, variant } = opts.theme;
         const themePalette = BasicUI_ColorThemes.generateTheme(color, dark, variant);
         BasicUI_ColorThemes.applyTheme(themePalette);
@@ -973,8 +971,17 @@ function isMobileEmulation() {
 
     // 3. Fallback check for User-Agent Client Hints (modern Chrome/Edge)
     let chIsDesktop = false;
-    if (navigator.userAgentData) {
-        chIsDesktop = !navigator.userAgentData.mobile;
+
+    /**
+     * @typedef {Object} NavigatorUAData
+     * @property {boolean} mobile
+     * @property {Array<{brand: string, version: string}>} brands
+     */
+    // Tell VS Code that navigator includes this custom definition
+    /** @type {Navigator & { userAgentData?: NavigatorUAData }} */
+    const nav = navigator;
+    if (nav.userAgentData) {
+        chIsDesktop = !nav.userAgentData.mobile;
     }
 
     // If UA says mobile but OS says desktop, it's emulated
@@ -1004,7 +1011,7 @@ function isAndroid() {
 
 // const btnSettings = mkIconButton("./info.svg", "Settings");
 const btnSettings = modBeerHtml.createButton({
-    icon: "settings", 
+    icon: "settings",
     shape: "circle",
     // transparent: true
 });
@@ -1014,6 +1021,7 @@ btnSettings.title = "- Settings";
 
 document.body.appendChild(btnSettings);
 btnSettings.addEventListener("click", handleSettingsClick);
+/** * @param {MouseEvent} evt - The click event object.  */
 async function handleSettingsClick(evt) {
     evt.stopPropagation();
     console.log("handleSettingsClick");
@@ -1039,34 +1047,6 @@ function isDisplayModePWA() {
 
 
 //////////////////////////////////////////// 4basic
-
-/**
- * @param {string|HTMLSpanElement} icon 
- * @param {string} title 
- * @returns {HTMLButtonElement}
- */
-function mkIconButton(icon, title) {
-    let eltIcon = icon;
-    if (typeof icon == "string") {
-        const span = mkElt("span", { class: "icon-image" });
-        span.style.backgroundImage = `url(${icon})`;
-        eltIcon = span;
-    }
-    const btn = mkElt("button", undefined, eltIcon);
-    btn.classList.add("icon-button");
-    btn.title = title;
-    return btn;
-}
-function mkButtonBeer(txt) {
-    // The inner element should perhaps always be a <span>? FIX-ME:
-    let eltInner = txt;
-    if (!(eltInner instanceof HTMLSpanElement)) {
-        eltInner = mkElt("span", undefined, txt);
-    }
-    const btn = mkElt("button", undefined, eltInner);
-    btn.classList.add("no-wave");
-    return btn;
-}
 
 /**
  * Sync user input for an <input type=text> and an <input type=color>
@@ -1167,9 +1147,13 @@ function dialogColorTheme() {
         "Dark",
     ]);
     // const btnSaveColorTheme = mkElt("button", undefined, "Save");
-    const btnSaveColorTheme = mkButtonBeer("Save");
+    // const btnSaveColorTheme = mkButtonBeer("Save");
+    const btnSaveColorTheme = modBeerHtml.createButton({ label: "Save" });
+
     // const btnResetColorTheme = mkElt("button", undefined, "Reset");
-    const btnResetColorTheme = mkButtonBeer("Reset");
+    // const btnResetColorTheme = mkButtonBeer("Reset");
+    const btnResetColorTheme = modBeerHtml.createButton({ label: "Reset" });
+
     const divButtons = mkElt("div", undefined, [
         btnSaveColorTheme,
         btnResetColorTheme
@@ -1186,9 +1170,11 @@ function dialogColorTheme() {
         flex-wrap: wrap;
         gap: 10px;
     `;
-    divVariants.addEventListener("change", (evt) => {
-        const rad = evt.target;
-        currentTheme.variant = rad.value;
+
+    divVariants.addEventListener("change", /** @param {Event} evt */(evt) => {
+        const target = /** @type {HTMLElement} */ (evt.currentTarget);
+        if (!(target instanceof HTMLInputElement)) return;
+        currentTheme.variant = target.value;
         applyDialogTheme();
     });
     const mkRad = (nam) => {
@@ -1243,12 +1229,12 @@ function dialogColorTheme() {
         // divSnackbar
     ]);
 
-    btnSaveColorTheme.addEventListener("click", evt => {
+    btnSaveColorTheme.addEventListener("click", /** @param {Event} evt */(evt) => {
         evt.stopPropagation();
         saveTheme();
         btnSaveColorTheme.disabled = true;
     });
-    btnResetColorTheme.addEventListener("click", evt => {
+    btnResetColorTheme.addEventListener("click", /** @param {Event} evt */ evt => {
         evt.stopPropagation();
         resetTheme();
         fillInTheme(currentTheme);
@@ -1265,7 +1251,7 @@ function dialogColorTheme() {
     {
         // For debugging:
         const btnSnackbar = mkElt("button", undefined, "Snackbar");
-        btnSnackbar.addEventListener("click", evt => {
+        btnSnackbar.addEventListener("click", /** @param {Event} evt */ evt => {
             evt.stopPropagation();
             let str = `
                 isAndroid=="${isAndroid()}"
@@ -1288,7 +1274,7 @@ function dialogColorTheme() {
         const somethingToSave = canSurelySave || inpColor.validity.valid && hasNewTheme;
         btnSaveColorTheme.disabled = !somethingToSave;
     }
-    bdy.addEventListener("change", evt => {
+    bdy.addEventListener("change", /** @param {Event} evt */ evt => {
         checkCanSaveNewTheme(true);
     });
     checkCanSaveNewTheme(false);
