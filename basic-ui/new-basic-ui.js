@@ -1055,6 +1055,56 @@ let tmrSnackbar = null;
 // const snackbar = document.querySelector('#snackbar');
 
 /**
+ * Show txt popup-style at a certain point.
+ * Popup is guaranteed to be entirely inside viewport.
+ *
+ * Uses CSS class "show-here".
+ *
+ * @param {number} clientX
+ * @param {number} clientY
+ * @param {string|HTMLDivElement} txtOrDiv
+ * @param {number} [secTimeout]
+ * @returns {HTMLDivElement}
+ */
+export function showHere(clientX, clientY, txtOrDiv, secTimeout) {
+        // Both must be number or undefined
+        const hasPos = clientX != undefined && clientY != undefined;
+        if (hasPos) {
+            if (Number.isNaN(clientX) || Number.isNaN(clientY)) {
+                throw Error(`Bad pos: (${clientX}, ${clientY})`);
+            }
+        }
+        const div = mkElt("div", { class: "surface show-over" }, txtOrDiv);
+        div.setAttribute("popover", "");
+        document.documentElement.appendChild(div);
+        if (hasPos) {
+            const bcr = div.getBoundingClientRect();
+            const wW = window.innerWidth;
+            const wH = window.innerHeight;
+            if (bcr.right > wW) {
+                clientX = wW - bcr.width;
+                div.style.left = `${clientX}px`;
+            }
+            if (bcr.bottom > wH) {
+                clientY = wH - bcr.height;
+                div.style.top = `${clientY}px`;
+            }
+        }
+        div.showPopover();
+        if (hasPos) {
+            div.style.margin = `0`;
+            div.style.position = `fixed`;
+            div.style.left = `${clientX}px`;
+            div.style.top = `${clientY}px`;
+        }
+        if (secTimeout == undefined) return div;
+        setTimeout(() => {
+            div.remove();
+        }, secTimeout * 1000);
+        return div;
+}
+
+/**
  * @param {string|HTMLSpanElement} msg
  * @param {number} [secDur]
  */
@@ -1063,15 +1113,19 @@ export function snackbar(msg, secDur = 4) {
 }
 
 /**
- * @param {string|HTMLSpanElement} msg
+ * @param {string|HTMLDivElement} msg
  * @param {number} secDur
  */
 function showSnackbar(msg, secDur) {
     console.log("showSnackbar");
+    if (secDur > 30) {
+        console.error(`showSnackbar, secDur==${secDur} > 20`);
+        debugger;
+    }
     setTimeout(() => hideSnackbar(), secDur * 1000);
     const snackbar = getEltSnackbar();
     snackbar.textContent = "";
-    const eltMsg = (typeof msg == "string") ? mkElt("span", undefined, msg) : msg;
+    const eltMsg = (typeof msg == "string") ? mkElt("div", undefined, msg) : msg;
     snackbar.appendChild(eltMsg);
     snackbar.dataset.state = 'opening';
     snackbar.showPopover();

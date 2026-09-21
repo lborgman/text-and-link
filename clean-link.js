@@ -34,7 +34,6 @@ const modBeerHtml = await import("beer-html");
  * @property {Function} addXclose
  * @property {Function} closeMyDialog
  * @property {Function} colorNameToHex
- * @property {Function} displayMenu
  * @property {Function} getRootCssVarMs
  * @property {Function} isCssVariableDefined
  * @property {Function} mkDialogMenu
@@ -42,6 +41,7 @@ const modBeerHtml = await import("beer-html");
  * @property {Function} nextPaint
  * @property {Function} showDialog
  * @property {Function} showDialogConfirm
+ * @property {Function} showHere
  * @property {Function} snackbar
  * @property {Function} waitForLayoutSilence
  */
@@ -218,7 +218,7 @@ btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEve
         await navigator.clipboard.writeText(allText);
         // const elt = mkElt("div", { style: "NOmax-width: clamp(160px, 400px, 70dvw);" }, [
         const elt = mkElt("div", { style: "padding:8px" }, [
-            mkElt("i", { style: "color:green;" }, "Copied:"),
+            mkElt("div", { style: "color:green; font-style:italic" }, "Copied:"),
             mkElt("pre", { style: " overflow-wrap: anywhere; white-space: pre-wrap; " }, allText)
         ]
         );
@@ -231,16 +231,16 @@ btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEve
     function tellUser(message) {
         if (typeof message == "string") {
             // Nothing was copied
-            showSnackbar(message);
+            cleanLinkShowSnackbar(message);
             return;
         }
         // On Android there is very good default feedback when copying.
         if (isAndroid()) {
             const bcr = btnCopy.getBoundingClientRect();
-            showHere(bcr.left, bcr.top + bcr.height, "Copied", 1.5);
+            cleanLinkShowHere(bcr.left, bcr.top + bcr.height - 10, "Copied", 1.5);
             return;
         }
-        showSnackbar(message);
+        cleanLinkShowSnackbar(message);
     }
 }));
 btnCopy.addEventListener("NOclick", evt => {
@@ -712,7 +712,7 @@ function handleWikipediaClick(evt) {
     const targetA = target.closest("a");
     if (targetA == null) throw Error("targetA,2==null");
     const txtA = targetA.textContent
-    showHere(evt.clientX + 30, evt.clientY - 40, `Can't "${txtA}" this here`, 3);
+    cleanLinkShowHere(evt.clientX + 30, evt.clientY - 40, `Can't "${txtA}" this here`, 3);
 }
 
 /** @param {HTMLDialogElement} dialog */
@@ -730,7 +730,7 @@ function scriptAddShowHelpClickFun(dialog) {
             evt.stopPropagation();
             // const div = showHere(evt.clientX, evt.clientY, "You are already there!");
             // setTimeout(() => div.remove(), 3000);
-            showHere(evt.clientX, evt.clientY, "You are already there!", 3);
+            cleanLinkShowHere(evt.clientX, evt.clientY, "You are already there!", 3);
             return true;
         }
         return false;
@@ -770,7 +770,7 @@ function removeDialogCanInstall() {
  *
  * @return {HTMLDivElement}
  */
-function showOver(txtOrDiv, secTimeout, clientX, clientY) {
+function OLDshowOver(txtOrDiv, secTimeout, clientX, clientY) {
     // Both must be number or undefined
     const hasPos = clientX != undefined && clientY != undefined;
     if (hasPos) {
@@ -778,7 +778,7 @@ function showOver(txtOrDiv, secTimeout, clientX, clientY) {
             throw Error(`Bad pos: (${clientX}, ${clientY})`);
         }
     }
-    const div = mkElt("div", { class: "snackbar" }, txtOrDiv);
+    const div = mkElt("div", { class: "surface show-over" }, txtOrDiv);
     div.setAttribute("popover", "");
     document.documentElement.appendChild(div);
     if (hasPos) {
@@ -810,10 +810,10 @@ function showOver(txtOrDiv, secTimeout, clientX, clientY) {
 /**
  * Show txt popup-style in the snackbar position of the screen
  * @param {string|HTMLDivElement} txtOrDiv
- * @param {number} msShow
+ * @param {number} secDuration
  */
-function showSnackbar(txtOrDiv, msShow = 4000) {
-    return modBasicUI.snackbar(txtOrDiv, msShow);
+function cleanLinkShowSnackbar(txtOrDiv, secDuration = 4) {
+    return modBasicUI.snackbar(txtOrDiv, secDuration);
     // return showOver(txtOrDiv, 3);
 }
 function clearSnackbars() {
@@ -835,8 +835,9 @@ function clearSnackbars() {
  * @param {number} [secTimeout]
  * @returns {HTMLDivElement}
  */
-function showHere(clientX, clientY, txtOrDiv, secTimeout) {
-    return showOver(txtOrDiv, secTimeout, clientX, clientY);
+function cleanLinkShowHere(clientX, clientY, txtOrDiv, secTimeout) {
+    // return showOver(txtOrDiv, secTimeout, clientX, clientY);
+    modBasicUI.showHere(clientX, clientY, txtOrDiv, secTimeout);
 }
 
 // Remove popover without id on rim click
@@ -873,19 +874,19 @@ function addXclose(dialog) {
 document.documentElement.addEventListener("click", evt => {
     const dialog = evt.target;
     if (dialog instanceof HTMLDialogElement) {
-
+ 
         const rect = dialog.getBoundingClientRect();
         if (isPointInside(rect, evt.clientX, evt.clientY)) {
             return;
         }
         const scrollbarWidth = dialog.offsetWidth - dialog.clientWidth;
         const xFromRight = rect.right - evt.clientX;
-
+ 
         // Ignore if click is in scrollbar area
         if (xFromRight <= scrollbarWidth && xFromRight > 0) {
             return;
         }
-
+ 
         evt.stopPropagation();
         evt.preventDefault();
         closeDialog(dialog);
@@ -1306,7 +1307,7 @@ function dialogColorTheme() {
                 getSearchParamNames()=="${getSearchParamNames().join(',')}"
                 isDisplayModePWA()=="${isDisplayModePWA()}"
                 `;
-            showSnackbar(str, 20 * 1000);
+            cleanLinkShowSnackbar(str, 20);
         });
     }
 

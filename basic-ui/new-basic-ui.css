@@ -1,3 +1,12 @@
+/**** Snackbar and showOver *********/
+
+.show-over {
+    padding: 0.5rem;
+    border-radius: 4px;
+    /* box-shadow: var(--elevate2); */
+    box-shadow: 0 0.25rem 0.5rem var(--primary);
+}
+
 /* Functionality */
 #snackbar {
     position: fixed;
