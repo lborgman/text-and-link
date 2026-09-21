@@ -5,6 +5,40 @@ const BASIC_UI_VER = "0.0.01";
 logConsoleHereIs(`here is basic-ui.js, module,${BASIC_UI_VER}`);
 if (document.currentScript) throw Error("import .currentScript"); // is module
 
+
+/**
+ * @param {Record<string, any> & { [Symbol.toStringTag]: "Module" }} theModule - Any ESM module
+ * @param {string} importName - Used to construct a typedef name for the module
+ * @return string
+ */
+export function getJsDocForModule(theModule, importName) {
+    const isESM = theModule[Symbol.toStringTag] === "Module";
+    if (!isESM) throw Error("theModule is not an ESM module");
+
+    const names = importName.split("-");
+    /** @param {string} str @returns {string} */
+    const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+    const typedefName = names.map(n => capitalize(n)).join("") + "Module";
+    const JSDocProperties = Object.keys(theModule)
+        .map(key => {
+            const type = typeof theModule[key] === 'function' ? 'Function' : 'any';
+            return ` * @property {${type}} ${key}`;
+        })
+        .join('\n');
+
+    const template = `/**
+ * @typedef {Object} ${typedefName}
+${JSDocProperties}
+ */`;
+
+    // console.log(template);
+    return template;
+}
+
+
+
+
+
 // @ts-ignore
 const mkElt = window["mkElt"];
 
@@ -15,7 +49,7 @@ const mkElt = window["mkElt"];
  */
 export function mkXclose(funClose) {
     const xClose = mkElt("button", { class: "x-close" }, "✖");
-    xClose.addEventListener("click", evt => {
+    xClose.addEventListener("click", /** @param {Event} evt */ evt => {
         evt.stopPropagation();
         // debugger;
         if (funClose) {
@@ -43,7 +77,7 @@ export function addXclose(dialog) {
 }
 
 document.documentElement.addEventListener("click",
-    /** @param {MouseEvent} evt */
+    /** @param {PointerEvent} evt */
     evt => {
         // if (!evt.target) return;
 
@@ -109,8 +143,6 @@ document.documentElement.addEventListener("click",
         const target = /** @type {Element} */ (evt.target);
         const button = target.closest("button")
         if (button) {
-            // console.log("----- button click", evt);
-            // if (!evt.isDelayedClick) {
             if (evt.isTrusted) {
                 evt.stopImmediatePropagation();
                 evt.preventDefault();
@@ -124,6 +156,10 @@ document.documentElement.addEventListener("click",
     { capture: true }
 );
 
+/**
+ * @param {PointerEvent} event 
+ * @param {HTMLButtonElement} button 
+ */
 function addRippleAndClickDelayed(event, button) {
     const currentRipple = button.getElementsByClassName("basicUI_ripple")[0];
     if (currentRipple) { return; }
@@ -134,17 +170,12 @@ function addRippleAndClickDelayed(event, button) {
     const radius = diameter / 2;
 
     circle.style.width = circle.style.height = `${diameter}px`;
-    // circle.style.left = `${event.clientX - button.offsetLeft - radius}px`;
     circle.style.left = `${event.clientX - bcrButton.left - radius}px`;
-    // circle.style.top = `${event.clientY - button.offsetTop - radius}px`;
     circle.style.top = `${event.clientY - bcrButton.top - radius}px`;
     circle.classList.add("basicUI_ripple");
 
-
-
     const basicUI_rippleDuration = getRootCssVarMs("--basicUI_ripple-duration");
 
-    // circle.addEventListener("animationend", () => { whenRippleFinishes(); });
     //// Much easier to use timeout.  And more flexible.
     setTimeout(whenRippleFinishes, basicUI_rippleDuration * 0.5);
 
@@ -254,7 +285,7 @@ function openModalAndEnsureKeyboard(bdy) {
  *
  * @param {HTMLDivElement} bdy 
  * @param {function|undefined} [retValFun]
- * @param {undefined|HTMLButtonElement[]} [buttons]
+ * @param {undefined|HTMLButtonElement[]|HTMLButtonElement} [buttons]
  * @param {string} [dialogClass]
  * @returns {Promise<any>}
  * @category Visual helpers
@@ -282,11 +313,14 @@ export async function showDialog(bdy, retValFun, buttons, dialogClass) {
     // bdy.classList.add("modal-scroll-body");
     const dlg = mkElt("dialog", undefined, bdy);
     if (dialogClass) dlg.classList.add(dialogClass);
-    dlg.addEventListener("close", evt => { console.log("%%%%% dlg close"); });
-    dlg.addEventListener("cancel", evt => { console.log("%%%%% dlg cancel"); });
+    // dlg.addEventListener("close", evt => { console.log("%%%%% dlg close"); });
+    // dlg.addEventListener("cancel", evt => { console.log("%%%%% dlg cancel"); });
     if (buttons) {
         let myButtons = buttons;
-        if (!Array.isArray(myButtons)) { myButtons = [buttons]; }
+        if (!Array.isArray(myButtons)) {
+            const button = /** @type {HTMLButtonElement} */ (buttons);
+            myButtons = [button];
+        }
         const eltButtons = mkElt("div", { class: "dialog-buttons" });
         myButtons.forEach(b => {
             if (!(b instanceof HTMLButtonElement)) {
@@ -331,7 +365,7 @@ export async function showDialog(bdy, retValFun, buttons, dialogClass) {
 
     if (!retValFun) return;
     const promClose = new Promise(resolve => {
-        dlg.addEventListener("close", evt => { resolve("close"); });
+        dlg.addEventListener("close", /** @param {Event} evt */ evt => { resolve("close"); });
     });
     // debugger;
     // const ans = await valFun();
@@ -347,6 +381,7 @@ export async function showDialog(bdy, retValFun, buttons, dialogClass) {
  * @param {HTMLDivElement} bdy 
  * @param {string} [ok]
  * @param {string} [cancel]
+ * @param {function} [funOkButton]
  * @throws {TypeError}
  * @category Visual helpers
  */
@@ -359,11 +394,11 @@ export async function showDialogConfirm(bdy, ok, cancel, funOkButton) {
     const btnFalse = mkElt("button", undefined, cancel);
     const funAns = async () => {
         return await new Promise(resolve => {
-            btnTrue.addEventListener("click", evt => {
+            btnTrue.addEventListener("click", /** @param {Event} evt */(evt) => {
                 resolve(true);
                 closeMyDialog(btnTrue);
             });
-            btnFalse.addEventListener("click", evt => {
+            btnFalse.addEventListener("click",/** @param {Event} evt */ evt => {
                 resolve(false);
                 closeMyDialog(btnFalse);
             });
@@ -416,7 +451,7 @@ export function nextPaint(fun) {
             queueMicrotask(
                 () => {
                     fun();
-                    requestAnimationFrame(resolve);
+                    requestAnimationFrame(() => resolve());
                 }
             );
         });
@@ -487,7 +522,7 @@ const isDefined = window.getComputedStyle(document.documentElement)
 export function mkDialogMenu() {
     const eltDialogMenuContainer = mkElt("dialog", { class: "menu-container" });
     // The bubbling:
-    eltDialogMenuContainer.addEventListener("click", evt => {
+    eltDialogMenuContainer.addEventListener("click", /** @param {Event} evt */ evt => {
         evt.stopPropagation();
         eltDialogMenuContainer.close();
         eltDialogMenuContainer.remove();
@@ -512,7 +547,7 @@ export function addMenuDivider(dialogMenu) {
 /**
  *
  * @param {HTMLDialogElement} dialogMenu 
- * @param {string} txt 
+ * @param {string|HTMLSpanElement} txt 
  * @param {function():void} fun 
  * @throws {TypeError}
  * @throws {RangeError}
@@ -545,10 +580,16 @@ export function addMenuAlt(dialogMenu, txt, fun) {
 
     const alt = mkMenuAlt(txt, fun);
     dialogMenu.appendChild(alt);
+
+    /**
+     * @param {string|HTMLSpanElement} txt
+     * @param {()=> void} [fun]
+     * @returns {HTMLButtonElement}
+     */
     function mkMenuAlt(txt, fun) {
         const btn = mkElt("button", { class: "menu-alt" }, txt);
         if (fun) {
-            btn.addEventListener("click", evt => {
+            btn.addEventListener("click", /** @param {Event} evt */ evt => {
                 // evt.stopPropagation();
                 fun();
             });
@@ -612,17 +653,18 @@ export function displayMenu(dialogMenu, objDialogPosition) {
     }
     // dialogMenu.showModal();
     // requestAnimationFrame(() => dlg.classList.add("fade-backdrop"));
-    openDialog(dlg);
+    openDialog(dialogMenu);
 }
 
 
 
-
+/** @type {number} */
 let resizeTimeout;
 function syncViewport() {
     // Clear any pending debounced checks
     if (resizeTimeout) clearTimeout(resizeTimeout);
 
+    if (!window.visualViewport) return;
     const visualHeight = window.visualViewport.height;
     const totalHeight = window.innerHeight;
 
@@ -639,23 +681,6 @@ function syncViewport() {
 function monitorVisualViewport() {
     if (!window.visualViewport) return;
 
-    // let resizeTimeout;
-
-    const OLDsyncViewport = () => {
-        // Clear any pending debounced checks
-        if (resizeTimeout) clearTimeout(resizeTimeout);
-
-        const visualHeight = window.visualViewport.height;
-        const totalHeight = window.innerHeight;
-
-        // We add a tiny buffer (like 15px) because zoom or subpixel rendering 
-        // can make innerHeight and visualViewport.height differ slightly even without a keyboard.
-        const keyboardHeight = (totalHeight - visualHeight > 15) ? (totalHeight - visualHeight) : 0;
-
-        document.documentElement.style.setProperty('--visible-height', `${visualHeight}px`);
-        document.documentElement.style.setProperty('--keyboard-height', `${keyboardHeight}px`);
-    };
-
     // 1. Listen to the native viewport events
     window.visualViewport.addEventListener('resize', () => {
         // syncViewport();
@@ -670,7 +695,9 @@ function monitorVisualViewport() {
             if (!dlg) {
                 debugger;
             }
-            scrollForTextInput(dlg, 999);
+            if (dlg) {
+                scrollForTextInput(dlg, 999);
+            }
         }, 100);
     });
 
@@ -723,6 +750,7 @@ export function waitForLayoutSilence(elements) {
             ? Array.from(elements)
             : [elements];
 
+        /** @type {number|null} */
         let rafId = null;
 
         // Create the WeakMap that will be passed back to the user
@@ -896,7 +924,7 @@ function getEltSnackbar() {
         if (elt == null) { throw ReferenceError("elt == null"); }
         elt.addEventListener("click", evt => {
             evt.stopPropagation();
-            toast.clearQueue();
+            // toast.clearQueue();
         });
         elt.dataset.state = "closed";
         document.body.appendChild(elt);
@@ -1087,7 +1115,7 @@ setTimeout(() => {
 
 
 
-
+/** @param {HTMLDialogElement} dialog */
 function openDialog(dialog) {
     dialog.showModal();
 
@@ -1097,6 +1125,7 @@ function openDialog(dialog) {
     });
 }
 
+/** @param {HTMLDialogElement} dialog */
 function closeDialog(dialog) {
     dialog.classList.remove("fade-backdrop");
 

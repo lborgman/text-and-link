@@ -9,10 +9,47 @@ navigator.serviceWorker.register('./sw.js');
 
 export { };
 
+/**
+ * @typedef {Object} BeerHtmlModule
+ * @property {Function} createButton
+ * @property {Function} createChip
+ * @property {Function} createChipGroup
+ * @property {Function} createMenu
+ * @property {Function} createSelect
+ * @property {Function} createSlider
+ * @property {Function} createSwitch
+ * @property {Function} createTabs
+ * @property {Function} createTextField
+ * @property {Function} createTextareaField
+ */
+// @ts-ignore
 const modBeerHtml = await import("beer-html");
 
 // const modBasicUI = await import("https://lborgman.github.io/basic-ui/js/basic-ui.js");
-const modBasicUI = await import("basic-ui");
+// const modBasicUI = await import("basic-ui");
+/**
+ * @typedef {Object} BasicUiModule
+ * @property {Function} addMenuAlt
+ * @property {Function} addMenuDivider
+ * @property {Function} addXclose
+ * @property {Function} closeMyDialog
+ * @property {Function} colorNameToHex
+ * @property {Function} displayMenu
+ * @property {Function} getRootCssVarMs
+ * @property {Function} isCssVariableDefined
+ * @property {Function} mkDialogMenu
+ * @property {Function} mkXclose
+ * @property {Function} nextPaint
+ * @property {Function} showDialog
+ * @property {Function} showDialogConfirm
+ * @property {Function} snackbar
+ * @property {Function} waitForLayoutSilence
+ */
+
+// @ts-ignore
+const modBasicUI = /** @type {BasicUiModule} */ (await import("basic-ui"));
+
+
 
 // const storagePrefix = "clean-link";
 // const keyColorTheme = `${storagePrefix}-theme`;
@@ -26,16 +63,27 @@ const modBasicUI = await import("basic-ui");
 
 function saveTheme() {
     const strJson = JSON.stringify(currentTheme);
-    localStorage.setItem(globalThis.keyColorTheme, strJson);
+    localStorage.setItem(myGlobal.keyColorTheme, strJson);
 }
+
+
+/**
+ * @typedef {Object} GlobalUtilities
+ * @property {() => any} retrieveTheme
+ * @property {string} keyColorTheme
+ */
+/** @type {GlobalUtilities} */
+const myGlobal = /** @type {any} */ (globalThis);
+
 /**
  * @returns {ColorTheme}
  */
 function retrieveTheme() {
-    return globalThis.retrieveTheme();
+    // return /** @type {any} */ (globalThis).retrieveTheme();
+    return myGlobal.retrieveTheme();
 }
 function resetTheme() {
-    localStorage.removeItem(globalThis.keyColorTheme);
+    localStorage.removeItem(/** @type {any} */(globalThis).keyColorTheme);
     currentTheme = retrieveTheme();
 }
 
