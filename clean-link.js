@@ -393,8 +393,10 @@ if (isAndroid()) {
     // FIX-ME: We have checked before if it is in the DOM!
     const d = /** @type {HTMLDialogElement} */ (document.getElementById("can-be-installed"));
     if (d) {
-        addXclose(d);
-        d.showModal();
+        // addXclose(d);
+        // d.showModal();
+        // requestAnimationFrame(() => { dialog.classList.add("fade-backdrop"); });
+        modBasicUI.openDialog(d);
     }
 }
 
@@ -761,53 +763,6 @@ function removeDialogCanInstall() {
 ////// Popover
 
 /**
- * Show as popover
- *
- * @param {string|HTMLDivElement} txtOrDiv
- * @param {number} [secTimeout]
- * @param {number} [clientX]
- * @param {number} [clientY]
- *
- * @return {HTMLDivElement}
- */
-function OLDshowOver(txtOrDiv, secTimeout, clientX, clientY) {
-    // Both must be number or undefined
-    const hasPos = clientX != undefined && clientY != undefined;
-    if (hasPos) {
-        if (Number.isNaN(clientX) || Number.isNaN(clientY)) {
-            throw Error(`Bad pos: (${clientX}, ${clientY})`);
-        }
-    }
-    const div = mkElt("div", { class: "surface show-over" }, txtOrDiv);
-    div.setAttribute("popover", "");
-    document.documentElement.appendChild(div);
-    if (hasPos) {
-        const bcr = div.getBoundingClientRect();
-        const wW = window.innerWidth;
-        const wH = window.innerHeight;
-        if (bcr.right > wW) {
-            clientX = wW - bcr.width;
-            div.style.left = `${clientX}px`;
-        }
-        if (bcr.bottom > wH) {
-            clientY = wH - bcr.height;
-            div.style.top = `${clientY}px`;
-        }
-    }
-    div.showPopover();
-    if (hasPos) {
-        div.style.margin = `0`;
-        div.style.position = `fixed`;
-        div.style.left = `${clientX}px`;
-        div.style.top = `${clientY}px`;
-    }
-    if (secTimeout == undefined) return div;
-    setTimeout(() => {
-        div.remove();
-    }, secTimeout * 1000);
-    return div;
-}
-/**
  * Show txt popup-style in the snackbar position of the screen
  * @param {string|HTMLDivElement} txtOrDiv
  * @param {number} secDuration
@@ -815,12 +770,6 @@ function OLDshowOver(txtOrDiv, secTimeout, clientX, clientY) {
 function cleanLinkShowSnackbar(txtOrDiv, secDuration = 4) {
     return modBasicUI.snackbar(txtOrDiv, secDuration);
     // return showOver(txtOrDiv, 3);
-}
-function clearSnackbars() {
-    console.log("clearSnackbars");
-    // return; // FIX-ME: to do or not to do
-    // This is a bit broken:
-    modBasicUI.clearSnackbarQueue();
 }
 
 /**

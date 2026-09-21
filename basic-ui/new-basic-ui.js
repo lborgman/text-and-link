@@ -932,127 +932,6 @@ function getEltSnackbar() {
     return /** @type {HTMLDivElement} */ (elt);
 }
 
-/*
-class SnackbarQueue {
-    constructor() {
-        this.snackbarPopover = getEltSnackbar();
-        // this.queue = /** @type {string[]} * / [];
-        /** @type {string[]} * /
-        this.queue = [];
-        this.isDisplaying = false;
-
-        // Allow clicking to dismiss early
-        this.snackbarPopover.addEventListener('click', () => this.dismissCurrent());
-    }
-
-    /**
-     * @param {string|HTMLDivElement} message
-     * @param {number} duration
-     * /
-    showBar(message, duration = 3000) {
-        // Avoid queuing duplicate back-to-back messages
-        if (this.queue.some(item => item.message === message)) return;
-
-        this.queue.push({ message, duration });
-        if (!this.isDisplaying) {
-            this.processQueue();
-        }
-    }
-
-    async processQueue() {
-        if (this.queue.length === 0) {
-            this.isDisplaying = false;
-            console.log("processQueue: snackbar queue was empty");
-            return;
-        }
-
-        this.isDisplaying = true;
-        const { message, duration } = this.queue.shift();
-        // console.log("processQueue: snackbar duration", duration);
-
-        // Set text directly on the popover container
-        this.snackbarPopover = getEltSnackbar();
-        this.snackbarPopover.textContent = "";
-        this.snackbarPopover.append(message);
-        this.snackbarPopover.showPopover();
-
-        // Wait for display duration or manual click
-        await new Promise((resolve) => {
-            this.currentResolver = resolve;
-            this.timeoutId = setTimeout(resolve, duration);
-        });
-
-
-
-        // From Gemini:
-        dismissSnackbar(this.snackbarPopover);
-        async function dismissSnackbar(popoverEl) {
-            // Play the Material Design fast exit animation
-            const animation = popoverEl.animate([
-                { opacity: 1, transform: 'translateY(0)' },
-                { opacity: 0, transform: 'translateY(calc(100% + 2rem))' }
-            ], {
-                duration: 2000,
-                easing: 'cubic-bezier(0.3, 0, 1, 1)'
-            });
-
-            // Wait for animation to finish before native hide
-            await animation.finished;
-            popoverEl.hidePopover();
-            popoverEl.remove();
-        }
-
-
-
-
-        // Brief pause for CSS fade-out before showing the next snackbar
-        setTimeout(() => this.processQueue(), 150);
-    }
-
-    dismissCurrent() {
-        console.log("SnackbarQueue, dismissCurrent");
-        if (this.currentResolver) {
-            clearTimeout(this.timeoutId);
-            this.currentResolver();
-        }
-    }
-
-    clearQueue() {
-        console.log("SnackbarQueue, clearQueue");
-        this.queue.length = 0;
-        this.dismissCurrent();
-        this.snackbarPopover.hidePopover();
-    }
-}
-
-// Usage:
-const toast = new SnackbarQueue();
-// toast.show('Microphone enabled');
-
-
-
-
-/**
- * @param {string|HTMLDivElement} message
- * @param {number} duration
- *
- * @category Visual elements
- * @example
- *   snackbar('Microphone enabled');
- * /
-export function snackbar(message, duration) {
-    toast.showBar(message, duration);
-}
-
-export function clearSnackbarQueue() {
-    toast.clearQueue();
-}
-
-// Module-level variable to track the active timer
-let tmrSnackbar = null;
-*/
-
-// const snackbar = document.querySelector('#snackbar');
 
 /**
  * Show txt popup-style at a certain point.
@@ -1117,7 +996,7 @@ export function snackbar(msg, secDur = 4) {
  * @param {number} secDur
  */
 function showSnackbar(msg, secDur) {
-    console.log("showSnackbar");
+    // console.log("showSnackbar");
     if (secDur > 30) {
         console.error(`showSnackbar, secDur==${secDur} > 20`);
         debugger;
@@ -1129,14 +1008,14 @@ function showSnackbar(msg, secDur) {
     snackbar.appendChild(eltMsg);
     snackbar.dataset.state = 'opening';
     snackbar.showPopover();
-    console.log({ snackbar });
-    console.log(snackbar.dataset.state);
-    console.log(getComputedStyle(snackbar).animationName);
+    // console.log({ snackbar });
+    // console.log(snackbar.dataset.state);
+    // console.log(getComputedStyle(snackbar).animationName);
 
     snackbar.addEventListener('animationend', function onAnimationEnd(event) {
-        console.log("snackbar at animationend");
+        // console.log("snackbar at animationend");
         if (event.animationName !== 'snackbar-opening') return;
-        console.log("snackbar at animationName == snackbar-opening");
+        // console.log("snackbar at animationName == snackbar-opening");
 
 
         snackbar.removeEventListener('animationend', onAnimationEnd);
@@ -1174,9 +1053,7 @@ function openDialog(dialog) {
     dialog.showModal();
 
     // Allow the backdrop to exist before transitioning
-    requestAnimationFrame(() => {
-        dialog.classList.add("fade-backdrop");
-    });
+    requestAnimationFrame(() => { dialog.classList.add("fade-backdrop"); });
 }
 
 /** @param {HTMLDialogElement} dialog */

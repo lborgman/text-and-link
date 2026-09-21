@@ -46,7 +46,16 @@ window.logConsoleHereIs(`here is init-error.js ${INIT_ERROR_VER}`);
 
         // Build dialog
         const dlg = Object.assign(document.createElement("dialog"), {
-            style: "background:red; color:black; font-size:1rem; max-width:90vw;"
+            style:
+                `
+                opacity: 1;
+                visibility: visible;
+                background:red;
+                color:black;
+                font-size:1rem;
+                max-width:90dvw;
+                max-inline-size:90dvw;
+                `
         });
 
         dlg.append(
@@ -60,7 +69,15 @@ window.logConsoleHereIs(`here is init-error.js ${INIT_ERROR_VER}`);
 
         const pre = Object.assign(document.createElement("pre"), {
             textContent: [location.href, stack ?? `${evt.filename ?? "No filename"}:${evt.lineno ?? "?"}`].join("\n\n"),
-            style: "background:orange; padding:4px; text-wrap:wrap; overflow-wrap:break-word;"
+            style:
+                `
+                background:orange;
+                padding:4px;
+                text-wrap:wrap;
+                overflow-wrap:break-word;
+                opacity:1;
+                visibility:visible;
+                `
         });
         dlg.append(pre);
 
