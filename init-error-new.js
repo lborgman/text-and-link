@@ -48,13 +48,15 @@ window.logConsoleHereIs(`here is init-error.js ${INIT_ERROR_VER}`);
         const dlg = Object.assign(document.createElement("dialog"), {
             style:
                 `
+                all: revert;
                 opacity: 1;
                 visibility: visible;
                 background:red;
                 color:black;
                 font-size:1rem;
-                max-width:90dvw;
-                max-inline-size:90dvw;
+                border-radius:1rem;
+                max-width:80dvw;
+                max-inline-size:80dvw;
                 `
         });
         dlg.id = "error-dialog";
@@ -74,18 +76,17 @@ window.logConsoleHereIs(`here is init-error.js ${INIT_ERROR_VER}`);
                 `
 
   display: block ;
-  width: 100% ;         
+  width: 100% ;
   max-width: 100% ;
   box-sizing: border-box ;
   white-space: pre-wrap ;
   word-break: break-all ;
   overflow-wrap: anywhere ;
-  overflow-x: hidden !important;
-
+  overflow-x: hidden;
 
                 background:orange;
                 padding:4px;
-
+                margin-bottom:10px;
                 `
         });
         dlg.append(pre);
