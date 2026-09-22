@@ -10,17 +10,17 @@ const modBasic = await import("basic-ui");
 const cssDebugVisual = `
     #basic-ui_debugVisual {
         h3 {
-            color: red;
-            font-size: 1.1rem;
+            NOcolor: red;
+            font-size: 1.3rem;
             margin-bottom: 10px;
         }
 
         summary {
-            color: red;
+            color: yellow;
             background-color: black;
             list-style-type: revert;
             padding: 4px;
-            outline: 1px solid red;
+            outline: 1px solid #0004;
             max-width: content;
         }
 
@@ -43,6 +43,7 @@ const cssTestText = `
     }
 `;
 
+/*
 // ---- module script text ----
 const scriptModuleText = `
     const modBeerHtml = await import("beer-html");
@@ -132,7 +133,9 @@ const scriptModuleText = `
         eltExampleSection.appendChild(divTestTest);
     }
 `;
+*/
 
+/*
 // ---- icons script text ----
 const scriptIconsText = `
 // debugger; // script
@@ -181,7 +184,7 @@ const scriptIconsText = `
         .split(",")
         .map(n => n.trim())
         .forEach(n => insertIcon(n));
-    */
+    * /
     [
         "add",
         "cancel",
@@ -211,6 +214,7 @@ const scriptIconsText = `
     ]
         .forEach(n => insertIcon(n));
 `;
+*/
 
 // ---- test-checkbox block ----
 const detailsCheckbox = () => mkElt("details", undefined, [
@@ -247,7 +251,7 @@ const detailsRadio = () => mkElt("details", undefined, [
 ]);
 
 // ---- module script element ----
-const scriptModule = mkElt("script", { type: "module" }, scriptModuleText);
+// const scriptModule = mkElt("script", { type: "module" }, scriptModuleText);
 
 // ---- test-text block ----
 const detailsTestText = () => mkElt("details", { id: "test-text" }, [
@@ -271,26 +275,23 @@ const detailsTestIcons = () => mkElt("details", { open: "", id: "test-icons" }, 
     mkElt("div", undefined, [])
 ]);
 
-// ---- icons script element ----
-// const scriptIcons = mkElt("script", { type: "module" }, scriptIconsText);
 
 // ---- inner div.surface-variant ----
 const divSurfaceVariant = () => mkElt("div", {
-    style: "outline:4px dotted red; padding:4px;",
+    // style: "outline:4px dotted red; padding:4px;",
+    style: "padding:4px;",
     class: "surface-variant"
 }, [
     mkElt("style", undefined, cssDebugVisual),
-    mkElt("h3", undefined, "Testing beer-native.js and beer-fields.js"),
+    // mkElt("h3", undefined, "Testing beer-native.js and beer-fields.js"),
     mkElt("div", {
         id: "testVisual-result",
         style: "display:none; background-color:yellow; color:red; padding:8px; border-radius: 0;"
     }),
     detailsCheckbox(),
     detailsRadio(),
-    // scriptModule,
     detailsTestText(),
     detailsTestIcons(),
-    // scriptIcons
 ]);
 
 // ---- top-level details#basic-ui_debugVisual ----
@@ -393,9 +394,8 @@ async function doTheTestsInternal(dv) {
                 field
             ]);
             divTestTest.style = `
-            max-width: 30%;
             max-width: 150px;
-            outline: blue dotted 4px;
+            outline: blue dashed 1px;
         `;
             // eltTestText.appendChild(divTestTest);
             // section
@@ -413,14 +413,15 @@ async function doTheTestsInternal(dv) {
             // const eltTextIcon = mkElt("div", undefined, [iconName, ":", eltIcon]);
             spanName.style.opacity = "0.5";
             const eltTextIcon = mkElt("div", undefined, [spanName, eltIcon]);
-            myDiv.appendChild(eltTextIcon);
+            divTestIcons.appendChild(eltTextIcon);
         }
-        const myDiv = document.getElementById("test-icons").querySelector("div");
-        myDiv.style.display = "flex";
-        myDiv.style.flexWrap = "wrap";
-        myDiv.style.gap = "10px";
-        myDiv.style.padding = "10px";
-        myDiv.style.outline = "dotted blue 4px";
+        const divTestIcons = document.getElementById("test-icons").querySelector("div");
+        divTestIcons.classList.add("surface");
+        divTestIcons.style.display = "flex";
+        divTestIcons.style.flexWrap = "wrap";
+        divTestIcons.style.gap = "10px";
+        divTestIcons.style.padding = "10px";
+        divTestIcons.style.outline = "dotted blue 1px";
         /*
         // Basic UI icons
         "home, menu, close, search, settings"
@@ -538,7 +539,7 @@ globalThis.waitUntilQuerySelector = waitUntilQuerySelector;
 export function checkSetupDialog() {
     const dv = detailsDebugVisual();
     const bdy = mkElt("div", undefined, [
-        mkElt("h3", undefined, "basic-ui check"),
+        mkElt("h3", undefined, "Check basic-ui setup"),
         dv.lastElementChild
     ]);
     bdy.id = "basic-ui_debugVisual";
