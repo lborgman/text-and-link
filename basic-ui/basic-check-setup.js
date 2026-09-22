@@ -17,7 +17,7 @@ const cssDebugVisual = `
 
         summary {
             color: yellow;
-            background-color: black;
+            background-color: darkgreen;
             list-style-type: revert;
             padding: 4px;
             outline: 1px solid #0004;
@@ -254,19 +254,24 @@ const detailsRadio = () => mkElt("details", undefined, [
 // const scriptModule = mkElt("script", { type: "module" }, scriptModuleText);
 
 // ---- test-text block ----
-const detailsTestText = () => mkElt("details", { id: "test-text" }, [
-    mkElt("summary", undefined, "test-text"),
+const sectionText =
     mkElt("section", {
         style: `
             display:flex;
             flex-direction: row;
             flex-wrap: wrap;
             gap:20px;
-            background-color: var(--surface)
+            NObackground-color: var(--surface);
+            margin: 0;
             `
     }, [
         mkElt("style", undefined, cssTestText)
-    ])
+    ]);
+sectionText.classList.add("surface");
+
+const detailsTestText = () => mkElt("details", { id: "test-text" }, [
+    mkElt("summary", undefined, "test-text"),
+    sectionText
 ]);
 
 // ---- test-icons block ----
@@ -395,7 +400,7 @@ async function doTheTestsInternal(dv) {
             ]);
             divTestTest.style = `
             max-width: 150px;
-            outline: blue dashed 1px;
+            outline: greenyellow dashed 1px;
         `;
             // eltTestText.appendChild(divTestTest);
             // section
