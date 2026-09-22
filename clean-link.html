@@ -73,7 +73,7 @@
     <script type="module">
         import "basic-ui";
         import "basic-check";
-        import "NObasic-check";
+        // import "NObasic-check";
         // const m = await import("basic-check");
         // console.log({ m });
     </script>
@@ -327,9 +327,9 @@
         }
     </style>
 
+    <!-- <link href="./ext/beercss/beer.css" rel="stylesheet"> -->
     <!-- <link href="https://cdn.jsdelivr.net/npm/beercss@5.0.3/dist/cdn/beer.min.css" rel="stylesheet"> -->
     <link href="https://cdn.jsdelivr.net/npm/beercss@5.0.3/dist/cdn/beer.css" rel="stylesheet">
-    <!-- <link href="./ext/beercss/beer.css" rel="stylesheet"> -->
 
     <link href="./beer-native_b.css" rel="stylesheet">
     <!-- <link href="./beer-icons.css" rel="stylesheet"> -->
@@ -738,6 +738,13 @@
                     evt.stopPropagation();
                     modCheck.checkSetupDialog();
                 });
+                const btnError = mkElt("button", undefined, "Test Error");
+                container.appendChild(btnError);
+                btnError.addEventListener("click", evt => {
+                    evt.stopPropagation();
+                    badFun();
+                });
+
             }
         </script>
 

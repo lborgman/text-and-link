@@ -57,10 +57,11 @@ window.logConsoleHereIs(`here is init-error.js ${INIT_ERROR_VER}`);
                 max-inline-size:90dvw;
                 `
         });
+        dlg.id = "error-dialog";
 
         dlg.append(
             Object.assign(document.createElement("h2"), { textContent: "Error" }),
-            Object.assign(document.createElement("p"),  { textContent: message }),
+            Object.assign(document.createElement("p"), { textContent: message }),
         );
 
         if (hint) {
@@ -71,18 +72,32 @@ window.logConsoleHereIs(`here is init-error.js ${INIT_ERROR_VER}`);
             textContent: [location.href, stack ?? `${evt.filename ?? "No filename"}:${evt.lineno ?? "?"}`].join("\n\n"),
             style:
                 `
+
+  display: block ;
+  width: 100% ;         
+  max-width: 100% ;
+  box-sizing: border-box ;
+  white-space: pre-wrap ;
+  word-break: break-all ;
+  overflow-wrap: anywhere ;
+  overflow-x: hidden !important;
+
+
                 background:orange;
                 padding:4px;
-                text-wrap:wrap;
-                overflow-wrap:break-word;
-                opacity:1;
-                visibility:visible;
+
                 `
         });
         dlg.append(pre);
 
         const btn = Object.assign(document.createElement("button"), { textContent: "Close" });
-        btn.addEventListener("click", () => dlg.close());
+        btn.addEventListener("click", (evt) => {
+            evt.stopImmediatePropagation();
+            // debugger;
+            // dlg.close();
+            dlg.remove();
+            numErrors = 0;
+        });
         dlg.append(btn);
 
         document.body.appendChild(dlg);

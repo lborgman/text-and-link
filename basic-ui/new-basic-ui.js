@@ -105,6 +105,11 @@ document.documentElement.addEventListener("click",
 
         // Usage:
         const openDialog = queryAs("dialog[open]", HTMLDialogElement);
+        // debugger;
+        if (openDialog?.id == "error-dialog") {
+            // debugger;
+            return;
+        }
 
 
 
@@ -1049,9 +1054,8 @@ setTimeout(() => {
 
 
 /** @param {HTMLDialogElement} dialog */
-function openDialog(dialog) {
+export function openDialog(dialog) {
     dialog.showModal();
-
     // Allow the backdrop to exist before transitioning
     requestAnimationFrame(() => { dialog.classList.add("fade-backdrop"); });
 }
