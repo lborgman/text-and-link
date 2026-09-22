@@ -251,6 +251,7 @@ function openModalAndEnsureKeyboard(bdy) {
     openDialog(dlg);
 
     // 2. Wait a split second for the mobile browser to process the focus change
+    /*
     setTimeout(() => {
         if (!window.visualViewport) return;
 
@@ -279,6 +280,7 @@ function openModalAndEnsureKeyboard(bdy) {
             }
         }
     }, 150); // 150ms gives the mobile OS time to trigger the viewport resize if it was going to
+    */
 }
 
 
@@ -338,6 +340,7 @@ export async function showDialog(bdy, retValFun, buttons, dialogClass) {
     }
     addXclose(dlg);
 
+    /*
     // Look exclusively inside this dialog for the text element
     const textInput = dlg.querySelector(
         'textarea, input:not([type="button"]):not([type="submit"]):not([type="hidden"]):not([type="checkbox"]):not([type="radio"]), [contenteditable="true"]'
@@ -348,9 +351,9 @@ export async function showDialog(bdy, retValFun, buttons, dialogClass) {
     }
 
     if (textInput) {
-        textInput.focus();
+        // textInput.focus();
         dlg.classList.add("has-text-input");
-        /** @type {HTMLDivElement|undefined} */
+        /** @type {HTMLDivElement|undefined} * /
         const eltScroll = mkElt("div", {
             style: "height: 0.5px; padding: 0; margin:0;",
             class: "scroll-for-text-input"
@@ -358,6 +361,7 @@ export async function showDialog(bdy, retValFun, buttons, dialogClass) {
         dlg.insertBefore(eltScroll, dlg.firstElementChild);
         scrollForTextInput(dlg);
     }
+    */
 
 
     document.documentElement.appendChild(dlg);
