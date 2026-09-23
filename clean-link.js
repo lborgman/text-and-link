@@ -39,6 +39,7 @@ const modBeerHtml = await import("beer-html");
  * @property {Function} mkDialogMenu
  * @property {Function} mkXclose
  * @property {Function} nextPaint
+ * @property {Function} openDialog
  * @property {Function} showDialog
  * @property {Function} showDialogConfirm
  * @property {Function} showHere
@@ -587,17 +588,8 @@ async function fetchWikiArticle(pageTitle, lang = 'en') {
  * @returns {HTMLButtonElement}
  */
 function mkXclose(funClose) {
-    const xClose = mkElt("button", { class: "x-close", title: "- Close" }, "✖");
-    xClose.addEventListener("click",
-            /** @param {PointerEvent} evt */ evt => {
-            evt.stopPropagation();
-            if (funClose) {
-                funClose();
-                return;
-            }
-            (xClose.closest("dialog"))?.close();
-        });
-    return xClose;
+    if (funClose) { throw Error("funClose not supported any more"); }
+    return modBasicUI.mkXclose();
 }
 
 
@@ -804,53 +796,18 @@ document.addEventListener('toggle', (event) => {
 
 //// Dialog
 /**
- * @param {HTMLDialogElement} dialog 
+ * @param {HTMLDialogElement} dialog
  * @returns {HTMLButtonElement}
  */
 function addXclose(dialog) {
-    const btnClose = dialog.querySelector("button[class=x-close]");
-    if (btnClose) {
-        if (!(btnClose instanceof HTMLButtonElement)) throw Error("btnClose it not button");
-        return btnClose;
-    }
-    const elt = mkXclose(() => closeDialog(dialog));
-    // dialog.appendChild(elt);
-    dialog.insertBefore(elt, dialog.firstElementChild);
-    return elt;
+    return modBasicUI.addXclose(dialog);
 }
 
-/*
-document.documentElement.addEventListener("click", evt => {
-    const dialog = evt.target;
-    if (dialog instanceof HTMLDialogElement) {
- 
-        const rect = dialog.getBoundingClientRect();
-        if (isPointInside(rect, evt.clientX, evt.clientY)) {
-            return;
-        }
-        const scrollbarWidth = dialog.offsetWidth - dialog.clientWidth;
-        const xFromRight = rect.right - evt.clientX;
- 
-        // Ignore if click is in scrollbar area
-        if (xFromRight <= scrollbarWidth && xFromRight > 0) {
-            return;
-        }
- 
-        evt.stopPropagation();
-        evt.preventDefault();
-        closeDialog(dialog);
-    }
-    // const currentTarget = evt.currentTarget;
-    // const onDialog = dialog == currentTarget;
-    // if (onDialog) dialog.close();
-});
-*/
 
 /**
  * @param {HTMLDialogElement} dialog
  */
-function closeDialog(dialog) {
-    // console.log("closeDialog", dialog);
+function OLDcloseDialog(dialog) {
     dialog.close();
     if (!dialog.classList.contains("html-dialog")) {
         dialog.remove();
@@ -1276,7 +1233,21 @@ function dialogColorTheme() {
         checkCanSaveNewTheme(true);
     });
     checkCanSaveNewTheme(false);
-    modBasicUI.showDialog(bdy);
+
+    // modBasicUI.showDialog(bdy);
+
+    const dlg = mkElt("dialog", { class: "bottom" }, bdy);
+    // const dlg = mkElt("dialog", {class:"top"}, bdy);
+    // const dlg = mkElt("dialog", {class:"left"}, bdy);
+    // const dlg = mkElt("dialog", {class:"right"}, bdy);
+
+    addXclose(dlg);
+
+    document.body.appendChild(dlg);
+    // dlg.style.opacity = "1";
+    // dlg.style.visibility = "visible";
+    // dlg.showModal();
+    modBasicUI.openDialog(dlg);
 }
 
 getCSS_bg_classes();

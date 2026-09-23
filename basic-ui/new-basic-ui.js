@@ -6,6 +6,11 @@ logConsoleHereIs(`here is basic-ui.js, module,${BASIC_UI_VER}`);
 if (document.currentScript) throw Error("import .currentScript"); // is module
 
 
+const backdropDuration = getRootCssVarMs("--backdrop-duration");
+const rippleDuration = getRootCssVarMs("--basicUI_ripple-duration");
+const slideDuration = getRootCssVarMs("--dialog-slide-duration");
+
+
 /**
  * @param {Record<string, any> & { [Symbol.toStringTag]: "Module" }} theModule - Any ESM module
  * @param {string} importName - Used to construct a typedef name for the module
@@ -48,23 +53,18 @@ const mkElt = window["mkElt"];
  * @category Visual elements
  */
 export function mkXclose(funClose) {
+    if (funClose) { throw Error("funClose not supported any more"); }
     const xClose = mkElt("button", { class: "x-close" }, "✖");
     xClose.addEventListener("click", /** @param {Event} evt */ evt => {
         evt.stopPropagation();
-        // debugger;
-        if (funClose) {
-            funClose();
-            return;
-        }
-        // (xClose.closest("dialog"))?.close();
         const dlg = xClose.closest("dialog");
         closeDialog(dlg);
     });
     return xClose;
 }
+
 /**
- * 
- * @param {HTMLDialogElement} dialog 
+ * @param {HTMLDialogElement} dialog
  * returns {HTMLButtonElement}
  * @category Visual elements
  */
@@ -179,10 +179,9 @@ function addRippleAndClickDelayed(event, button) {
     circle.style.top = `${event.clientY - bcrButton.top - radius}px`;
     circle.classList.add("basicUI_ripple");
 
-    const basicUI_rippleDuration = getRootCssVarMs("--basicUI_ripple-duration");
 
     //// Much easier to use timeout.  And more flexible.
-    setTimeout(whenRippleFinishes, basicUI_rippleDuration * 0.5);
+    setTimeout(whenRippleFinishes, rippleDuration * 0.5);
 
 
 
@@ -955,41 +954,41 @@ function getEltSnackbar() {
  * @returns {HTMLDivElement}
  */
 export function showHere(clientX, clientY, txtOrDiv, secTimeout) {
-        // Both must be number or undefined
-        const hasPos = clientX != undefined && clientY != undefined;
-        if (hasPos) {
-            if (Number.isNaN(clientX) || Number.isNaN(clientY)) {
-                throw Error(`Bad pos: (${clientX}, ${clientY})`);
-            }
+    // Both must be number or undefined
+    const hasPos = clientX != undefined && clientY != undefined;
+    if (hasPos) {
+        if (Number.isNaN(clientX) || Number.isNaN(clientY)) {
+            throw Error(`Bad pos: (${clientX}, ${clientY})`);
         }
-        const div = mkElt("div", { class: "surface show-over" }, txtOrDiv);
-        div.setAttribute("popover", "");
-        document.documentElement.appendChild(div);
-        if (hasPos) {
-            const bcr = div.getBoundingClientRect();
-            const wW = window.innerWidth;
-            const wH = window.innerHeight;
-            if (bcr.right > wW) {
-                clientX = wW - bcr.width;
-                div.style.left = `${clientX}px`;
-            }
-            if (bcr.bottom > wH) {
-                clientY = wH - bcr.height;
-                div.style.top = `${clientY}px`;
-            }
-        }
-        div.showPopover();
-        if (hasPos) {
-            div.style.margin = `0`;
-            div.style.position = `fixed`;
+    }
+    const div = mkElt("div", { class: "surface show-over" }, txtOrDiv);
+    div.setAttribute("popover", "");
+    document.documentElement.appendChild(div);
+    if (hasPos) {
+        const bcr = div.getBoundingClientRect();
+        const wW = window.innerWidth;
+        const wH = window.innerHeight;
+        if (bcr.right > wW) {
+            clientX = wW - bcr.width;
             div.style.left = `${clientX}px`;
+        }
+        if (bcr.bottom > wH) {
+            clientY = wH - bcr.height;
             div.style.top = `${clientY}px`;
         }
-        if (secTimeout == undefined) return div;
-        setTimeout(() => {
-            div.remove();
-        }, secTimeout * 1000);
-        return div;
+    }
+    div.showPopover();
+    if (hasPos) {
+        div.style.margin = `0`;
+        div.style.position = `fixed`;
+        div.style.left = `${clientX}px`;
+        div.style.top = `${clientY}px`;
+    }
+    if (secTimeout == undefined) return div;
+    setTimeout(() => {
+        div.remove();
+    }, secTimeout * 1000);
+    return div;
 }
 
 /**
@@ -1065,19 +1064,16 @@ export function openDialog(dialog) {
 }
 
 /** @param {HTMLDialogElement} dialog */
-function closeDialog(dialog) {
+export function closeDialog(dialog) {
     dialog.classList.remove("fade-backdrop");
 
-    // Read the CSS variable from :root
-    const rootStyles = getComputedStyle(document.documentElement);
-    const duration = parseFloat(rootStyles.getPropertyValue("--backdrop-duration"));
+    console.log("closeDialog, duration", backdropDuration);
 
-    // Convert ms → ms (parseFloat already gives the number)
     setTimeout(() => {
         dialog.close();
         if (!dialog.classList.contains("html-dialog")) {
             console.log("closeDialog remove");
             dialog.remove();
         }
-    }, duration);
+    }, backdropDuration);
 }

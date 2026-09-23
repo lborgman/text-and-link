@@ -75,14 +75,31 @@
 
 
 :root {
+    /* scrim + blur */
     /* MD3‑correct for blur */
     --backdrop-duration: 300ms;
-    /* scrim + blur */
     --backdrop-duration: 2300ms;
     --dialog-duration: 250ms;
     --dialog-duration: 2250ms;
     /* dialog surface fade */
+
+    --dialog-slide-duration: 2s;
+
+    --snackbar-exit-duration: 0.6s;
+    --snackbar-exit-duration: 500ms;
+    --snackbar-exit-duration: 2s;
+
+    --snackbar-entry-duration: 4s;
+    --snackbar-entry-duration: 0.5s;
+
+    --basicUI_ripple-duration: 1s;
+
+    --dialog-slide-duration: 0.35s;
+    --dialog-slide-duration: 2.35s;
 }
+
+
+
 
 dialog {
     opacity: 0;
@@ -128,4 +145,49 @@ dialog.fade-backdrop::backdrop {
       So the filtered layer is multiplied by the element’s opacity.
     */
     opacity: 1;
+}
+
+
+
+dialog.bottom {
+    transform: translateY(100%) !important;
+    transition-property: transform;
+    transition-duration: var(--dialog-slide-duration);
+}
+
+dialog.bottom.fade-backdrop {
+    transform: translateY(0) !important;
+}
+
+
+dialog.top {
+    transform: translateY(-100%) !important;
+    transition-property: transform;
+    transition-duration: var(--dialog-slide-duration);
+}
+
+dialog.top.fade-backdrop {
+    transform: translateY(0) !important;
+}
+
+
+dialog.left {
+    transform: translateX(-100%) !important;
+    transition-property: transform;
+    transition-duration: var(--dialog-slide-duration);
+}
+
+dialog.left.fade-backdrop {
+    transform: translateX(0) !important;
+}
+
+
+dialog.right {
+    transform: translateX(100%) !important;
+    transition-property: transform;
+    transition-duration: var(--dialog-slide-duration);
+}
+
+dialog.right.fade-backdrop {
+    transform: translateX(0) !important;
 }
