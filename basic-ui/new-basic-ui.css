@@ -155,9 +155,7 @@ dialog.bottom {
     transition-duration: var(--dialog-slide-duration);
 }
 
-dialog.bottom.fade-backdrop {
-    transform: translateY(0) !important;
-}
+/* dialog.bottom.fade-backdrop { transform: translateY(0) !important; } */
 
 
 dialog.top {

@@ -1061,32 +1061,27 @@ function syncInpTextAndColorPicker(inpTypeText, inpTypeColor) {
 function dialogColorTheme() {
     // const inpColor = mkElt("input", { id: "inp-color", type: "text", placeholder: "CSS color" });
     console.log({ modBeerHtml });
-    debugger;
+    // debugger;
     const { field: fieldColor, input: inpColor } =
         modBeerHtml.createTextField({
             label: "Color",
             border: true
         });
-    debugger;
+    // debugger;
     inpColor.id = "inp-color";
 
     inpColor.value = currentTheme.color;
-    inpColor.style.width = "calc(7ch + 30px)";
-    // inpColor.style.borderRadius = "3px";
-    // inpColor.style.padding = "3px";
+    fieldColor.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
     const colorPicker = mkElt("input", { id: "color-picker", type: "color" });
     colorPicker.value = currentTheme.color;
-    const eltColor = mkElt("span", undefined, [
-        // Put a span around to preserve height:
-        // mkElt("span", undefined, inpColor),
+    const eltColorInputs = mkElt("span", { id: "OLDcolor-inputs" }, [
         fieldColor,
         colorPicker
     ]);
-    eltColor.style.display = "inline-flex";
-    eltColor.style.alignItems = "center";
-    eltColor.style.gap = "5px";
+    eltColorInputs.classList.add("basic-ui_color-inputs");
     const lblColor = mkElt("label", { class: "label-selection-row" }, [
-        "Color", eltColor
+        mkElt("span", { style: "font-weight:bold; font-size:1.15rem;" }, "Seed Color:"),
+        eltColorInputs
     ]);
 
     function applyDialogTheme() {
@@ -1249,12 +1244,63 @@ function dialogColorTheme() {
 
     // modBasicUI.showDialog(bdy);
 
-    const dlg = mkElt("dialog", { class: "bottom" }, bdy);
+    const dlg = mkElt("dialog", { class: "xbottom" }, bdy);
+    // const dlg = mkElt("dialog", { class: "bottom" }, bdy);
     // const dlg = mkElt("dialog", {class:"top"}, bdy);
     // const dlg = mkElt("dialog", {class:"left"}, bdy);
     // const dlg = mkElt("dialog", {class:"right"}, bdy);
 
     addXclose(dlg);
+    dlg.id = "color-theme-dialog";
+            // eltColorInputs
+    const dlgInnerStyle = `
+        outline: 8px dotted red;
+        .basic-ui_color-inputs {
+            outline: 1px dotted red;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            > * {
+                position: static;
+                outline: 1px dashed yellow;
+            }
+            #color-picker {
+                height: 40px;
+                width: 40px;
+                opacity: 1;
+            }
+        }
+
+
+        /* 1. Target Webkit browsers (Chrome, Safari, Edge, Opera) */
+input[type=color]::-webkit-color-swatch-wrapper {
+    padding: 0;
+}
+input[type=color]::-webkit-color-swatch {
+    border: none;
+}
+
+/* 2. Target Firefox */
+input[type=color]::-moz-color-swatch {
+    border: none;
+}
+
+    `;
+    addDialogStyle(dlg, dlgInnerStyle);
+    function addDialogStyle(dlg, innerStyle) {
+        const idDialog = dlg.id;
+        if (("string" !== typeof idDialog) || idDialog.trim().length == 0) {
+            debugger;
+            throw Error("dlg.id is missing");
+        }
+        const eltStyle = mkElt("style");
+        eltStyle.textContent = `
+        #${idDialog} {
+            ${innerStyle}
+        }
+    `;
+        dlg.prepend(eltStyle);
+    }
 
     document.body.appendChild(dlg);
     // dlg.style.opacity = "1";
