@@ -191,3 +191,29 @@ dialog.right {
 dialog.right.fade-backdrop {
     transform: translateX(0) !important;
 }
+
+
+.x-close {
+    position: absolute;
+    right: 4px;
+    top: 4px;
+    margin: 0;
+    width: 32px;
+    height: 32px;
+    color: currentColor;
+    background: none;
+    border: none;
+    box-shadow: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.x-close:hover {
+    background-color: red;
+}
+
+span.basicUI_ripple {
+    position: absolute !important;
+}

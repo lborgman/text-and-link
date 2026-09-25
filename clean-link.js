@@ -1059,14 +1059,27 @@ function syncInpTextAndColorPicker(inpTypeText, inpTypeColor) {
 }
 
 function dialogColorTheme() {
-    const inpColor = mkElt("input", { id: "inp-color", type: "text", placeholder: "CSS color" });
+    // const inpColor = mkElt("input", { id: "inp-color", type: "text", placeholder: "CSS color" });
+    console.log({ modBeerHtml });
+    debugger;
+    const { field: fieldColor, input: inpColor } =
+        modBeerHtml.createTextField({
+            label: "Color",
+            border: true
+        });
+    debugger;
+    inpColor.id = "inp-color";
+
     inpColor.value = currentTheme.color;
     inpColor.style.width = "calc(7ch + 30px)";
+    // inpColor.style.borderRadius = "3px";
+    // inpColor.style.padding = "3px";
     const colorPicker = mkElt("input", { id: "color-picker", type: "color" });
     colorPicker.value = currentTheme.color;
     const eltColor = mkElt("span", undefined, [
         // Put a span around to preserve height:
-        mkElt("span", undefined, inpColor),
+        // mkElt("span", undefined, inpColor),
+        fieldColor,
         colorPicker
     ]);
     eltColor.style.display = "inline-flex";
