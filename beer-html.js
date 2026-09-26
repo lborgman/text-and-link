@@ -130,7 +130,17 @@ export function createTextField({
         eltText.addEventListener('input', () => onInput(eltText.value));
     }
 
-    return { field, input: eltText };
+    /*
+    The wrapper becomes the containing block for the absolutely‑positioned floating label.
+    Without the wrapper, the label sizes itself relative to a higher‑level layout container,
+    so its width and line length become unpredictable.
+
+    By wrapping the field, the label’s geometry is computed relative to the wrapper’s width, making the floating‑label line consistent and correct.”
+
+    Note: This is needed only for label+border. FIX-ME:
+    */
+    const wrapper = mkElt("div", undefined, field);
+    return { wrapper, input: eltText };
 }
 
 // ---------------------------------------------------------------------------

@@ -1062,7 +1062,7 @@ function dialogColorTheme() {
     // const inpColor = mkElt("input", { id: "inp-color", type: "text", placeholder: "CSS color" });
     console.log({ modBeerHtml });
     // debugger;
-    const { field: fieldColor, input: inpColor } =
+    const { wrapper, input: inpColor } =
         modBeerHtml.createTextField({
             label: "Color",
             border: true
@@ -1072,12 +1072,13 @@ function dialogColorTheme() {
 
     inpColor.value = currentTheme.color;
     // fieldColor.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
-    const divFieldColor = mkElt("div", undefined, fieldColor);
-    divFieldColor.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
+    // const divFieldColor = mkElt("div", undefined, fieldColor);
+    // const divFieldColor = fieldColor;
+    wrapper.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
     const colorPicker = mkElt("input", { id: "color-picker", type: "color" });
     colorPicker.value = currentTheme.color;
     const eltColorInputs = mkElt("span", { id: "OLDcolor-inputs" }, [
-        divFieldColor,
+        wrapper,
         colorPicker
     ]);
     eltColorInputs.classList.add("basic-ui_color-inputs");
