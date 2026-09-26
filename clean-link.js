@@ -1071,11 +1071,13 @@ function dialogColorTheme() {
     inpColor.id = "inp-color";
 
     inpColor.value = currentTheme.color;
-    fieldColor.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
+    // fieldColor.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
+    const divFieldColor = mkElt("div", undefined, fieldColor);
+    divFieldColor.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
     const colorPicker = mkElt("input", { id: "color-picker", type: "color" });
     colorPicker.value = currentTheme.color;
     const eltColorInputs = mkElt("span", { id: "OLDcolor-inputs" }, [
-        fieldColor,
+        divFieldColor,
         colorPicker
     ]);
     eltColorInputs.classList.add("basic-ui_color-inputs");
@@ -1135,7 +1137,7 @@ function dialogColorTheme() {
     `;
 
     divVariants.addEventListener("change", /** @param {Event} evt */(evt) => {
-        const target = /** @type {HTMLElement} */ (evt.currentTarget);
+        const target = /** @type {HTMLElement} */ (evt.target);
         if (!(target instanceof HTMLInputElement)) return;
         currentTheme.variant = target.value;
         applyDialogTheme();
@@ -1254,15 +1256,15 @@ function dialogColorTheme() {
     dlg.id = "color-theme-dialog";
             // eltColorInputs
     const dlgInnerStyle = `
-        outline: 8px dotted red;
+        NOoutline: 8px dotted red;
         .basic-ui_color-inputs {
-            outline: 1px dotted red;
+            NOoutline: 1px dotted red;
             display: inline-flex;
             align-items: center;
             gap: 5px;
             > * {
                 position: static;
-                outline: 1px dashed yellow;
+                NOoutline: 1px dashed yellow;
             }
             #color-picker {
                 height: 40px;
