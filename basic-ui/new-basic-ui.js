@@ -1227,6 +1227,7 @@ async function checkWoff2icons(action) {
 
 
 if (location.hostname == "localhost") {
+    const idBtnSym = "button-mdc-symbols";
     const btnSymbols = mkElt("button", { id: idBtnSym }, "Get Woff2");
     btnSymbols.style = `
         position: fixed;
