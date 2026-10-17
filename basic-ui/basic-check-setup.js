@@ -149,7 +149,7 @@ export async function doTheTests() {
 async function doTheTestsInternal(dv) {
     // scriptModule
     {
-        const modBeerHtml = await import("beer-html");
+        const modBeerHtml = await import("bear-html");
         function insertHere(output) {
             document.currentScript.parentNode.insertBefore(output, document.currentScript);
         }

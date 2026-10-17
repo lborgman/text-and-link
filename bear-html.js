@@ -1,5 +1,5 @@
 /**
- * beer-fields.js
+ * bear-html.js - Not beer, but bear
  *
  * Utility functions for building Beer CSS form field markup (text input,
  * textarea, switch) without depending on Beer CSS's own JS module.

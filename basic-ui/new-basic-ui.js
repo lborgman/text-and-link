@@ -219,6 +219,16 @@ export function OLDmkFabButton(icon, title, small) {
 }
 
 /**
+ * @param {string} iconName 
+ * @returns {HTMLLIElement}
+ * @category Visual elements
+ */
+export function mkIcon(iconName) {
+    const elt = mkElt("i", undefined, iconName);
+    return elt;
+}
+
+/**
  * 
  * @param {any} icon 
  * @param {string} title 

@@ -23,7 +23,7 @@ export { };
  * @property {Function} createTextareaField
  */
 // @ts-ignore
-const modBeerHtml = await import("beer-html");
+const modBeerHtml = await import("bear-html");
 
 // const modBasicUI = await import("https://lborgman.github.io/basic-ui/js/basic-ui.js");
 // const modBasicUI = await import("basic-ui");
