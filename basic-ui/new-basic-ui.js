@@ -1091,14 +1091,18 @@ const mdcIconStyle = "Outlined";
 // const mdcIconStyle = "Rounded";
 // const mdcIconStyle = "Sharp";
 
+// let mdcIconsClass = `material-symbols-outlined`;
+let mdcIconsClass = `material-symbols-${mdcIconStyle.toLowerCase()}`;
+
 /**
  * @param {string} iconName 
  * @returns {HTMLLIElement}
  * @category Visual elements
  */
-export function mkIcon(iconName) {
-    const elt = mkElt("i", undefined, iconName);
-    return elt;
+export function mkMdcIcon(iconName) {
+    setIconsUsed.add(iconName);
+    const spanIcon = mkElt("span", { class: mdcIconsClass }, iconName);
+    return spanIcon;
 }
 
 let iconsForApp = "";
