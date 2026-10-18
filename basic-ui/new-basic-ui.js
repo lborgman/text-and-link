@@ -1095,6 +1095,11 @@ const mdcIconStyle = "Outlined";
 let mdcIconsClass = `material-symbols-${mdcIconStyle.toLowerCase()}`;
 
 /**
+ * @returns {string}
+ */
+export function getIconClass() { return mdcIconsClass; }
+
+/**
  * @param {string} iconName 
  * @returns {HTMLLIElement}
  * @category Visual elements

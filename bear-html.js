@@ -381,8 +381,9 @@ export function createChip({
     if (asButton) chip.type = 'button';
 
     if (icon) {
-        const iconEl = document.createElement('i');
-        iconEl.textContent = icon;
+        // const iconEl = document.createElement('i');
+        // iconEl.textContent = icon;
+        const iconEl = mkIconElt(icon);
         chip.append(iconEl);
     }
 
@@ -472,8 +473,9 @@ export function createMenu({ trigger, items }) {
         const row = document.createElement('a');
         row.className = 'row';
         if (item.icon) {
-            const iconEl = document.createElement('i');
-            iconEl.textContent = item.icon;
+            // const iconEl = document.createElement('i');
+            // iconEl.textContent = item.icon;
+            const iconEl = mkIconElt(item.icon);
             row.append(iconEl);
         }
         const span = document.createElement('span');
@@ -638,8 +640,9 @@ export function createButton({
         }
         button.append(imgEl);
     } else if (icon) {
-        const iconEl = document.createElement('i');
-        iconEl.textContent = icon;
+        // const iconEl = document.createElement('i');
+        // iconEl.textContent = icon;
+        const iconEl = mkIconElt(icon);
         button.append(iconEl);
     }
 
@@ -661,4 +664,26 @@ export function createButton({
     }
 
     return button;
+}
+
+let iconClass = "";
+/**
+ * Set the class to use for icons.
+ * Could be something like `material-symbols-outlined`.
+ * @param {string} cls
+ */
+export function setIconClass(cls) {
+    iconClass = cls;
+}
+function mkIconElt(icon) {
+    const iconEl = document.createElement('i');
+    iconEl.textContent = icon;
+    if (0 == iconClass.length) {
+        const msg = "setIconClass has not been called";
+        console.error(msg);
+        debugger;
+        throw Error(msg);
+    }
+    iconEl.classList.add(iconClass);
+    return iconEl
 }
