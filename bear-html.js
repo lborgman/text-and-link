@@ -521,7 +521,7 @@ export function createMenu({ trigger, items }) {
         else close();
     });
 
-    document.body.append(menu);
+    // document.body.append(menu);
 
     return { menu, open, close };
 }

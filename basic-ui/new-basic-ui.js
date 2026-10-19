@@ -992,7 +992,7 @@ export function showHere(clientX, clientY, txtOrDiv, secTimeout) {
 }
 
 /**
- * @param {string|HTMLSpanElement} msg
+ * @param {string|HTMLDivElement} msg
  * @param {number} [secDur]
  */
 export function snackbar(msg, secDur = 4) {
