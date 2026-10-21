@@ -488,7 +488,7 @@ export function createMenu({ trigger, items }) {
         menu.append(row);
     }
 
-    function position() {
+    function positionMenu() {
         const rect = trigger.getBoundingClientRect();
         menu.style.top = `${rect.bottom + window.scrollY}px`;
         menu.style.left = `${rect.left + window.scrollX}px`;
@@ -503,7 +503,7 @@ export function createMenu({ trigger, items }) {
     }
 
     function open() {
-        position();
+        positionMenu();
         menu.style.display = '';
         document.addEventListener('click', onOutsideClick, { capture: true });
         document.addEventListener('keydown', onKeydown);
@@ -515,7 +515,7 @@ export function createMenu({ trigger, items }) {
         document.removeEventListener('keydown', onKeydown);
     }
 
-    trigger.addEventListener('click', (event) => {
+    trigger?.addEventListener('click', (event) => {
         event.stopPropagation();
         if (menu.style.display === 'none') open();
         else close();
