@@ -466,8 +466,8 @@ export function createChipGroup({ items, mode = 'single', selected, onChange } =
  */
 export function createMenu({ trigger, items }) {
     const menu = document.createElement('menu');
-    menu.style.position = 'absolute';
-    menu.style.display = 'none';
+    // menu.style.position = 'absolute';
+    // menu.style.display = 'none';
 
     for (const item of items) {
         const row = document.createElement('a');
