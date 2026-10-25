@@ -643,13 +643,8 @@ export function createButton({
         }
         button.append(imgEl);
     } else if (icon) {
-        // const iconEl = document.createElement('i');
-        // iconEl.textContent = icon;
-        // const iconEl = mkIconElt(icon);
-        // button.append(iconEl);
-        // if (icon.tagName != "I") {
         if (!(icon instanceof HTMLSpanElement)) {
-            const msg = `!(icon is not an <i>-element)`;
+            const msg = `icon is not an <span>-element`;
             console.error(msg, icon);
             debugger;
             throw Error(msg);
