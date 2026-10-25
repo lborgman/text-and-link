@@ -1087,17 +1087,35 @@ export function closeDialog(dialog) {
 const setIconsUsed = new Set();
 setIconsUsed.add("edit_off");
 
-const mdcIconStyle = "Outlined";
-// const mdcIconStyle = "Rounded";
-// const mdcIconStyle = "Sharp";
 
-// let mdcIconsClass = `material-symbols-outlined`;
-let mdcIconsClass = `material-symbols-${mdcIconStyle.toLowerCase()}`;
+
+let mdcIconStyle = "Outlined";
+// let mdcIconStyle = "Rounded";
+// let mdcIconStyle = "Sharp";
+let mdcIconsClass = "";
+setMdcIconStyle("Outlined");
+
+/**
+ * @param {string} iconStyle
+ */
+export function setMdcIconStyle(iconStyle) {
+    const arrStyles = ["Outlined", "Rounded", "Sharp"];
+    if (-1 == arrStyles.indexOf(iconStyle)) {
+        const msg = `Unknown iconStyle=="${iconStyle}"`;
+        console.error(msg);
+        debugger;
+        throw Error(msg);
+    }
+    mdcIconStyle = iconStyle
+    mdcIconsClass = `material-symbols-${mdcIconStyle.toLowerCase()}`;
+}
 
 /**
  * @returns {string}
  */
-export function getIconClass() { return mdcIconsClass; }
+export function getMdcIconClass() { return mdcIconsClass; }
+
+
 
 /**
  * @param {string} iconName 

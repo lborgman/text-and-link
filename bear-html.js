@@ -1,3 +1,5 @@
+// @ts-check
+
 /**
  * bear-html.js - Not beer, but bear
  *
@@ -578,7 +580,7 @@ export function createTabs({ tabs, initial = 0, onChange }) {
  * Creates a Beer CSS styled button.
  * @param {object} [options]
  * @param {string} [options.label] - Button text.
- * @param {string} [options.icon] - Material icon name shown before the label. Ignored if `image` is set.
+ * @param {HTMLElement} [options.icon] - <i> element for icon, shown before the label. Ignored if `image` is set.
  * @param {string} [options.image] - Image URL shown instead of an icon (e.g. avatar, logo). Takes priority over `icon`.
  * @param {string} [options.imageAlt=''] - Alt text for `image`. Ignored if `decorative` is true.
  * @param {boolean} [options.decorative=false] - Marks `image` as purely ornamental (empty alt, hidden from assistive tech) rather than meaningful content.
@@ -613,8 +615,9 @@ export function createButton({
     type = 'button',
     onClick,
 } = {}) {
-    const button = document.createElement('button');
-    button.type = type;
+    const button = /** @type {HTMLButtonElement} */ (document.createElement('button'));
+    // button.type = type;
+    button.setAttribute("type", type);
     button.className = [
         border && 'border',
         transparent && 'transparent',
@@ -642,8 +645,16 @@ export function createButton({
     } else if (icon) {
         // const iconEl = document.createElement('i');
         // iconEl.textContent = icon;
-        const iconEl = mkIconElt(icon);
-        button.append(iconEl);
+        // const iconEl = mkIconElt(icon);
+        // button.append(iconEl);
+        // if (icon.tagName != "I") {
+        if (!(icon instanceof HTMLSpanElement)) {
+            const msg = `!(icon is not an <i>-element)`;
+            console.error(msg, icon);
+            debugger;
+            throw Error(msg);
+        }
+            button.append(icon);
     }
 
     if (label) {
@@ -666,12 +677,13 @@ export function createButton({
     return button;
 }
 
+/*
 let iconClass = "";
-/**
+/* *
  * Set the class to use for icons.
  * Could be something like `material-symbols-outlined`.
  * @param {string} cls
- */
+ * /
 export function setIconClass(cls) {
     iconClass = cls;
 }
@@ -687,3 +699,4 @@ function mkIconElt(icon) {
     iconEl.classList.add(iconClass);
     return iconEl
 }
+*/
