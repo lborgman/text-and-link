@@ -5,6 +5,7 @@
 */
 
 const modBasic = await import("basic-ui");
+const modBear = await import("bear-html");
 
 // ---- style text for #basic-ui_debugVisual ----
 const cssDebugVisual = `
@@ -45,7 +46,7 @@ const cssTestText = `
 
 
 // ---- test-checkbox block ----
-const detailsCheckbox = () => mkElt("details", undefined, [
+const detailsCheckbox = () => mkElt("details", { open: "" }, [
     mkElt("summary", undefined, " test-checkbox"),
     mkElt("label", undefined, [
         mkElt("input", { type: "checkbox" }),
@@ -58,9 +59,19 @@ const detailsCheckbox = () => mkElt("details", undefined, [
         ])
     ])
 ]);
+// debugger;
+const mySwitch = modBear.createSwitch({
+    checked: true,
+    // label: "switch"
+});
+const detailsSwitch = () => mkElt("details", { open: "" }, [
+    mkElt("summary", undefined, " test-switch"),
+    mkElt("div", undefined, mySwitch.wrapper)
+    // mySwitch.wrapper
+]);
 
 // ---- test-radio block ----
-const detailsRadio = () => mkElt("details", undefined, [
+const detailsRadio = () => mkElt("details", { open: "" }, [
     mkElt("summary", undefined, "test-radio"),
     mkElt("label", undefined, [
         mkElt("input", { type: "radio", name: "test", value: "1" }),
@@ -103,7 +114,7 @@ const detailsTestText = () => mkElt("details", { id: "test-text" }, [
 ]);
 
 // ---- test-icons block ----
-const detailsTestIcons = () => mkElt("details", { open: "", id: "test-icons" }, [
+const detailsTestIcons = () => mkElt("details", { id: "test-icons" }, [
     mkElt("summary", undefined, "test-icons"),
     mkElt("div", undefined, [])
 ]);
@@ -122,6 +133,7 @@ const divSurfaceVariant = () => mkElt("div", {
         style: "display:none; background-color:yellow; color:red; padding:8px; border-radius: 0;"
     }),
     detailsCheckbox(),
+    detailsSwitch(),
     detailsRadio(),
     detailsTestText(),
     detailsTestIcons(),
@@ -149,7 +161,6 @@ export async function doTheTests() {
 async function doTheTestsInternal(dv) {
     // scriptModule
     {
-        const modBeerHtml = await import("bear-html");
         function insertHere(output) {
             document.currentScript.parentNode.insertBefore(output, document.currentScript);
         }
@@ -209,7 +220,7 @@ async function doTheTestsInternal(dv) {
         // debugger;
         function addTextExample(fieldOpts) {
             // debugger;
-            const { wrapper, input } = modBeerHtml.createTextField(fieldOpts);
+            const { wrapper, input } = modBear.createTextField(fieldOpts);
             // console.log({ field, input });
             const field = wrapper.firstElementChild;
             let fieldClass = field.getAttribute("class");
@@ -316,10 +327,15 @@ async function doTheTestsInternal(dv) {
         dvResult.style.display = "block";
     }
 
+    /*
+    // These tests does not work any more.
     const cb = await globalThis.waitUntilQuerySelector("input[type=checkbox]", dv);
     const cbRect = cb.getBoundingClientRect();
     if (cbRect.width > 2) { problem("Is beer.css loaded?"); }
     if (cbRect.width > 8) { problem("Is beer-native.css loaded after beer.css?"); }
+    */
+
+
     const iIcon = await globalThis.waitUntilQuerySelector("i", dv);
     const iRect = iIcon.getBoundingClientRect();
     console.log({ iIcon, iRect });

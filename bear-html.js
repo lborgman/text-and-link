@@ -116,12 +116,27 @@ export function createTextField({
     const fieldType = rest.type || 'input';
 
     const eltText = document.createElement(fieldType);
-    if (fieldType == "input") {
-        // eltText = document.createElement('input');
+    /*
+    if (eltText instanceof HTMLInputElement) {
         eltText.type = "text";
+        eltText.value = value;
+        if (name) eltText.name = name;
     }
-    eltText.value = value;
-    if (name) eltText.name = name;
+    if (eltText instanceof HTMLTextAreaElement) {
+        eltText.value = value;
+        if (name) eltText.name = name;
+    }
+    */
+    switch (true) {
+        case (eltText instanceof HTMLInputElement):
+            eltText.type = "text";
+        case (eltText instanceof HTMLTextAreaElement):
+            eltText.value = value;
+            if (name) eltText.name = name;
+            break;
+        default:
+            throw Error("bad eltText");
+    }
 
     field.append(eltText);
     if (label) field.append(label);
@@ -205,33 +220,42 @@ export function createTextareaField({
  * @param {(checked: boolean) => void} [options.onChange]
  * @returns {{ wrapper: HTMLElement, input: HTMLInputElement }}
  */
-export function createSwitch({ checked = false, label, name, onChange } = {}) {
+export function createSwitch({
+    checked = false,
+    // label,
+    name,
+    // onChange
+} = {}) {
     const input = document.createElement('input');
     input.type = 'checkbox';
-    input.className = 'switch';
+    // input.className = 'switch';
     input.checked = checked;
+    input.setAttribute("aria-hidden", "true");
     if (name) input.name = name;
 
-    let wrapper = input;
+    // const wrapper = input;
 
-    if (label) {
-        const id = nextId('switch');
-        input.id = id;
+    // if (label) {
+    //     const id = nextId('switch');
+    //     input.id = id;
 
-        const container = document.createElement('div');
-        container.className = 'switch-field';
+    //     const container = document.createElement('div');
+    //     container.className = 'switch-field';
 
-        const labelEl = document.createElement('label');
-        labelEl.htmlFor = id;
-        labelEl.textContent = label;
+    //     const labelEl = document.createElement('label');
+    //     labelEl.htmlFor = id;
+    //     labelEl.textContent = label;
 
-        container.append(input, labelEl);
-        wrapper = container;
-    }
+    //     container.append(input, labelEl);
+    //     wrapper = container;
+    // }
+    const wrapper = mkElt("label", { class: "switch" }, [input, mkElt("span")]);
 
+    /*
     if (onChange) {
         input.addEventListener('change', () => onChange(input.checked));
     }
+    */
 
     return { wrapper, input };
 }
@@ -649,7 +673,7 @@ export function createButton({
             debugger;
             throw Error(msg);
         }
-            button.append(icon);
+        button.append(icon);
     }
 
     if (label) {
@@ -672,26 +696,3 @@ export function createButton({
     return button;
 }
 
-/*
-let iconClass = "";
-/* *
- * Set the class to use for icons.
- * Could be something like `material-symbols-outlined`.
- * @param {string} cls
- * /
-export function setIconClass(cls) {
-    iconClass = cls;
-}
-function mkIconElt(icon) {
-    const iconEl = document.createElement('i');
-    iconEl.textContent = icon;
-    if (0 == iconClass.length) {
-        const msg = "setIconClass has not been called";
-        console.error(msg);
-        debugger;
-        throw Error(msg);
-    }
-    iconEl.classList.add(iconClass);
-    return iconEl
-}
-*/

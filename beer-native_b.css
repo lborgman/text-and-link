@@ -51,8 +51,8 @@ label:has(> input[type="checkbox"]) {
 label:has(> input[type="checkbox"])>input {
   position: absolute;
 
-  inline-size: 1px;
-  block-size: 1px;
+  /* inline-size: 1px; */
+  /* block-size: 1px; */
 
   opacity: 0;
 }
@@ -62,7 +62,7 @@ label:has(> input[type="checkbox"])>input {
 * Checkbox icon.
   */
 
-label:has(> input[type="checkbox"])::before {
+label:not(.switch):has(> input[type="checkbox"])::before {
   content: "check_box_outline_blank";
 
   grid-column: 1;
@@ -90,6 +90,11 @@ label:has(> input[type="checkbox"])::before {
 
   user-select: none;
 }
+label.switch:has(> input[type="checkbox"])::before {
+  color: transparent;
+}
+/*
+*/
 
 /*
 
