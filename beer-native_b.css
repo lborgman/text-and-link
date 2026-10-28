@@ -29,7 +29,7 @@
 Checkbox
 ========================================================================== */
 
-label:has(> input[type="checkbox"]) {
+label:not(.switch):has(> input[type="checkbox"]) {
   --_size: 1.5rem;
 
   position: relative;
@@ -48,7 +48,7 @@ label:has(> input[type="checkbox"]) {
 * visual layout. The generated icon represents its state.
   */
 
-label:has(> input[type="checkbox"])>input {
+label:not(.switch):has(> input[type="checkbox"])>input {
   position: absolute;
 
   /* inline-size: 1px; */
@@ -101,7 +101,7 @@ label.switch:has(> input[type="checkbox"])::before {
 * Checked.
   */
 
-label:has(> input[type="checkbox"]:checked)::before {
+label:not(.switch):has(> input[type="checkbox"]:checked)::before {
   content: "check_box";
   font-variation-settings: "FILL" 1;
 }
