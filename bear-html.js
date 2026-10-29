@@ -9,6 +9,9 @@
  * Beer CSS reference: https://github.com/beercss/beercss/blob/main/docs
  */
 
+// @ts-ignore
+const mkElt = window["mkElt"];
+
 // ---------------------------------------------------------------------------
 // Shared internals
 // ---------------------------------------------------------------------------

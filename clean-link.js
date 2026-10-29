@@ -227,7 +227,7 @@ btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEve
         tellUser(elt);
     } catch (err) {
         const errorMessage = err instanceof Error ? err.message : String(err);
-        throw new Error(errorMessage, { cause: err });
+        throw Error(errorMessage, { cause: err });
     }
     function tellUser(message) {
         if (typeof message == "string") {
@@ -554,13 +554,13 @@ async function fetchWikiArticle(pageTitle, lang = 'en') {
         const response = await fetch(url);
 
         if (!response.ok) {
-            throw new Error(`HTTP error status: ${response.status}`);
+            throw Error(`HTTP error status: ${response.status}`);
         }
 
         const data = await response.json();
 
         if (data.error) {
-            throw new Error(`Wikipedia API error: ${data.error.info}`);
+            throw Error(`Wikipedia API error: ${data.error.info}`);
         }
 
         return data.parse.text;
@@ -852,7 +852,7 @@ function showHtmlAsDialog(strHtml, opts = {}) {
     }
     if (Object.keys(rest).length > 0) {
         const unknownKeys = Object.keys(rest).join(", ");
-        throw new Error(
+        throw Error(
             `Invalid options passed to displayMenu: ${unknownKeys}. ` +
             `Only allowed: ${allowedOpts.join(", ")}`
         );
