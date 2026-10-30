@@ -5,14 +5,21 @@ const isLocalHost = Boolean(
     window.location.hostname === '127.0.0.1' ||
     window.location.hostname === '[::1]' // IPv6 loopback
 );
-
 if (!isLocalHost) {
     const msg = "This file should only be loaded in localhost";
     console.error(msg);
     debugger;
     throw Error(msg);
 }
+
 showBtnMdcIcons();
+
+debugger;
+const myDir = new URL('./', import.meta.url).href;
+
+// FIX-ME: What format do I need here:
+// const urlWoff2File = "./mdc-icons/icons/my-symbols.woff2";
+const urlWoff2File = `${myDir}woff2/my-symbols.woff2`;
 
 const setMdcIconsUsed = new Set();
 setMdcIconsUsed.add("edit_off");
@@ -135,6 +142,73 @@ function showBtnMdcIcons() {
     btnSymbols.style.right = "15px";
     btnSymbols.addEventListener("click", evt => {
         evt.stopPropagation();
-        modMdcIcons.checkWoff2icons("dialog");
+        checkWoff2icons("dialog");
     });
+}
+
+
+let iconsForApp = "";
+
+/**
+ * @param {string} whichApp 
+ */
+export function setMdcIconsFor(whichApp) {
+    iconsForApp = whichApp;
+    saveStoredIconsUsed();
+}
+
+
+const keyMdcIcons = () => {
+    if (0 == iconsForApp.length) {
+        const msg = "iconsForApp is not set";
+        console.error(msg);
+        debugger;
+        throw Error(msg);
+    }
+    return `used-mdc-symbols-${iconsForApp}`;
+}
+
+function getStoredIconsUsed() {
+    const keyIconsUsed = keyMdcIcons();
+    const storedIconsUsed = localStorage.getItem(keyIconsUsed);
+    if (storedIconsUsed != null) {
+        const arrUsed = storedIconsUsed.split(",");
+        arrUsed.forEach(sym => {
+            if (sym.length == 0) throw Error("sym is empty string");
+            setMdcIconsUsed.add(sym);
+        });
+    }
+}
+function saveStoredIconsUsed() {
+    if (location.hostname != "localhost") return;
+    if (!iconsForApp) return;
+    getStoredIconsUsed();
+    if (setMdcIconsUsed.size == 0) return;
+    localStorage.setItem(keyMdcIcons(), [...setMdcIconsUsed].sort().join(","));
+}
+
+
+async function mkWOFF2downloadLink() {
+    const ourIcons = getOurMdcIconsList();
+    const linkWOFF2css = `https://fonts.googleapis.com/css2?family=Material+Symbols+${mdcIconStyle}:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=${ourIcons}`;
+    console.log(linkWOFF2css.slice(8));
+    let cssResponse;
+    // https://web.dev/articles/fetch-api-error-handling
+    try {
+        cssResponse = await fetch(linkWOFF2css);
+    } catch (err) {
+        console.error(linkWOFF2css, err);
+        debugger;
+        throw (err);
+    }
+    const txtCss = await cssResponse.text();
+    const m = txtCss.match(/url\((.*?)\)/m);
+    if (m == null) {
+        const msg = "Did not find url()";
+        console.error(msg);
+        debugger;
+        throw Error(msg);
+    }
+    const linkWOFF2 = m[1];
+    return linkWOFF2;
 }
