@@ -12,8 +12,7 @@ if (!isLocalHost) {
     debugger;
     throw Error(msg);
 }
-
-// const modBasic = importFc4i("basic-ui");
+showBtnMdcIcons();
 
 const setMdcIconsUsed = new Set();
 setMdcIconsUsed.add("edit_off");
@@ -116,4 +115,26 @@ async function getMdcSymbolsInWoff2File(woffUrl) {
     const strNames = cleanedNames.sort().join(",");
     return strNames;
 
+}
+
+function showBtnMdcIcons() {
+    const idBtnSym = "button-mdc-symbols";
+    const btnSymbols = mkElt("button", { id: idBtnSym }, "Get Woff2");
+    btnSymbols.style = `
+        background-color: red;
+        padding: 15px;
+        border-radius: 5px;
+        NOz-index: 9999;
+    `;
+    btnSymbols.setAttribute("popover", "");
+    document.body.appendChild(btnSymbols);
+    btnSymbols.showPopover();
+    btnSymbols.style.inset = "auto";
+    btnSymbols.style.margin = "0";
+    btnSymbols.style.bottom = "15px";
+    btnSymbols.style.right = "15px";
+    btnSymbols.addEventListener("click", evt => {
+        evt.stopPropagation();
+        modMdcIcons.checkWoff2icons("dialog");
+    });
 }

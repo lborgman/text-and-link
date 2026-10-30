@@ -1157,9 +1157,7 @@ export function getMdcIconClass() { return mdcIconsClass; }
  * @category Visual elements
  */
 export function mkMdcIcon(iconName) {
-    // setMdcIconsUsed.add(iconName);
-    // debugger;
-    modMdcIcons.addToUsedIcons(iconName);
+    modMdcIcons?.addToUsedIcons(iconName);
     const spanIcon = mkElt("span", { class: mdcIconsClass }, iconName);
     return spanIcon;
 }
@@ -1233,25 +1231,3 @@ async function mkWOFF2downloadLink() {
 
 
 const modMdcIcons = (location.hostname == "localhost") ? await import("mdc-icons") : undefined;
-if (location.hostname == "localhost") {
-    debugger;
-    const idBtnSym = "button-mdc-symbols";
-    const btnSymbols = mkElt("button", { id: idBtnSym }, "Get Woff2");
-    btnSymbols.style = `
-        background-color: red;
-        padding: 20px;
-        border-radius: 5px;
-        NOz-index: 9999;
-    `;
-    btnSymbols.setAttribute("popover", "");
-    document.body.appendChild(btnSymbols);
-    btnSymbols.showPopover();
-    btnSymbols.style.inset = "auto";
-    btnSymbols.style.margin = "0";
-    btnSymbols.style.top = "5px";
-    btnSymbols.style.right = "5px";
-    btnSymbols.addEventListener("click", evt => {
-        evt.stopPropagation();
-        modMdcIcons.checkWoff2icons("dialog");
-    });
-}
