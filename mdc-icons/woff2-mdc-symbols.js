@@ -12,7 +12,7 @@ let promSymbols;
 /**
  * 
  * @param {string} mdcIconStyle 
- * @returns {Promise<Object>}
+ * @returns {Promise<Record<string, string>>}
  */
 export async function fetchGoogleSymbolNameMap(mdcIconStyle) {
     promSymbols = promSymbols || inner();

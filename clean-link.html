@@ -24,7 +24,9 @@
     <script src="./basic-ui/basic-ui-color-theme-loader.js" blocking="rendering"></script>
     <script>
         console.log("script block after color theme loader!!!!")
-        const storagePrefix = "clean-link";
+        // const storagePrefix = "clean-link";
+        const s = location.href;
+        const storagePrefix = s.slice(0, s.lastIndexOf("/")+1);
         globalThis.keyColorTheme = `${storagePrefix}-theme`;
         const savedTheme = retrieveTheme();
         const { color, dark, variant } = savedTheme;

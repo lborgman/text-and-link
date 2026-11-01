@@ -1,5 +1,8 @@
 // @ts-check
 
+// @ts-ignore
+const mkElt = window["mkElt"];
+
 const isLocalHost = Boolean(
     window.location.hostname === 'localhost' ||
     window.location.hostname === '127.0.0.1' ||
@@ -28,14 +31,12 @@ export async function setIconStyle(iconStyle) {
 const myDir = new URL('./', import.meta.url).href;
 
 // FIX-ME: What format do I need here:
-// const urlWoff2File = "./mdc-icons/icons/my-symbols.woff2";
-const urlWoff2File = `${myDir}woff2/my-symbols.woff2`;
+const urlMyWoff2File = `${myDir}woff2/my-symbols.woff2`;
 
 const setMdcIconsUsed = new Set();
-setMdcIconsUsed.add("edit_off");
+setMdcIconsUsed.add("edit_off"); // FIX-ME: Do I still need this?
 
-// const setIconsInWoffFile = await getIconsInMyWoffFile();
-let setIconsInWoffFile;
+const setIconsInMyWoff2File = new Set();
 
 /**
  * @param {string} iconName
@@ -54,11 +55,12 @@ function getOurMdcIconsList() {
  */
 async function checkWoff2icons(action) {
     if (!["justCheck", "dialog"].includes(action)) throw Error(`Unknown action parameter: "${action}"`);
-    const woffIconsList = await getMdcSymbolsInWoff2File(urlWoff2File);
-    const hasWoffIcons = woffIconsList != undefined;
+    const myMdcWoffSymbolsList = await getMdcSymbolsInWoff2File(urlMyWoff2File);
+    const hasWoffIcons = myMdcWoffSymbolsList != undefined;
 
     // const setIconsWoff2 = new Set(hasWoffIcons ? woffIconsList.split(",") : undefined);
-    const setMdcIconsWoff2 = setIconsInWoffFile;
+    // FIX-ME: Why did I need two variables for this? Do I still need that???
+    const setMdcIconsWoff2 = setIconsInMyWoff2File;
     setMdcIconsWoff2.add("edit"); // FIX-ME: mapping codepoints problem
     setMdcIconsWoff2.add("favorite"); // FIX-ME: mapping codepoints problem
 
@@ -84,6 +86,10 @@ async function checkWoff2icons(action) {
     window.console.log(`Missing in woff file: "${missing}",\nsee console for .woff download link`);
 
     // alert(`Missing in woff file: "${missing}",\nsee console for .woff download link`);
+    /**
+     * @param {string} txt 
+     * @returns {HTMLSpanElement}
+     */
     const makeGroupLabel = (txt) => {
         const elt = mkElt("span", undefined, txt);
         elt.style.fontWeight = "bold";
@@ -100,11 +106,11 @@ async function checkWoff2icons(action) {
         mkElt("p", undefined, [
             `Replace or add the file `,
             // mkElt("div", undefined, "./ext/mdc-fonts/my-symbols.woff2"),
-            mkElt("div", undefined, urlWoff2File),
+            mkElt("div", undefined, urlMyWoff2File),
             ` with the new file.`
         ])
     ]);
-    console.log({ urlWoff2File });
+    console.log({ urlWoff2File: urlMyWoff2File });
     eltDownload.style = `
         padding: 10px;
         margin-top: 20px;
@@ -144,6 +150,7 @@ async function getMdcSymbolsInWoff2File(woffUrl) {
 
     // const modWoff2MdcSymbols = await importFc4i("woff2-mdc-symbols");
     const modWoff2MdcSymbols = await import("./woff2-mdc-symbols.js");
+    /** @type {Record<string,string>} */
     const codepointToName = await modWoff2MdcSymbols.fetchGoogleSymbolNameMap(mdcIconStyle);
     if (!codepointToName) return;
 
@@ -174,26 +181,31 @@ function showBtnMdcIcons() {
     btnSymbols.style.margin = "0";
     btnSymbols.style.bottom = "15px";
     btnSymbols.style.right = "15px";
-    btnSymbols.addEventListener("click", evt => {
-        evt.stopPropagation();
-        btnSymbols.remove();
-        checkWoff2icons("dialog");
-    });
+    btnSymbols.addEventListener("click",
+        /** @param {MouseEvent} evt */
+        evt => {
+            evt.stopPropagation();
+            btnSymbols.remove();
+            checkWoff2icons("dialog");
+        });
 }
 
 
 let iconsForApp = "";
 
 /**
- * @param {string} whichApp 
- */
+ * param {string} whichApp 
+ * /
 export function setMdcIconsFor(whichApp) {
     iconsForApp = whichApp;
     saveStoredIconsUsed();
 }
+*/
 
 
 const keyMdcIcons = () => {
+    return `used-mdc-symbols-${urlMyWoff2File}`;
+    /*
     if (0 == iconsForApp.length) {
         const msg = "iconsForApp is not set";
         console.error(msg);
@@ -201,6 +213,7 @@ const keyMdcIcons = () => {
         throw Error(msg);
     }
     return `used-mdc-symbols-${iconsForApp}`;
+    */
 }
 
 function getStoredIconsUsed() {
@@ -258,10 +271,18 @@ async function mkWOFF2downloadLink() {
  * returns {Promise<Set>}
  */
 async function getIconsInMyWoffFile() {
-    const woffIconsList = await getMdcSymbolsInWoff2File(urlWoff2File);
+    const woffIconsList = await getMdcSymbolsInWoff2File(urlMyWoff2File);
     const hasWoffIcons = woffIconsList != undefined;
+
     // return new Set(hasWoffIcons ? woffIconsList.split(",") : undefined);
-    let theSet = new Set(hasWoffIcons ? woffIconsList.split(",") : undefined);
-    setIconsInWoffFile = theSet;
+    // let theSet = new Set(hasWoffIcons ? woffIconsList.split(",") : undefined);
+    // setIconsInMyWoff2File = theSet;
+
+    setIconsInMyWoff2File.clear();
+    if (hasWoffIcons) {
+        woffIconsList.split(",").forEach(iconName => {
+            setIconsInMyWoff2File.add(iconName);
+        })
+    }
 }
 

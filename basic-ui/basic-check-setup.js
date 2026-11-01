@@ -6,6 +6,7 @@
 
 const modBasic = await import("basic-ui");
 const modBear = await import("bear-html");
+const modMdcIcons = (location.hostname == "localhost") ? await import("mdc-icons") : undefined;
 
 // ---- style text for #basic-ui_debugVisual ----
 const cssDebugVisual = `

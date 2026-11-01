@@ -392,7 +392,8 @@ export function createSlider({
  * Creates a single Beer CSS chip (`<a class="chip">` or `<button class="chip">`).
  * @param {object} [options]
  * @param {string} [options.label]
- * @param {string} [options.icon] - Material icon name shown before the label.
+ * param {string} [options.icon] - Material icon name shown before the label.
+ * @param {HTMLSpanElement} [options.icon] - <span> element for icon, shown before the label. Ignored if `image` is set.
  * @param {boolean} [options.selected=false]
  * @param {boolean} [options.asButton=false] - Use `<button>` instead of `<a>`.
  * @param {(selected: boolean) => void} [options.onToggle]
@@ -412,8 +413,9 @@ export function createChip({
     if (icon) {
         // const iconEl = document.createElement('i');
         // iconEl.textContent = icon;
-        const iconEl = mkIconElt(icon);
-        chip.append(iconEl);
+        // const iconEl = mkIconElt(icon);
+        // chip.append(iconEl);
+        chip.append(icon);
     }
 
     if (label) {
@@ -490,7 +492,7 @@ export function createChipGroup({ items, mode = 'single', selected, onChange } =
  * field helpers above), not just a class toggle.
  * @param {object} options
  * @param {HTMLElement} options.trigger - Element that opens the menu on click.
- * @param {{ label: string, icon?: string, onSelect?: () => void }[]} options.items
+ * @param {{ label: string, icon?: HTMLSpanElement, onSelect?: () => void }[]} options.items
  * @returns {{ menu: HTMLElement, open: () => void, close: () => void }}
  */
 export function createMenu({ trigger, items }) {
@@ -504,8 +506,9 @@ export function createMenu({ trigger, items }) {
         if (item.icon) {
             // const iconEl = document.createElement('i');
             // iconEl.textContent = item.icon;
-            const iconEl = mkIconElt(item.icon);
-            row.append(iconEl);
+            // const iconEl = mkIconElt(item.icon);
+            // row.append(iconEl);
+            row.append(item.icon);
         }
         const span = document.createElement('span');
         span.textContent = item.label;
@@ -523,10 +526,19 @@ export function createMenu({ trigger, items }) {
         menu.style.left = `${rect.left + window.scrollX}px`;
     }
 
+    /* * @param {MouseEvent} event * /
     function onOutsideClick(event) {
         if (!menu.contains(event.target) && event.target !== trigger) close();
     }
+    */
+    /** @param {MouseEvent} event */
+    function onOutsideClick(event) {
+        const target = /** @type {Element} */ (event.target);
 
+        if (!menu.contains(target) && target !== trigger) close();
+    }
+
+    /** @param {KeyboardEvent} event */
     function onKeydown(event) {
         if (event.key === 'Escape') close();
     }
@@ -607,7 +619,7 @@ export function createTabs({ tabs, initial = 0, onChange }) {
  * Creates a Beer CSS styled button.
  * @param {object} [options]
  * @param {string} [options.label] - Button text.
- * @param {HTMLElement} [options.icon] - <i> element for icon, shown before the label. Ignored if `image` is set.
+ * @param {HTMLSpanElement} [options.icon] - <span> element for icon, shown before the label. Ignored if `image` is set.
  * @param {string} [options.image] - Image URL shown instead of an icon (e.g. avatar, logo). Takes priority over `icon`.
  * @param {string} [options.imageAlt=''] - Alt text for `image`. Ignored if `decorative` is true.
  * @param {boolean} [options.decorative=false] - Marks `image` as purely ornamental (empty alt, hidden from assistive tech) rather than meaningful content.
