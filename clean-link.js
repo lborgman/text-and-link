@@ -37,6 +37,7 @@ const modBeerHtml = await import("bear-html");
  * @property {Function} getRootCssVarMs
  * @property {Function} isCssVariableDefined
  * @property {Function} mkDialogMenu
+ * @property {Function} mkMdcIcon
  * @property {Function} mkXclose
  * @property {Function} nextPaint
  * @property {Function} openDialog
@@ -49,6 +50,14 @@ const modBeerHtml = await import("bear-html");
 
 // @ts-ignore
 const modBasicUI = /** @type {BasicUiModule} */ (await import("basic-ui"));
+
+/**
+ * @type {{
+ *   generateTheme: (color: string, dark?: boolean, variant?: string) => unknown,
+ *   applyTheme: (theme: unknown) => void,
+ * }}
+ */
+const BasicUI_ColorThemes = /** @type {any} */ (globalThis).BasicUI_ColorThemes;
 
 
 
@@ -197,7 +206,7 @@ function handleInputLink() {
     divOutputLink.appendChild(eltA);
 
 }
-const btnCopy = document.getElementById("btn-copy");
+const btnCopy = /** @type {HTMLButtonElement|null} */ (document.getElementById("btn-copy"));
 if (btnCopy == null) throw Error("btnCopy == null");
 btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEvent} evt */ async evt => {
     // FIX-ME:
@@ -229,6 +238,9 @@ btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEve
         const errorMessage = err instanceof Error ? err.message : String(err);
         throw Error(errorMessage, { cause: err });
     }
+    /**
+     * @param {string | HTMLDivElement} message
+     */
     function tellUser(message) {
         if (typeof message == "string") {
             // Nothing was copied
@@ -237,7 +249,8 @@ btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEve
         }
         // On Android there is very good default feedback when copying.
         if (isAndroid()) {
-            const bcr = btnCopy.getBoundingClientRect();
+            const copyButton = /** @type {HTMLButtonElement} */ (btnCopy);
+            const bcr = copyButton.getBoundingClientRect();
             cleanLinkShowHere(bcr.left, bcr.top + bcr.height - 10, "Copied", 1.5);
             return;
         }
@@ -539,7 +552,7 @@ async function showWikipediaAsDialog(pageTitle) {
     // debugger;
     dlg.style.border = `2px solid ${color}`;
 }
-window.showWikipediaAsDialog = showWikipediaAsDialog;
+/** @type {any} */ (window).showWikipediaAsDialog = showWikipediaAsDialog;
 
 /**
  * Fetches the HTML content of a Wikipedia article.
@@ -774,7 +787,7 @@ function cleanLinkShowSnackbar(txtOrDiv, secDuration = 4) {
  * @param {number} clientY
  * @param {string|HTMLDivElement} txtOrDiv
  * @param {number} [secTimeout]
- * @returns {HTMLDivElement}
+ * @returns {void}
  */
 function cleanLinkShowHere(clientX, clientY, txtOrDiv, secTimeout) {
     // return showOver(txtOrDiv, secTimeout, clientX, clientY);
@@ -784,8 +797,8 @@ function cleanLinkShowHere(clientX, clientY, txtOrDiv, secTimeout) {
 // Remove popover without id on rim click
 document.addEventListener('toggle', (event) => {
     if (!event.target) { return; }
-    if (event.target.id) { return; }
-    const target = /** @type {HTMLElement} */ (event.target);
+    const target = /** @type {HTMLElement & { id?: string }} */ (event.target);
+    if (target.id) { return; }
     if (event.newState === 'closed' && target.hasAttribute('popover')) {
         target.remove();
     }
@@ -872,7 +885,9 @@ function showHtmlAsDialog(strHtml, opts = {}) {
     document.body.appendChild(dialog);
     if (opts.theme) {
         const { color, dark, variant } = opts.theme;
-        const themePalette = BasicUI_ColorThemes.generateTheme(color, dark, variant);
+        const safeColor = color || '#000000';
+        const safeVariant = variant || 'tonalSpot';
+        const themePalette = BasicUI_ColorThemes.generateTheme(safeColor, dark, safeVariant);
         BasicUI_ColorThemes.applyTheme(themePalette);
     }
     dialog.showModal();
@@ -1143,6 +1158,9 @@ function dialogColorTheme() {
         currentTheme.variant = target.value;
         applyDialogTheme();
     });
+    /**
+     * @param {string} nam
+     */
     const mkRad = (nam) => {
         const rad = mkElt("input", { type: "radio", value: nam, name: "variant" });
         const lbl = mkElt("label", undefined, [rad, nam]);
@@ -1206,12 +1224,18 @@ function dialogColorTheme() {
         fillInTheme(currentTheme);
         applyDialogTheme(); // FIX-ME: ?
     });
+    /**
+     * @param {ColorTheme} theme
+     */
     function fillInTheme(theme) {
         const { color, dark, variant } = theme;
-        inpColor.value = color;
-        colorPicker.value = modBasicUI.colorNameToHex(color);
+        const safeColor = color || '#000000';
+        inpColor.value = safeColor;
+        colorPicker.value = modBasicUI.colorNameToHex(safeColor);
         chkDark.checked = dark;
-        divVariants.querySelector(`input[value=${variant}]`).checked = true
+        const selectedVariant = variant || 'tonalSpot';
+        const selectedInput = /** @type {HTMLInputElement|null} */ (divVariants.querySelector(`input[value=${selectedVariant}]`));
+        if (selectedInput) selectedInput.checked = true;
     }
 
     {
@@ -1290,6 +1314,10 @@ input[type=color]::-moz-color-swatch {
 
     `;
     addDialogStyle(dlg, dlgInnerStyle);
+    /**
+     * @param {HTMLDialogElement} dlg
+     * @param {string} innerStyle
+     */
     function addDialogStyle(dlg, innerStyle) {
         const idDialog = dlg.id;
         if (("string" !== typeof idDialog) || idDialog.trim().length == 0) {
@@ -1336,12 +1364,13 @@ function getCSS_bg_classes() {
         try {
             // Loop through each CSS rule within the stylesheet
             Array.from(sheet.cssRules || sheet.rules).forEach(rule => {
+                const styleRule = /** @type {CSSStyleRule} */ (rule);
                 // Check if the rule is a standard style rule and has a selector
-                if (rule.selectorText) {
+                if (styleRule.selectorText) {
                     // Find everything matching a .class pattern using regex
-                    const classes = rule.selectorText.match(/\.[a-zA-Z0-9_-]+/g);
+                    const classes = styleRule.selectorText.match(/\.[a-zA-Z0-9_-]+/g);
                     if (classes) {
-                        classes.forEach(c => allDefinedClasses.add(c.replace('.', '')));
+                        classes.forEach(/** @param {string} c */ c => allDefinedClasses.add(c.replace('.', '')));
                     }
                 }
             });

@@ -9,21 +9,29 @@ if (document.currentScript) throw Error("Should be imported, is module"); // is 
 
 // let isMaybeFromShare = false;
 
+/**
+ * @param {string} query
+ * @returns {Record<string, string>}
+ */
 const getQueryParams = (query) => {
-    let params = {};
+    /** @type {Record<string, string>} */
+    const params = {};
     new URLSearchParams(query).forEach((value, key) => {
         params[key] = value;
     });
     return params;
 };
 
-const searchParams = getQueryParams(location.search);
+const searchParams = /** @type {Record<string, string>} */ (getQueryParams(location.search));
 const keysParams = Object.keys(searchParams);
 const nParams = keysParams.length;
 
-let url = searchParams['url'];
-let title = searchParams['title'];
-let text = searchParams['text'];
+/** @type {string | undefined} */
+let url = searchParams["url"];
+/** @type {string | undefined} */
+let title = searchParams["title"];
+/** @type {string | undefined} */
+let text = searchParams["text"];
 
 // Sometimes url is missing
 const urlIsUrl = url?.startsWith("https://");

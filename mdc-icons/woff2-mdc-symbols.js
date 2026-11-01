@@ -6,13 +6,12 @@ window["logConsoleHereIs"](`here is woff2-mdc-symbols.js ${WOFF2_MDC_SYMBOLS_VER
 if (document.currentScript) throw Error("import .currentScript"); // is module
 
 
-/** @type {Promise<Object>} */
+/** @type {Promise<Record<number, string>> | undefined} */
 let promSymbols;
 
 /**
- * 
  * @param {string} mdcIconStyle 
- * @returns {Promise<Record<string, string>>}
+ * @returns {Promise<Record<number, string>>}
  */
 export async function fetchGoogleSymbolNameMap(mdcIconStyle) {
     promSymbols = promSymbols || inner();
@@ -27,7 +26,7 @@ export async function fetchGoogleSymbolNameMap(mdcIconStyle) {
         } catch (err) {
             console.log(err);
             debugger; // eslint-disable-line no-debugger
-            throw Error(err);
+            throw new Error(String(err));
         }
         if (!response.ok) {
             // if (response.status == 404 && response.type == "cors") {
@@ -42,6 +41,7 @@ export async function fetchGoogleSymbolNameMap(mdcIconStyle) {
         }
         // return undefined;
         const text = await response.text();
+        /** @type {Record<number, string>} */
         const codepointToName = {};
         text.split('\n').forEach(line => {
             const [name, hex] = line.trim().split(/\s+/);

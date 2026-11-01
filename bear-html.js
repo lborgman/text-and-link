@@ -47,6 +47,10 @@ function nextId(prefix) {
  * @param {HTMLInputElement|HTMLTextAreaElement} control
  * @param {HTMLLabelElement|null} labelEl
  */
+/**
+ * @param {HTMLInputElement|HTMLTextAreaElement|HTMLSelectElement} control
+ * @param {HTMLLabelElement|null} labelEl
+ */
 function wireFloatingLabel(control, labelEl) {
     if (!labelEl) return;
 
@@ -107,7 +111,7 @@ function buildField({ label, border, fill, size }, isTextarea) {
 /**
  * Creates a Beer CSS styled text input, wrapped in its required field markup.
  * @param {FieldOptions & { type?: string }} [options]
- * @returns {{ field: HTMLDivElement, input: HTMLInputElement }}
+ * @returns {{ wrapper: HTMLDivElement, input: HTMLInputElement | HTMLTextAreaElement }}
  */
 export function createTextField({
     value = '',
@@ -130,15 +134,15 @@ export function createTextField({
         if (name) eltText.name = name;
     }
     */
-    switch (true) {
-        case (eltText instanceof HTMLInputElement):
-            eltText.type = "text";
-        case (eltText instanceof HTMLTextAreaElement):
-            eltText.value = value;
-            if (name) eltText.name = name;
-            break;
-        default:
-            throw Error("bad eltText");
+    if (eltText instanceof HTMLInputElement) {
+        eltText.type = "text";
+        eltText.value = value;
+        if (name) eltText.name = name;
+    } else if (eltText instanceof HTMLTextAreaElement) {
+        eltText.value = value;
+        if (name) eltText.name = name;
+    } else {
+        throw Error("bad eltText");
     }
 
     field.append(eltText);
@@ -392,8 +396,7 @@ export function createSlider({
  * Creates a single Beer CSS chip (`<a class="chip">` or `<button class="chip">`).
  * @param {object} [options]
  * @param {string} [options.label]
- * param {string} [options.icon] - Material icon name shown before the label.
- * @param {HTMLSpanElement} [options.icon] - <span> element for icon, shown before the label. Ignored if `image` is set.
+ * @param {string | Node} [options.icon] - Material icon name or icon element shown before the label.
  * @param {boolean} [options.selected=false]
  * @param {boolean} [options.asButton=false] - Use `<button>` instead of `<a>`.
  * @param {(selected: boolean) => void} [options.onToggle]
@@ -492,7 +495,7 @@ export function createChipGroup({ items, mode = 'single', selected, onChange } =
  * field helpers above), not just a class toggle.
  * @param {object} options
  * @param {HTMLElement} options.trigger - Element that opens the menu on click.
- * @param {{ label: string, icon?: HTMLSpanElement, onSelect?: () => void }[]} options.items
+ * @param {{ label: string, icon?: string | Node, onSelect?: () => void }[]} options.items
  * @returns {{ menu: HTMLElement, open: () => void, close: () => void }}
  */
 export function createMenu({ trigger, items }) {
@@ -587,6 +590,7 @@ export function createTabs({ tabs, initial = 0, onChange }) {
     const panelsContainer = document.createElement('div');
     panelsContainer.className = 'tabs-panels';
 
+    /** @type {HTMLAnchorElement[]} */
     const tabEls = [];
 
     tabs.forEach((tab, index) => {
@@ -601,6 +605,9 @@ export function createTabs({ tabs, initial = 0, onChange }) {
         panelsContainer.append(tab.panel);
     });
 
+    /**
+     * @param {number} index
+     */
     function select(index) {
         tabEls.forEach((tabEl, i) => tabEl.classList.toggle('active', i === index));
         tabs.forEach((tab, i) => {
