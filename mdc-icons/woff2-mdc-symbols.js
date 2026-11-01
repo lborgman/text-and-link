@@ -72,5 +72,13 @@ function mkSymbol2codepointUrl(mdcIconStyle) {
     //// Github CORS blocked raw files in may 2025
     // return `https://raw.githubusercontent.com/google/material-design-icons/master/variablefont/MaterialSymbols${mdcIconStyle}%5BFILL,GRAD,opsz,wght%5D.codepoints";`;
     // return `./ext/mdc-fonts/MaterialSymbols${mdcIconStyle}Codepoints.txt`;
-    return `./mdc-icons/MaterialSymbols${mdcIconStyle}Codepoints.txt`;
+    const metaUrl = import.meta.url;
+    const fileURL = new URL('./samedir.txt', import.meta.url);
+    const fileHref = fileURL.href;
+    const codepointsTxtUrl = new URL(`./MaterialSymbols${mdcIconStyle}Codepoints.txt`, import.meta.url);
+    const codepointsTxtHref = codepointsTxtUrl.href;
+    console.log({ metaUrl, fileHref, codepointsTxtHref });
+    // debugger;
+    // return `./mdc-icons/MaterialSymbols${mdcIconStyle}Codepoints.txt`;
+    return codepointsTxtHref;
 }
