@@ -1166,5 +1166,9 @@ export function mkMdcIcon(iconName) {
 
 
 // @ts-ignore
-const modMdcIcons = (location.hostname == "localhost") ? await import("mdc-icons") : undefined;
+const modMdcIcons = (location.hostname == "localhost") ?
+    // await import("mdc-icons")
+    await import("../mdc-icons/mdc-icons.js")
+    :
+    undefined;
 await modMdcIcons?.setIconStyle(mdcIconStyle);
