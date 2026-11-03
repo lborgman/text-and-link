@@ -192,18 +192,22 @@ function showBtnMdcIcons() {
     };
 
     // 2. The outside click handler
-    const outsideClickListener = (event) => {
-        if (!btnSymbols.contains(/** @type {Node} */(event.target))) {
-            cleanupSymbolsPopover();
-        }
-    };
+    const outsideClickListener =
+        /** @param {MouseEvent} event */
+        (event) => {
+            if (!btnSymbols.contains(/** @type {Node} */(event.target))) {
+                cleanupSymbolsPopover();
+            }
+        };
 
     // 3. The Escape key handler
-    const escapeKeyListener = (event) => {
-        if (event.key === 'Escape') {
-            cleanupSymbolsPopover();
-        }
-    };
+    const escapeKeyListener =
+        /** @param {KeyboardEvent} event */
+        (event) => {
+            if (event.key === 'Escape') {
+                cleanupSymbolsPopover();
+            }
+        };
 
     // 4. Attach both handlers using the capture phase (true)
     document.addEventListener('click', outsideClickListener, true);
