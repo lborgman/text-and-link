@@ -1091,6 +1091,7 @@ function dialogColorTheme() {
     // const divFieldColor = fieldColor;
     wrapper.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
     const colorPicker = mkElt("input", { id: "color-picker", type: "color" });
+    colorPicker.classList.add("input-color-square");
     colorPicker.value = currentTheme.color;
     const eltColorInputs = mkElt("span", { id: "OLDcolor-inputs" }, [
         wrapper,
@@ -1279,7 +1280,8 @@ function dialogColorTheme() {
 
     addXclose(dlg);
     dlg.id = "color-theme-dialog";
-            // eltColorInputs
+    // eltColorInputs
+    /*
     const dlgInnerStyle = `
         NOoutline: 8px dotted red;
         .basic-ui_color-inputs {
@@ -1291,7 +1293,7 @@ function dialogColorTheme() {
                 position: static;
                 NOoutline: 1px dashed yellow;
             }
-            #color-picker {
+            #OLDcolor-picker {
                 height: 40px;
                 width: 40px;
                 opacity: 1;
@@ -1299,21 +1301,24 @@ function dialogColorTheme() {
         }
 
 
-        /* 1. Target Webkit browsers (Chrome, Safari, Edge, Opera) */
-input[type=color]::-webkit-color-swatch-wrapper {
+        /* 1. Target Webkit browsers (Chrome, Safari, Edge, Opera) * /
+OLDinput[type=color]::-webkit-color-swatch-wrapper {
     padding: 0;
 }
-input[type=color]::-webkit-color-swatch {
+OLDinput[type=color]::-webkit-color-swatch {
     border: none;
 }
 
-/* 2. Target Firefox */
-input[type=color]::-moz-color-swatch {
+/* 2. Target Firefox * /
+OLDinput[type=color]::-moz-color-swatch {
     border: none;
 }
 
     `;
     addDialogStyle(dlg, dlgInnerStyle);
+    */
+
+
     /**
      * @param {HTMLDialogElement} dlg
      * @param {string} innerStyle

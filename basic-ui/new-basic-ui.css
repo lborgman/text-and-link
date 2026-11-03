@@ -215,3 +215,37 @@ dialog.right.fade-backdrop {
 span.basicUI_ripple {
     position: absolute !important;
 }
+
+
+
+/* #color-picker { */
+input[type=color].input-color-square {
+    height: 20px;
+    width: 40px;
+    opacity: 1;
+
+    /* 1. Target Webkit browsers (Chrome, Safari, Edge, Opera) */
+    &::-webkit-color-swatch-wrapper {
+        padding: 0;
+    }
+
+    &::-webkit-color-swatch {
+        border: none;
+    }
+
+    /* 2. Target Firefox */
+    &::-moz-color-swatch {
+        border: none;
+    }
+
+}
+
+.basic-ui_color-inputs {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+
+    >* {
+        position: static !important;
+    }
+}

@@ -174,9 +174,43 @@ function showBtnMdcIcons() {
         border-radius: 5px;
         outline: 1px solid yellow;
     `;
-    btnSymbols.setAttribute("popover", "");
+
+
+
+    /////// Make it easy to dismiss the "Get new Woff2"-button:
+
+    // 1. Set to manual to prevent native browser engine flashes
+    btnSymbols.setAttribute("popover", "manual");
     document.body.appendChild(btnSymbols);
     btnSymbols.showPopover();
+
+    // Define a unified cleanup function
+    const cleanupSymbolsPopover = () => {
+        btnSymbols.remove();
+        document.removeEventListener('click', outsideClickListener, true);
+        document.removeEventListener('keydown', escapeKeyListener, true);
+    };
+
+    // 2. The outside click handler
+    const outsideClickListener = (event) => {
+        if (!btnSymbols.contains(/** @type {Node} */(event.target))) {
+            cleanupSymbolsPopover();
+        }
+    };
+
+    // 3. The Escape key handler
+    const escapeKeyListener = (event) => {
+        if (event.key === 'Escape') {
+            cleanupSymbolsPopover();
+        }
+    };
+
+    // 4. Attach both handlers using the capture phase (true)
+    document.addEventListener('click', outsideClickListener, true);
+    document.addEventListener('keydown', escapeKeyListener, true);
+
+
+
     btnSymbols.style.inset = "auto";
     btnSymbols.style.margin = "0";
     btnSymbols.style.bottom = "15px";
