@@ -333,6 +333,8 @@ export function createSelect({ options, value, name, onChange, ...rest } = { opt
  * @param {string} [options.name]
  * @param {boolean} [options.showBubble=true]
  * @param {(value: number) => void} [options.onInput]
+ * @param {number} [options.onInputThrottleMs]
+ * @param {(value: number) => void|null} [options.onChange]
  * @returns {{ wrapper: HTMLElement, input: HTMLInputElement }}
  */
 export function createSlider({
@@ -343,6 +345,8 @@ export function createSlider({
     name,
     showBubble = true,
     onInput,
+    onInputThrottleMs,
+    onChange,
 } = {}) {
     const input = document.createElement('input');
     input.type = 'range';
@@ -352,44 +356,54 @@ export function createSlider({
     input.value = String(value ?? min);
     if (name) input.name = name;
 
+    /*
     if (!showBubble) {
         if (onInput) {
             input.addEventListener('input', () => onInput(Number(input.value)));
         }
         return { wrapper: input, input };
     }
+    */
 
     const wrapper = document.createElement('div');
     wrapper.className = 'slider-field';
     wrapper.style.position = 'relative';
+    wrapper.appendChild(input);
 
-    const bubble = document.createElement('span');
-    bubble.className = 'slider-bubble';
-    bubble.style.position = 'absolute';
-    bubble.style.pointerEvents = 'none';
-    bubble.style.top = '-1.75rem';
-    bubble.style.backgroundColor = "white";
-    bubble.style.padding = "2px";
-    bubble.style.outline = "1px solid #3333";
-    bubble.style.borderRadius = "3px";
+    if (showBubble) {
+        const bubble = document.createElement('span');
+        bubble.className = 'slider-bubble';
+        bubble.style.position = 'absolute';
+        bubble.style.pointerEvents = 'none';
+        bubble.style.top = '-1.75rem';
+        bubble.style.backgroundColor = "white";
+        bubble.style.padding = "2px";
+        bubble.style.outline = "1px solid #3333";
+        bubble.style.borderRadius = "3px";
+        wrapper.appendChild(bubble);
 
-
-
-    wrapper.append(input, bubble);
-
-    const updateBubble = () => {
-        const percent = (Number(input.value) - min) / (max - min);
-        bubble.textContent = input.value;
-        // Nudges the bubble to follow the thumb; the 8px fudge roughly accounts
-        // for thumb radius so the bubble centers over it rather than the track.
-        bubble.style.left = `calc(${percent * 100}% - ${percent * 16 - 8}px)`;
-    };
-
-    input.addEventListener('input', () => {
+        const updateBubble = () => {
+            const percent = (Number(input.value) - min) / (max - min);
+            bubble.textContent = input.value;
+            // Nudges the bubble to follow the thumb; the 8px fudge roughly accounts
+            // for thumb radius so the bubble centers over it rather than the track.
+            bubble.style.left = `calc(${percent * 100}% - ${percent * 16 - 8}px)`;
+        };
+        input.addEventListener('input', () => {
+            updateBubble();
+        });
         updateBubble();
-        if (onInput) onInput(Number(input.value));
-    });
-    updateBubble();
+    }
+    if (onInput) {
+        const handleInput =
+            onInputThrottleMs ?
+                throttle(onInput, onInputThrottleMs)
+                :
+                onInput;
+        input.addEventListener('input', () => {
+            handleInput(Number(input.value));
+        });
+    }
 
     return { wrapper, input };
 }
@@ -724,3 +738,21 @@ export function createButton({
     return button;
 }
 
+
+/**
+ * Simple throttle helper scoped inside the module.
+ *
+ * @param {function} func 
+ * @param {number} msLimit 
+ * @returns {function}
+ */
+function throttle(func, msLimit) {
+    let inThrottle = false;
+    return function (...args) {
+        if (!inThrottle) {
+            func.apply(this, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, msLimit);
+        }
+    };
+}
