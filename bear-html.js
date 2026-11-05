@@ -377,8 +377,10 @@ export function createSlider({
         bubble.style.pointerEvents = 'none';
         bubble.style.top = '-1.75rem';
         bubble.style.backgroundColor = "white";
-        bubble.style.padding = "2px";
-        bubble.style.outline = "1px solid #3333";
+        bubble.style.padding = "2px 6px";
+        bubble.style.outline = "2px solid rgb(0 117 255)";
+        bubble.style.color = "rgb(0 117 255)";
+        bubble.style.fontSize = "0.9rem";
         bubble.style.borderRadius = "3px";
         wrapper.appendChild(bubble);
 
