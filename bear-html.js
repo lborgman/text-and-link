@@ -404,6 +404,11 @@ export function createSlider({
             handleInput(Number(input.value));
         });
     }
+    if (onChange) {
+        input.addEventListener('change', () => {
+            onChange(Number(input.value));
+        });
+    }
 
     return { wrapper, input };
 }
@@ -740,11 +745,13 @@ export function createButton({
 
 
 /**
- * Simple throttle helper scoped inside the module.
+ * Creates a throttled function that only invokes `func` at most once per
+ * every `msLimit` milliseconds.
  *
- * @param {function} func 
- * @param {number} msLimit 
- * @returns {function}
+ * @template {(...args: any[]) => any} T
+ * @param {T} func
+ * @param {number} msLimit
+ * @returns {(this: ThisParameterType<T>, ...args: Parameters<T>) => void} A new throttled function.
  */
 function throttle(func, msLimit) {
     let inThrottle = false;
