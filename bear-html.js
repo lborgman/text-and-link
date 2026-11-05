@@ -368,6 +368,12 @@ export function createSlider({
     bubble.style.position = 'absolute';
     bubble.style.pointerEvents = 'none';
     bubble.style.top = '-1.75rem';
+    bubble.style.backgroundColor = "white";
+    bubble.style.padding = "2px";
+    bubble.style.outline = "1px solid #3333";
+    bubble.style.borderRadius = "3px";
+
+
 
     wrapper.append(input, bubble);
 
