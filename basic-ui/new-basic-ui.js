@@ -328,7 +328,7 @@ export async function showDialog(bdy, retValFun, buttons, dialogClass) {
             const button = /** @type {HTMLButtonElement} */ (buttons);
             myButtons = [button];
         }
-        const eltButtons = mkElt("div", { class: "dialog-buttons" });
+        const eltButtons = mkElt("nav", { class: "dialog-buttons" });
         myButtons.forEach(b => {
             if (!(b instanceof HTMLButtonElement)) {
                 debugger;

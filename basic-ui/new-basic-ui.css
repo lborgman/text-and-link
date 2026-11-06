@@ -109,6 +109,16 @@ dialog {
     transition-timing-function: cubic-bezier(0.2, 0, 0, 1);
 }
 
+dialog nav.dialog-buttons {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 5px;
+    button {
+        background-color: transparent;
+    }
+}
+
 dialog.fade-backdrop {
     opacity: 1;
 }
