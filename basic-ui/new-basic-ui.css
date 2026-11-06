@@ -116,6 +116,8 @@ dialog nav.dialog-buttons {
     gap: 5px;
     button {
         background-color: transparent;
+        color: inherit;
+        text-transform: capitalize;
     }
 }
 
