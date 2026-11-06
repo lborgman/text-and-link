@@ -114,6 +114,7 @@ dialog nav.dialog-buttons {
     display: flex;
     justify-content: flex-end;
     gap: 5px;
+
     button {
         background-color: transparent;
         color: inherit;
@@ -260,4 +261,315 @@ input[type=color].input-color-square {
     >* {
         position: static !important;
     }
+}
+
+
+
+
+
+
+/****************************
+* The rest is for Beer/Bear
+******************************/
+
+
+
+
+/* Checkbox */
+
+label:not(.switch):has(> input[type="checkbox"]) {
+    --_size: 1.5rem;
+
+    position: relative;
+
+    display: inline-grid;
+    grid-template-columns: var(--_size) auto;
+    align-items: center;
+    column-gap: 0.25rem;
+
+    cursor: pointer;
+}
+
+
+
+/*
+  Keep the real input functional and focusable, but remove it from the
+  visual layout. The generated icon represents its state.
+*/
+
+label:not(.switch):has(> input[type="checkbox"])>input {
+    position: absolute;
+
+    /* inline-size: 1px; */
+    /* block-size: 1px; */
+
+    opacity: 0;
+}
+
+
+/* Checkbox icon. */
+
+label:not(.switch):has(> input[type="checkbox"])::before {
+    content: "check_box_outline_blank";
+
+    grid-column: 1;
+    grid-row: 1;
+
+    inline-size: var(--_size);
+    block-size: var(--_size);
+
+    font-family: var(--font-icon);
+    font-weight: normal;
+    font-style: normal;
+    font-size: var(--_size);
+    line-height: 1;
+
+    letter-spacing: normal;
+    text-transform: none;
+    font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--primary);
+
+    user-select: none;
+}
+
+label.switch:has(> input[type="checkbox"])::before {
+    color: transparent;
+}
+
+
+/* Checked. */
+
+label:not(.switch):has(> input[type="checkbox"]:checked)::before {
+    content: "check_box";
+    font-variation-settings: "FILL" 1;
+}
+
+
+/* Indeterminate.  */
+
+label:has(> input[type="checkbox"]:indeterminate)::before {
+    content: "indeterminate_check_box";
+}
+
+
+/* Disabled.  */
+
+label:has(> input[type="checkbox"]:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+/* Keyboard focus.  */
+
+label:has(> input[type="checkbox"]:focus-visible)::before {
+    outline: 0.125rem solid var(--primary);
+    outline-offset: 0.375rem;
+}
+
+
+
+label:has(> input[type="checkbox"]:not(:disabled)):hover::after,
+label:has(> input[type="checkbox"]:not(:disabled):focus)::after {
+    box-shadow: 0 0 0 0.5rem currentColor;
+    opacity: 0.1;
+}
+
+
+/* Radio */
+
+label:has(> input[type="radio"]) {
+    --_size: 1.5rem;
+
+    position: relative;
+
+    display: inline-grid;
+    grid-template-columns: var(--_size) auto;
+    align-items: center;
+    column-gap: 0.25rem;
+
+    cursor: pointer;
+}
+
+
+/*
+  Keep the real input functional and focusable, but remove it from the
+  visual layout. The generated icon represents its state.
+*/
+
+label:has(> input[type="radio"])>input {
+    position: absolute;
+
+    inline-size: 1px;
+    block-size: 1px;
+
+    opacity: 0;
+}
+
+
+/* Radio icon.  */
+
+label:has(> input[type="radio"])::before {
+    content: "radio_button_unchecked";
+
+    grid-column: 1;
+    grid-row: 1;
+
+    inline-size: var(--_size);
+    block-size: var(--_size);
+
+    font-family: var(--font-icon);
+    font-weight: normal;
+    font-style: normal;
+    font-size: var(--_size);
+    line-height: 1;
+
+    letter-spacing: normal;
+    text-transform: none;
+    font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    color: var(--primary);
+
+    user-select: none;
+}
+
+
+/* Checked.  */
+
+label:has(> input[type="radio"]:checked)::before {
+    content: "radio_button_checked";
+}
+
+
+/* Disabled.  */
+
+label:has(> input[type="radio"]:disabled) {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+
+
+/* Keyboard focus.  */
+
+label:has(> input[type="radio"]:focus-visible)::before {
+    outline: 0.125rem solid var(--primary);
+    outline-offset: 0.375rem;
+}
+
+
+/* Hover and focus ripple.  */
+
+label:has(> input[type="radio"])::after {
+    content: "";
+
+    position: absolute;
+
+    inset-inline-start: 0;
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+
+    inline-size: var(--_size);
+    block-size: var(--_size);
+
+    border-radius: 50%;
+
+    background-color: currentColor;
+    box-shadow: 0 0 0 0 currentColor;
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition: all var(--speed1);
+}
+
+label:has(> input[type="radio"]:not(:disabled)):hover::after,
+label:has(> input[type="radio"]:not(:disabled):focus)::after {
+    box-shadow: 0 0 0 0.5rem currentColor;
+    opacity: 0.1;
+}
+
+
+
+/*
+:root {
+  /* --dialog-slide-duration: 0.35s; * /
+  /* for testing slow motion * /
+  --dialog-slide-duration: 2.35s;
+}
+
+/* ⬆️ Top dialog * /
+dialog.top {
+  transform: translateY(-100%);
+  transition: transform var(--dialog-slide-duration) cubic-bezier(0.2, 0, 0, 1);
+}
+
+dialog.top[open] {
+  transform: translateY(0);
+}
+
+/* ⬇️ Bottom dialog * /
+dialog.bottom {
+  transform: translateY(100%);
+  transition: transform var(--dialog-slide-duration) cubic-bezier(0.2, 0, 0, 1);
+}
+
+dialog.bottom[open] {
+  transform: translateY(0);
+}
+
+/* ⬅️ Left dialog * /
+dialog.left {
+  transform: translateX(-100%);
+  transition: transform var(--dialog-slide-duration) cubic-bezier(0.2, 0, 0, 1);
+}
+
+dialog.left[open] {
+  transform: translateX(0);
+}
+
+/* ➡️ Right dialog * /
+dialog.right {
+  transform: translateX(100%);
+  transition: transform var(--dialog-slide-duration) cubic-bezier(0.2, 0, 0, 1);
+}
+
+dialog.right[open] {
+  transform: translateX(0);
+}
+*/
+
+
+
+dialog.bottom {
+    transform: translateY(100%);
+    transition: transform var(--dialog-slide-duration) cubic-bezier(0.2, 0, 0, 1);
+}
+
+dialog.bottom[open] {
+    transform: translateY(0);
+}
+
+
+.slider-bubble {
+    position: 'absolute';
+    pointer-events: 'none';
+    top: '-1.5rem';
+    background-color: "white";
+    padding: "0px 4px";
+    outline: "2px solid rgb(0 117 255)";
+    color: "rgb(0 117 255)";
+    font-size: "0.9rem";
+    border-radius: "3px";
 }

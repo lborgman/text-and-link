@@ -121,6 +121,28 @@ const detailsTestIcons = () => mkElt("details", { id: "test-icons" }, [
 ]);
 
 
+
+// ---- test-tabs block ----
+const tabsExample = modBear.createTabs({
+    tabs: [
+        { label: "Tab1", panel: mkElt("div", undefined, "This is tab 1") },
+        { label: "Tab2", panel: mkElt("div", undefined, "This is tab 2") },
+        { label: "Tab3", panel: mkElt("div", undefined, "This is tab 3") },
+    ]
+});
+// const sectionTabs = mkElt("section", undefined,)
+tabsExample.nav.style.width = "fit-content";
+const detailsTestTabs = () => mkElt("details", { id: "test-tabs" }, [
+    mkElt("summary", undefined, "test-tabs"),
+    mkElt("div", undefined,
+        [
+            tabsExample.nav,
+            tabsExample.panelsContainer,
+        ]
+    )
+]);
+
+
 // ---- inner div.surface-variant ----
 const divSurfaceVariant = () => mkElt("div", {
     // style: "outline:4px dotted red; padding:4px;",
@@ -138,6 +160,7 @@ const divSurfaceVariant = () => mkElt("div", {
     detailsRadio(),
     detailsTestText(),
     detailsTestIcons(),
+    detailsTestTabs(),
 ]);
 
 // ---- top-level details#basic-ui_debugVisual ----

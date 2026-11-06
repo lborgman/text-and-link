@@ -373,6 +373,7 @@ export function createSlider({
     if (showBubble) {
         const bubble = document.createElement('span');
         bubble.className = 'slider-bubble';
+        /*
         bubble.style.position = 'absolute';
         bubble.style.pointerEvents = 'none';
         bubble.style.top = '-1.5rem';
@@ -382,6 +383,7 @@ export function createSlider({
         bubble.style.color = "rgb(0 117 255)";
         bubble.style.fontSize = "0.9rem";
         bubble.style.borderRadius = "3px";
+        */
         wrapper.appendChild(bubble);
 
         const updateBubble = () => {
