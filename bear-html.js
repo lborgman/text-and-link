@@ -375,9 +375,9 @@ export function createSlider({
         bubble.className = 'slider-bubble';
         bubble.style.position = 'absolute';
         bubble.style.pointerEvents = 'none';
-        bubble.style.top = '-1.75rem';
+        bubble.style.top = '-1.5rem';
         bubble.style.backgroundColor = "white";
-        bubble.style.padding = "2px 6px";
+        bubble.style.padding = "0px 4px";
         bubble.style.outline = "2px solid rgb(0 117 255)";
         bubble.style.color = "rgb(0 117 255)";
         bubble.style.fontSize = "0.9rem";
