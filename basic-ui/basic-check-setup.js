@@ -143,6 +143,30 @@ const detailsTestTabs = () => mkElt("details", { id: "test-tabs" }, [
 ]);
 
 
+// ----- Test sliders ----
+const sli1 = modBear.createSlider({
+    min: 2, max: 8, step: 1, value: 4, showBubble: true,
+});
+/*
+const sli1Copy = modBear.createSlider({
+    min: 2, max: 8, step: 1, value: 4, showBubble: true,
+});
+document.body.appendChild(sli1Copy.wrapper);
+debugger;
+*/
+
+const detailsTestSliders = () => mkElt("details", { id: "test-sliders" }, [
+    mkElt("summary", undefined, "test-sliders"),
+    mkElt("div", undefined,
+        [
+            mkElt("div", undefined,
+                sli1.wrapper
+            )
+        ])
+]);
+
+
+
 // ---- inner div.surface-variant ----
 const divSurfaceVariant = () => mkElt("div", {
     // style: "outline:4px dotted red; padding:4px;",
@@ -161,6 +185,7 @@ const divSurfaceVariant = () => mkElt("div", {
     detailsTestText(),
     detailsTestIcons(),
     detailsTestTabs(),
+    detailsTestSliders(),
 ]);
 
 // ---- top-level details#basic-ui_debugVisual ----

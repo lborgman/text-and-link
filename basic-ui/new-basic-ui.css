@@ -562,14 +562,20 @@ dialog.bottom[open] {
 }
 
 
-.slider-bubble {
-    position: 'absolute';
-    pointer-events: 'none';
-    top: '-1.5rem';
-    background-color: "white";
-    padding: "0px 4px";
-    outline: "2px solid rgb(0 117 255)";
-    color: "rgb(0 117 255)";
-    font-size: "0.9rem";
-    border-radius: "3px";
+div.slider {
+    input[type=range] {
+        width: stretch;
+    }
+
+    span.slider-bubble {
+        position: absolute;
+        pointer-events: none;
+        top: -1.5rem;
+        background-color: white;
+        padding: 0px 4px;
+        outline: 2px solid rgb(0 117 255);
+        color: rgb(0 117 255);
+        font-size: 0.9rem;
+        border-radius: 3px;
+    }
 }

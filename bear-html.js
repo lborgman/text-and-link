@@ -320,6 +320,9 @@ export function createSelect({ options, value, name, onChange, ...rest } = { opt
 // Slider
 // ---------------------------------------------------------------------------
 
+/** @typedef {("tiny"|"small"|"medium"|"large"|"extra")} SliderSize */
+/** @typedef {("vertical"|"horizontal")} SliderDirection */
+
 /**
  * Creates a slider (`<input type="range">`) with a value bubble that tracks
  * the thumb position as it's dragged. Assumes CSS restyles the bare range
@@ -332,6 +335,10 @@ export function createSelect({ options, value, name, onChange, ...rest } = { opt
  * @param {number} [options.value]
  * @param {string} [options.name]
  * @param {boolean} [options.showBubble=true]
+ *
+ * @param {SliderSize} [options.size=tiny]
+ * @param {SliderDirection} [options.direction=horizontal]
+ *
  * @param {(value: number) => void} [options.onInput]
  * @param {number} [options.onInputThrottleMs]
  * @param {(value: number) => void|null} [options.onChange]
@@ -344,6 +351,8 @@ export function createSlider({
     value,
     name,
     showBubble = true,
+    size = "tiny",
+    direction = "horizontal",
     onInput,
     onInputThrottleMs,
     onChange,
@@ -356,34 +365,19 @@ export function createSlider({
     input.value = String(value ?? min);
     if (name) input.name = name;
 
-    /*
-    if (!showBubble) {
-        if (onInput) {
-            input.addEventListener('input', () => onInput(Number(input.value)));
-        }
-        return { wrapper: input, input };
-    }
-    */
 
     const wrapper = document.createElement('div');
-    wrapper.className = 'slider-field';
+    // wrapper.className = 'slider-field';
+    wrapper.classList.add('slider');
+    wrapper.classList.add(size);
+    wrapper.classList.add(direction);
+
     wrapper.style.position = 'relative';
     wrapper.appendChild(input);
 
     if (showBubble) {
         const bubble = document.createElement('span');
         bubble.className = 'slider-bubble';
-        /*
-        bubble.style.position = 'absolute';
-        bubble.style.pointerEvents = 'none';
-        bubble.style.top = '-1.5rem';
-        bubble.style.backgroundColor = "white";
-        bubble.style.padding = "0px 4px";
-        bubble.style.outline = "2px solid rgb(0 117 255)";
-        bubble.style.color = "rgb(0 117 255)";
-        bubble.style.fontSize = "0.9rem";
-        bubble.style.borderRadius = "3px";
-        */
         wrapper.appendChild(bubble);
 
         const updateBubble = () => {
