@@ -357,7 +357,33 @@ export function createSlider({
     onInputThrottleMs,
     onChange,
 } = {}) {
-    const input = document.createElement('input');
+    console.warn("createSlider");
+    console.log("%cis there a custom element defined:", "color:red;", customElements.get('bear-range'));
+    // const input = document.createElement('input');
+
+
+    // const input = document.createElement('bear-range');
+    const input = /** @type {HTMLInputElement} */ (
+        document.createElement('input', { is: 'bear-range' })
+    );
+    input.setAttribute('is', 'bear-range'); // only if you want CSS like input[is="bear-range"] to match
+
+
+    console.log("%cinput", "color:green", input);
+    console.log("%cinput.outerHTML", "color:green", input.outerHTML);
+    console.log("%cinput.constructor", "color:green", input.constructor);
+    console.log("%cinput.constructor.name", "color:green", input.constructor.name);
+    console.log("%cinput instanceof BearRange", "color:green", input instanceof BearRange);
+    console.log("%cinput customElements", "color:green", customElements.get('bear-range'));
+
+    const Registered = customElements.get('bear-range');
+    console.log('%cregistered=', "color:yellow", Registered.name);
+    console.log('%csame class=', "color:yellow", Registered === BearRange);
+    console.log('%cinstanceof registered=', "color:yellow", input instanceof Registered);
+    // debugger;
+
+
+
     input.type = 'range';
     input.min = String(min);
     input.max = String(max);
@@ -374,6 +400,9 @@ export function createSlider({
 
     wrapper.style.position = 'relative';
     wrapper.appendChild(input);
+
+    const spanSelected = mkElt("span");
+    wrapper.appendChild(spanSelected);
 
     if (showBubble) {
         const bubble = document.createElement('span');
@@ -408,8 +437,33 @@ export function createSlider({
         });
     }
 
+    // console.warn("calling updateRange in createSlider");
+    // setTimeout(() => { updateRange(input); }, 0);
+    input.addEventListener("input", evt => {
+        evt.stopPropagation();
+        updateRange(input);
+    });
+
     return { wrapper, input };
 }
+class BearRange extends HTMLInputElement {
+    constructor() {
+        console.log("%cCalling BearRange super", "font-size:18px;color:red;");
+        super();
+    }
+    connectedCallback() {
+        // This fires the moment the input enters the DOM
+        console.log("%cBearRange connected!", "font-size:18px;color:green;");
+        updateRange(this);
+        // debugger;
+    }
+}
+
+// You must specify which native tag you are extending
+console.log("%cbefore define bear-range", "color:red;");
+customElements.define('bear-range', BearRange, { extends: 'input' });
+console.log("%cafter define bear-range", "color:red;");
+
 
 // ---------------------------------------------------------------------------
 // Chip
@@ -760,4 +814,93 @@ function throttle(func, msLimit) {
             setTimeout(() => inThrottle = false, msLimit);
         }
     };
+}
+
+
+const rootPixelSize = rootSizeInPixels();
+function updateRange(input) {
+    console.log("updateRange here");
+    // debugger;
+    // onWeak(input, "change", onChangeInput);
+    // const divSlider = parent(input);
+    const divSlider = input.closest(".slider");
+    // const bar = query("span", divSlider);
+    const bar = divSlider.querySelector("span");
+    // const inputs = queryAll("input", divSlider);
+    const inputs = divSlider.querySelectorAll("input", divSlider);
+    if (!inputs.length || !bar) return;
+    // const thumb = hasClass(divSlider, "max") ? 0 : .25 * rootSize * 100 / inputs[0].offsetWidth;
+    const thumbHasMax = divSlider.classList.contains("max");
+    // const thumb = divSlider.classList.contains("max") ? 0 : .25 * rootPixelSize * 100 / inputs[0].offsetWidth;
+    const i0 = inputs[0];
+    // if (!i0.isConnected) { debugger; }
+    const thumb = thumbHasMax ?
+        0 :
+        .25 * rootPixelSize * 100 / i0.offsetWidth;
+    const percents = [];
+    const values = [];
+    for (let i = 0, n = inputs.length; i < n; i++) {
+        const min = parseFloat(inputs[i].min) || 0;
+        const max = parseFloat(inputs[i].max) || 100;
+        const value = parseFloat(inputs[i].value) || 0;
+        const percent = (value - min) * 100 / (max - min);
+        const fix = thumb / 2 - thumb * percent / 100;
+        percents.push(percent + fix);
+        values.push(value);
+    }
+    let percent = percents[0];
+    let start = 0;
+    let end = 100 - start - percent;
+    let value1 = values[0];
+    let value2 = values[1] || 0;
+    if (inputs.length > 1) {
+        percent = Math.abs(percents[1] - percents[0]);
+        start = percents[1] > percents[0] ? percents[0] : percents[1];
+        end = 100 - start - percent;
+        if (value2 > value1) {
+            value1 = values[1] || 0;
+            value2 = values[0];
+        }
+    }
+    requestAnimationFrame(() => {
+        // divSlider.style.cssText = `--_start: ${start}%; --_end: ${end}%; --_value1: '${value1}'; --_value2: '${value2}';`
+        divSlider.style.setProperty("--_start", `${start}%`);
+        divSlider.style.setProperty("--_end", `${end}%`);
+        divSlider.style.setProperty("--_value1", `${value1}`);
+        divSlider.style.setProperty("--_value2", `${value2}`);
+    }
+    );
+}
+function BADrootSizeInPixels() {
+    const root =
+        document.querySelector(".beer")
+        ?? document.documentElement;
+
+    const value =
+        getComputedStyle(root)
+            .getPropertyValue("--size")
+            .trim();
+
+    return parseFloat(value) || 16;
+}
+function rootSizeInPixels() {
+    const root =
+        document.querySelector(".beer")
+        ?? document.documentElement;
+
+    // 1. Create a dummy element to let the browser resolve the CSS units
+    const dummy = document.createElement("div");
+
+    // 2. Set its width using your custom property
+    dummy.style.width = `var(--size, 16px)`;
+    dummy.style.position = "absolute";
+    dummy.style.visibility = "hidden";
+
+    // 3. Append, measure the absolute pixel width, and clean up
+    root.appendChild(dummy);
+    const pixelWidth = parseFloat(getComputedStyle(dummy).width);
+    root.removeChild(dummy);
+
+    // 4. Return the guaranteed pixel number (or fallback to 16)
+    return pixelWidth || 16;
 }
