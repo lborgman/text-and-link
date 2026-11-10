@@ -451,7 +451,7 @@ class BearRange extends HTMLInputElement {
         console.log("%cCalling BearRange super", "font-size:18px;color:red;");
         super();
     }
-    connectedCallback() {
+    OLDconnectedCallback() {
         // This fires the moment the input enters the DOM
         console.log("%cBearRange connected!", "font-size:18px;color:green;");
         // updateRange(this);
@@ -463,7 +463,55 @@ class BearRange extends HTMLInputElement {
         }, 300);
         // debugger;
     }
+    // }
+    // class MyComponent extends HTMLElement {
+    connectedCallback() {
+        // 1. Yield to the browser to calculate layout and styles
+        requestAnimationFrame(() => {
+
+            // 2. Perform a strict visibility check
+            const isReadyForInit = this.checkVisibility({
+                opacityProperty: true,       // Returns false if opacity: 0
+                visibilityProperty: true,    // Returns false if visibility: hidden
+                // contentVisibilityProperty: true // Returns false if skipped by content-visibility
+            });
+
+            if (!isReadyForInit) {
+                // 3. Fallback: Postpone initialization until it actually becomes visible
+                this.#waitForVisibility();
+                return;
+            }
+
+            // 4. Safe to initialize: Element is visible and has a layout box
+            this.#initialize();
+        });
+    }
+
+    #initialize() {
+        console.log("Safe initialization executed. No layout errors will occur.");
+        // Run your error-prone measurement, layout, or canvas code here
+        updateRange(this);
+    }
+
+    #waitForVisibility() {
+        console.warn("Component attached but hidden. Postponing setup to prevent errors.");
+
+        const observer = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                observer.disconnect(); // Clean up memory immediately
+                this.#initialize();
+            }
+        });
+
+        observer.observe(this);
+    }
 }
+
+// customElements.define('my-component', MyComponent);
+
+
+
+
 
 // You must specify which native tag you are extending
 console.log("%cbefore define bear-range", "color:red;");
