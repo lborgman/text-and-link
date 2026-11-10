@@ -14,6 +14,12 @@ const mkElt = window["mkElt"];
 
 const modCustElts = await import("custom-elts-helpers");
 debugger;
+// class x
+class BearRange extends modCustElts.withSafeInit(HTMLInputElement) {
+    onVisibleInit() {
+        updateRange(this);
+    }
+}
 
 // ---------------------------------------------------------------------------
 // Shared internals
@@ -452,7 +458,7 @@ export function createSlider({
 
     return { wrapper, input };
 }
-class BearRange extends HTMLInputElement {
+class BearRangeOLD extends HTMLInputElement {
     constructor() {
         console.log("%cCalling BearRange super", "font-size:18px;color:red;");
         super();
