@@ -460,7 +460,7 @@ class BearRange extends HTMLInputElement {
                 console.log(this.offsetWidth);
                 updateRange(this);
             });
-        }, 0);
+        }, 300);
         // debugger;
     }
 }
