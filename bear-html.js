@@ -454,7 +454,13 @@ class BearRange extends HTMLInputElement {
     connectedCallback() {
         // This fires the moment the input enters the DOM
         console.log("%cBearRange connected!", "font-size:18px;color:green;");
-        updateRange(this);
+        // updateRange(this);
+        setTimeout(() => {
+            requestAnimationFrame(() => {
+                console.log(this.offsetWidth);
+                updateRange(this);
+            });
+        }, 0);
         // debugger;
     }
 }
