@@ -36,7 +36,9 @@ const modBeerHtml = await import("bear-html");
  * @property {Function} colorNameToHex
  * @property {Function} getRootCssVarMs
  * @property {Function} isCssVariableDefined
+ * @property {Function} mkColorPickerSquare
  * @property {Function} mkDialogMenu
+ * @property {Function} mkDoubleColorInputs
  * @property {Function} mkMdcIcon
  * @property {Function} mkXclose
  * @property {Function} nextPaint
@@ -1018,89 +1020,34 @@ function isDisplayModePWA() {
 
 //////////////////////////////////////////// 4basic
 
-/**
- * Sync user input for an <input type=text> and an <input type=color>
- *
- * @Example
- *  // Note the order here. This function must be called first.
- *  syncInpTextAndColorPicker(inpColor, colorPicker);
- *  inpColor.addEventListener("input", () => { checkCanSaveNewTheme(); });
- *  colorPicker.addEventListener("input", () => { applyNewTheme(); });
- *
- * @param {HTMLInputElement} inpTypeText
- * @param {HTMLInputElement} inpTypeColor
- */
-function syncInpTextAndColorPicker(inpTypeText, inpTypeColor) {
-    if (inpTypeText.tagName != "INPUT") {
-        debugger;
-        throw Error("Not <input>");
-    }
-    if (inpTypeColor.tagName != "INPUT") {
-        debugger;
-        throw Error("Not <input>");
-    }
-    if (inpTypeText.type != "text") {
-        debugger;
-        throw Error("Not <input type=text>");
-    }
-    if (inpTypeColor.type != "color") {
-        debugger;
-        throw Error("Not <input type=color>");
-    }
-    inpTypeText.addEventListener("input", () => {
-        const hex = modBasicUI.colorNameToHex(inpTypeText.value.trim());
-        // console.log({ hex });
-        if (hex) {
-            inpTypeText.setCustomValidity("");
-            if (document.activeElement == inpTypeText) {
-                inpTypeColor.value = hex;
-                inpTypeColor.dispatchEvent(new Event('input', { bubbles: true }));
-            }
-            currentTheme.color = inpTypeText.value;
-        } else {
-            inpTypeText.setCustomValidity("Invalid color");
-        }
-        inpTypeText.reportValidity();
-        // // Set in a separate input event that runs after this event:
-        // checkCanSaveNewTheme();
-    });
-    inpTypeColor.addEventListener("input", () => {
-        if (document.activeElement == inpTypeColor) {
-            inpTypeText.value = inpTypeColor.value;
-            inpTypeText.dispatchEvent(new Event('input', { bubbles: true }));
-        }
-        currentTheme.color = inpTypeText.value;
-    });
-}
 
 function dialogColorTheme() {
     // const inpColor = mkElt("input", { id: "inp-color", type: "text", placeholder: "CSS color" });
     console.log({ modBeerHtml });
     // debugger;
-    const { wrapper, input: inpColor } =
-        modBeerHtml.createTextField({
-            label: "Color",
-            border: true
-        });
-    // debugger;
-    inpColor.id = "inp-color";
+
+    const wrapperInpColor = modBeerHtml.createTextField({
+        label: "Color",
+        border: true
+    });
+    debugger;
+    const inpColor = wrapperInpColor.input;
+
+    const wrapperDoubleColors = modBasicUI.mkDoubleColorInputs(wrapperInpColor, applyDialogTheme);
+    const colorPicker = wrapperDoubleColors.colorPicker;
+    const eltColorInputs = wrapperDoubleColors.wrapper;
+
+
 
     inpColor.value = currentTheme.color;
-    // fieldColor.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
-    // const divFieldColor = mkElt("div", undefined, fieldColor);
-    // const divFieldColor = fieldColor;
-    wrapper.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
-    const colorPicker = mkElt("input", { id: "color-picker", type: "color" });
-    colorPicker.classList.add("input-color-square");
+    inpColor.id = "inp-color";
+    colorPicker.id = "color-picker";
     colorPicker.value = currentTheme.color;
-    const eltColorInputs = mkElt("span", { id: "OLDcolor-inputs" }, [
-        wrapper,
-        colorPicker
-    ]);
-    eltColorInputs.classList.add("basic-ui_color-inputs");
+
     const lblColor = mkElt("label", { class: "label-selection-row" }, [
         mkElt("span", { style: "font-weight:bold; font-size:1.15rem;" }, "Seed Color:"),
         eltColorInputs
+        // wrapperDoubleColors.wrapper
     ]);
 
     function applyDialogTheme() {
@@ -1114,7 +1061,6 @@ function dialogColorTheme() {
     }
 
 
-    syncInpTextAndColorPicker(inpColor, colorPicker);
     inpColor.addEventListener("input", () => { checkCanSaveNewTheme(true); });
     colorPicker.addEventListener("input", () => { applyDialogTheme(); });
 

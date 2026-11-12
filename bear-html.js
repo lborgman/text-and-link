@@ -13,7 +13,7 @@
 const mkElt = window["mkElt"];
 
 const modCustElts = await import("custom-elts-helpers");
-debugger;
+// debugger;
 // class x
 class BearRange extends modCustElts.withSafeInit(HTMLInputElement) {
     onVisibleInit() {
@@ -369,8 +369,8 @@ export function createSlider({
     onInputThrottleMs,
     onChange,
 } = {}) {
-    console.warn("createSlider");
-    console.log("%cis there a custom element defined:", "color:red;", customElements.get('bear-range'));
+    // console.warn("createSlider");
+    // console.log("%cis there a custom element defined:", "color:red;", customElements.get('bear-range'));
     // const input = document.createElement('input');
 
 
@@ -381,17 +381,17 @@ export function createSlider({
     input.setAttribute('is', 'bear-range'); // only if you want CSS like input[is="bear-range"] to match
 
 
-    console.log("%cinput", "color:green", input);
-    console.log("%cinput.outerHTML", "color:green", input.outerHTML);
-    console.log("%cinput.constructor", "color:green", input.constructor);
-    console.log("%cinput.constructor.name", "color:green", input.constructor.name);
-    console.log("%cinput instanceof BearRange", "color:green", input instanceof BearRange);
-    console.log("%cinput customElements", "color:green", customElements.get('bear-range'));
+    // console.log("%cinput", "color:green", input);
+    // console.log("%cinput.outerHTML", "color:green", input.outerHTML);
+    // console.log("%cinput.constructor", "color:green", input.constructor);
+    // console.log("%cinput.constructor.name", "color:green", input.constructor.name);
+    // console.log("%cinput instanceof BearRange", "color:green", input instanceof BearRange);
+    // console.log("%cinput customElements", "color:green", customElements.get('bear-range'));
 
     const Registered = customElements.get('bear-range');
-    console.log('%cregistered=', "color:yellow", Registered.name);
-    console.log('%csame class=', "color:yellow", Registered === BearRange);
-    console.log('%cinstanceof registered=', "color:yellow", input instanceof Registered);
+    // console.log('%cregistered=', "color:yellow", Registered.name);
+    // console.log('%csame class=', "color:yellow", Registered === BearRange);
+    // console.log('%cinstanceof registered=', "color:yellow", input instanceof Registered);
     // debugger;
 
 
@@ -526,9 +526,9 @@ class BearRangeOLD extends HTMLInputElement {
 
 
 // You must specify which native tag you are extending
-console.log("%cbefore define bear-range", "color:red;");
+// console.log("%cbefore define bear-range", "color:red;");
 customElements.define('bear-range', BearRange, { extends: 'input' });
-console.log("%cafter define bear-range", "color:red;");
+// console.log("%cafter define bear-range", "color:red;");
 
 
 // ---------------------------------------------------------------------------
@@ -885,7 +885,7 @@ function throttle(func, msLimit) {
 
 const rootPixelSize = rootSizeInPixels();
 function updateRange(input) {
-    console.log("updateRange here");
+    // console.log("updateRange here");
     // debugger;
     // onWeak(input, "change", onChangeInput);
     // const divSlider = parent(input);

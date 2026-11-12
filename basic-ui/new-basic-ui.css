@@ -236,6 +236,7 @@ input[type=color].input-color-square {
     height: 20px;
     width: 40px;
     opacity: 1;
+    position: static;
 
     /* 1. Target Webkit browsers (Chrome, Safari, Edge, Opera) */
     &::-webkit-color-swatch-wrapper {

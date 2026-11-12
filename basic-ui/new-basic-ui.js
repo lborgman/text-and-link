@@ -557,7 +557,7 @@ export function addMenuDivider(dialogMenu) {
  *
  * @param {HTMLDialogElement} dialogMenu 
  * @param {string|HTMLSpanElement} txt 
- * @param {function():void} fun 
+ * @param {() => void} fun 
  * @throws {TypeError}
  * @throws {RangeError}
  * @category Visual elements
@@ -1075,7 +1075,7 @@ export function closeDialog(dialog) {
     setTimeout(() => {
         dialog.close();
         if (!dialog.classList.contains("html-dialog")) {
-            console.log("closeDialog remove");
+            // console.log("closeDialog remove");
             dialog.remove();
         }
     }, backdropDuration);
@@ -1172,3 +1172,108 @@ const modMdcIcons = (location.hostname == "localhost") ?
     :
     undefined;
 await modMdcIcons?.setIconStyle(mdcIconStyle);
+
+
+/**
+ * @returns {HTMLInputElement} an <input type="color">
+ */
+export function mkColorPickerSquare() {
+    const colorPicker = mkElt("input", { type: "color", class: "input-color-square" });
+    // colorPicker.classList.add("input-color-square");
+    return colorPicker
+}
+
+/**
+ * 
+ * @param {object} wrapperInpColor 
+ * @param {() => void} onAnyInput 
+ * @returns {void}
+ */
+export function mkDoubleColorInputs(wrapperInpColor, onAnyInput) {
+    // onAnyInput is checked in syncInpTextAndColorPicker!
+    /*
+    const { wrapper: wrapperInpColor, input: inpColor } =
+        createTextField({
+            label: "Color",
+            border: true
+        });
+    */
+    const inpColor = wrapperInpColor.input;
+
+    // wrapperInpColor.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
+    wrapperInpColor.wrapper.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
+
+    const colorPicker = mkColorPickerSquare();
+    const eltColorInputs = mkElt("span", undefined, [
+        wrapperInpColor.wrapper,
+        colorPicker
+    ]);
+    eltColorInputs.classList.add("basic-ui_color-inputs");
+    syncInpTextAndColorPicker(inpColor, colorPicker, onAnyInput);
+    return { inpColor, colorPicker, wrapper: eltColorInputs }
+}
+
+/**
+ * Sync user input for an <input type=text> and an <input type=color>
+ *
+ * @Example
+ *  // Note the order here. This function must be called first.
+ *  syncInpTextAndColorPicker(inpColor, colorPicker);
+ *  inpColor.addEventListener("input", () => { checkCanSaveNewTheme(); });
+ *  colorPicker.addEventListener("input", () => { applyNewTheme(); });
+ *
+ * @param {HTMLInputElement} inpTypeText
+ * @param {HTMLInputElement} inpTypeColor
+ * @param {() => void} onAnyInput
+ */
+function syncInpTextAndColorPicker(inpTypeText, inpTypeColor, onAnyInput) {
+    const tofAny = typeof onAnyInput;
+    if ("function" != tofAny) {
+        debugger;
+        throw Error("onAnyInput should be a function");
+    } else if (0 < onAnyInput.length) {
+        debugger;
+        throw Error("onAnyInput should take no parameters");
+    }
+    if (inpTypeText.tagName != "INPUT") {
+        debugger;
+        throw Error("Not <input>");
+    }
+    if (inpTypeColor.tagName != "INPUT") {
+        debugger;
+        throw Error("Not <input>");
+    }
+    if (inpTypeText.type != "text") {
+        debugger;
+        throw Error("Not <input type=text>");
+    }
+    if (inpTypeColor.type != "color") {
+        debugger;
+        throw Error("Not <input type=color>");
+    }
+    inpTypeText.addEventListener("input", () => {
+        const hex = colorNameToHex(inpTypeText.value.trim());
+        if (hex) {
+            inpTypeText.setCustomValidity("");
+            if (document.activeElement == inpTypeText) {
+                inpTypeColor.value = hex;
+                inpTypeColor.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+            // currentTheme.color = inpTypeText.value;
+            onAnyInput();
+        } else {
+            inpTypeText.setCustomValidity("Invalid color");
+        }
+        inpTypeText.reportValidity();
+        // // Set in a separate input event that runs after this event:
+        // checkCanSaveNewTheme();
+    });
+    inpTypeColor.addEventListener("input", () => {
+        if (document.activeElement == inpTypeColor) {
+            inpTypeText.value = inpTypeColor.value;
+            inpTypeText.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        // currentTheme.color = inpTypeText.value;
+        onAnyInput();
+    });
+}
