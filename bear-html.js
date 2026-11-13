@@ -29,6 +29,7 @@ class BearRange extends modCustElts.withSafeInit(HTMLInputElement) {
  * @typedef {object} FieldOptions
  * @property {string} [label] - Floating label text. Omit for no label.
  * @property {string} [value] - Initial value.
+ * @property {string} [placeholder] - Needed for floating labels
  * @property {boolean} [border=false] - Use bordered style.
  * @property {boolean} [fill=false] - Use filled style. `border` and `fill` are
  *   mutually exclusive per Beer CSS; if both are set, `fill` wins.
@@ -127,6 +128,7 @@ function buildField({ label, border, fill, size }, isTextarea) {
  */
 export function createTextField({
     value = '',
+    placeholder = " ",
     name,
     onInput,
     ...rest
@@ -156,6 +158,8 @@ export function createTextField({
     } else {
         throw Error("bad eltText");
     }
+
+    eltText.setAttribute("placeholder", placeholder);
 
     field.append(eltText);
     if (label) field.append(label);
