@@ -1030,7 +1030,7 @@ function dialogColorTheme() {
         label: "Color",
         border: true
     });
-    debugger;
+    // debugger;
     const inpColor = wrapperInpColor.input;
 
     const wrapperDoubleColors = modBasicUI.mkDoubleColorInputs(wrapperInpColor, applyDialogTheme);
@@ -1042,6 +1042,7 @@ function dialogColorTheme() {
     inpColor.value = currentTheme.color;
     inpColor.id = "inp-color";
     colorPicker.id = "color-picker";
+    console.warn("before colorPicker.value =");
     colorPicker.value = currentTheme.color;
 
     const lblColor = mkElt("label", { class: "label-selection-row" }, [
@@ -1051,6 +1052,7 @@ function dialogColorTheme() {
     ]);
 
     function applyDialogTheme() {
+        console.warn("applyDialogTheme called");
         /** @type {ColorTheme} */
         const dlgTheme = {
             color: inpColor.value,
@@ -1074,12 +1076,8 @@ function dialogColorTheme() {
         chkDark,
         "Dark",
     ]);
-    // const btnSaveColorTheme = mkElt("button", undefined, "Save");
-    // const btnSaveColorTheme = mkButtonBeer("Save");
     const btnSaveColorTheme = modBeerHtml.createButton({ label: "Save" });
 
-    // const btnResetColorTheme = mkElt("button", undefined, "Reset");
-    // const btnResetColorTheme = mkButtonBeer("Reset");
     const btnResetColorTheme = modBeerHtml.createButton({ label: "Reset" });
 
     const divButtons = mkElt("div", undefined, [

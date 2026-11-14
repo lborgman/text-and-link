@@ -1187,7 +1187,11 @@ export function mkColorPickerSquare() {
  * 
  * @param {object} wrapperInpColor 
  * @param {() => void} onAnyInput 
- * @returns {void}
+ * @returns {{
+ *   inpColor: HTMLInputElement,
+ *   colorPicker: HTMLInputElement,
+ *   wrapper: HTMLSpanElement
+ * }} An object containing the input elements and wrapper.
  */
 export function mkDoubleColorInputs(wrapperInpColor, onAnyInput) {
     // onAnyInput is checked in syncInpTextAndColorPicker!
@@ -1204,13 +1208,13 @@ export function mkDoubleColorInputs(wrapperInpColor, onAnyInput) {
     wrapperInpColor.wrapper.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
 
     const colorPicker = mkColorPickerSquare();
-    const eltColorInputs = mkElt("span", undefined, [
+    const spanColorInputs = mkElt("span", undefined, [
         wrapperInpColor.wrapper,
         colorPicker
     ]);
-    eltColorInputs.classList.add("basic-ui_color-inputs");
+    spanColorInputs.classList.add("basic-ui_color-inputs");
     syncInpTextAndColorPicker(inpColor, colorPicker, onAnyInput);
-    return { inpColor, colorPicker, wrapper: eltColorInputs }
+    return { inpColor, colorPicker, wrapper: spanColorInputs }
 }
 
 /**
@@ -1227,6 +1231,7 @@ export function mkDoubleColorInputs(wrapperInpColor, onAnyInput) {
  * @param {() => void} onAnyInput
  */
 function syncInpTextAndColorPicker(inpTypeText, inpTypeColor, onAnyInput) {
+    console.warn("syncInpTextAndColor called");
     const tofAny = typeof onAnyInput;
     if ("function" != tofAny) {
         debugger;
@@ -1260,6 +1265,7 @@ function syncInpTextAndColorPicker(inpTypeText, inpTypeColor, onAnyInput) {
                 inpTypeColor.dispatchEvent(new Event('input', { bubbles: true }));
             }
             // currentTheme.color = inpTypeText.value;
+            console.log("before onAnyInput in inpTypeText");
             onAnyInput();
         } else {
             inpTypeText.setCustomValidity("Invalid color");
@@ -1274,6 +1280,7 @@ function syncInpTextAndColorPicker(inpTypeText, inpTypeColor, onAnyInput) {
             inpTypeText.dispatchEvent(new Event('input', { bubbles: true }));
         }
         // currentTheme.color = inpTypeText.value;
+        console.log("before onAnyInput in inpTypeColor");
         onAnyInput();
     });
 }
