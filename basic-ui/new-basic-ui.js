@@ -1217,8 +1217,10 @@ export function mkDoubleColorInputs(wrapperInpColor, onAnyInput) {
 
     /** @type {undefined|string} */
     let initColor;
+
+    inpColor.setCustomValidity("");
     setTimeout(() => {
-        if (undefined != initColor) return;
+        if (undefined != initColor) { return; }
         // inpColor.value = "funInitColor not called";
         inpColor.value = "(none)";
         inpColor.setCustomValidity("Developer should call funInitColor");
