@@ -1218,17 +1218,15 @@ export function mkDoubleColorInputs(wrapperInpColor, onAnyInput) {
     /** @type {undefined|string} */
     let initColor;
 
-    inpColor.setCustomValidity(""); // probably bug in Edge updating. Hm, no?
+
+    // inpColor.setCustomValidity("Developer should call funInitColor");
+    inpColor.setCustomValidity("Not ready"); // funInitColor will clear this
     inpColor.reportValidity();
 
-    setTimeout(() => {
-        if (undefined != initColor) { return; }
-        inpColor.value = "(none)";
-        inpColor.setCustomValidity("Developer should call funInitColor");
-        inpColor.reportValidity();
-    }, 1000);
     /** @param {string} color */
     const funInitColor = (color) => {
+        inpColor.setCustomValidity(""); // probably bug in Edge updating. Hm, no?
+        inpColor.reportValidity();
         initColor = color;
         const hex = colorNameToHex(initColor);
         if (null == hex) {
