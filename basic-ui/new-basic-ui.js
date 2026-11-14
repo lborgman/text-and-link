@@ -1214,7 +1214,16 @@ export function mkDoubleColorInputs(wrapperInpColor, onAnyInput) {
         colorPicker
     ]);
     spanColorInputs.classList.add("basic-ui_color-inputs");
+
+    /** @type {undefined|string} */
     let initColor;
+    setTimeout(() => {
+        if (undefined != initColor) return;
+        // inpColor.value = "funInitColor not called";
+        inpColor.value = "(none)";
+        inpColor.setCustomValidity("Developer should call funInitColor");
+        inpColor.reportValidity();
+    }, 1000);
     /** @param {string} color */
     const funInitColor = (color) => {
         initColor = color;

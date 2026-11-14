@@ -1033,11 +1033,9 @@ function dialogColorTheme() {
     const colorPicker = wrapperDoubleColors.colorPicker;
     const eltColorInputs = wrapperDoubleColors.wrapper;
 
-
-
-    inpColor.value = currentTheme.color;
     inpColor.id = "inp-color";
     colorPicker.id = "color-picker";
+
     wrapperDoubleColors.funInitColor(currentTheme.color);
 
     const lblColor = mkElt("label", { class: "label-selection-row" }, [
@@ -1169,9 +1167,9 @@ function dialogColorTheme() {
      */
     function fillInTheme(theme) {
         const { color, dark, variant } = theme;
-        const safeColor = color || '#000000';
-        inpColor.value = safeColor;
-        colorPicker.value = modBasicUI.colorNameToHex(safeColor);
+        // const safeColor = color || '#000000';
+        // inpColor.value = safeColor;
+        // colorPicker.value = modBasicUI.colorNameToHex(safeColor);
         chkDark.checked = dark;
         const selectedVariant = variant || 'tonalSpot';
         const selectedInput = /** @type {HTMLInputElement|null} */ (divVariants.querySelector(`input[value=${selectedVariant}]`));
