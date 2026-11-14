@@ -1218,7 +1218,7 @@ export function mkDoubleColorInputs(wrapperInpColor, onAnyInput) {
     /** @type {undefined|string} */
     let initColor;
 
-    inpColor.setCustomValidity("");
+    // inpColor.setCustomValidity(""); // probably bug in Edge updating
     setTimeout(() => {
         if (undefined != initColor) { return; }
         // inpColor.value = "funInitColor not called";
