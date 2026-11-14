@@ -1022,15 +1022,11 @@ function isDisplayModePWA() {
 
 
 function dialogColorTheme() {
-    // const inpColor = mkElt("input", { id: "inp-color", type: "text", placeholder: "CSS color" });
-    console.log({ modBeerHtml });
-    // debugger;
 
     const wrapperInpColor = modBeerHtml.createTextField({
         label: "Color",
         border: true
     });
-    // debugger;
     const inpColor = wrapperInpColor.input;
 
     const wrapperDoubleColors = modBasicUI.mkDoubleColorInputs(wrapperInpColor, applyDialogTheme);
@@ -1042,8 +1038,7 @@ function dialogColorTheme() {
     inpColor.value = currentTheme.color;
     inpColor.id = "inp-color";
     colorPicker.id = "color-picker";
-    console.warn("before colorPicker.value =");
-    colorPicker.value = currentTheme.color;
+    wrapperDoubleColors.funInitColor(currentTheme.color);
 
     const lblColor = mkElt("label", { class: "label-selection-row" }, [
         mkElt("span", { style: "font-weight:bold; font-size:1.15rem;" }, "Seed Color:"),
@@ -1052,7 +1047,7 @@ function dialogColorTheme() {
     ]);
 
     function applyDialogTheme() {
-        console.warn("applyDialogTheme called");
+        // console.warn("applyDialogTheme called");
         /** @type {ColorTheme} */
         const dlgTheme = {
             color: inpColor.value,

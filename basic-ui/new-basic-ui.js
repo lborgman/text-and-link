@@ -1190,7 +1190,8 @@ export function mkColorPickerSquare() {
  * @returns {{
  *   inpColor: HTMLInputElement,
  *   colorPicker: HTMLInputElement,
- *   wrapper: HTMLSpanElement
+ *   wrapper: HTMLSpanElement,
+ *   funInitColor: (arg0: string) => void
  * }} An object containing the input elements and wrapper.
  */
 export function mkDoubleColorInputs(wrapperInpColor, onAnyInput) {
@@ -1213,8 +1214,22 @@ export function mkDoubleColorInputs(wrapperInpColor, onAnyInput) {
         colorPicker
     ]);
     spanColorInputs.classList.add("basic-ui_color-inputs");
-    syncInpTextAndColorPicker(inpColor, colorPicker, onAnyInput);
-    return { inpColor, colorPicker, wrapper: spanColorInputs }
+    let initColor;
+    /** @param {string} color */
+    const funInitColor = (color) => {
+        initColor = color;
+        const hex = colorNameToHex(initColor);
+        if (null == hex) {
+            const msg = `Bad color: "${color}"`;
+            console.error(msg);
+            debugger;
+            throw Error(msg);
+        }
+        inpColor.value = initColor;
+        colorPicker.value = hex;
+        syncInpTextAndColorPicker(inpColor, colorPicker, onAnyInput);
+    }
+    return { inpColor, colorPicker, wrapper: spanColorInputs, funInitColor }
 }
 
 /**
@@ -1231,7 +1246,7 @@ export function mkDoubleColorInputs(wrapperInpColor, onAnyInput) {
  * @param {() => void} onAnyInput
  */
 function syncInpTextAndColorPicker(inpTypeText, inpTypeColor, onAnyInput) {
-    console.warn("syncInpTextAndColor called");
+    // console.warn("syncInpTextAndColor called");
     const tofAny = typeof onAnyInput;
     if ("function" != tofAny) {
         debugger;
@@ -1265,7 +1280,7 @@ function syncInpTextAndColorPicker(inpTypeText, inpTypeColor, onAnyInput) {
                 inpTypeColor.dispatchEvent(new Event('input', { bubbles: true }));
             }
             // currentTheme.color = inpTypeText.value;
-            console.log("before onAnyInput in inpTypeText");
+            // console.log("before onAnyInput in inpTypeText");
             onAnyInput();
         } else {
             inpTypeText.setCustomValidity("Invalid color");
@@ -1280,7 +1295,7 @@ function syncInpTextAndColorPicker(inpTypeText, inpTypeColor, onAnyInput) {
             inpTypeText.dispatchEvent(new Event('input', { bubbles: true }));
         }
         // currentTheme.color = inpTypeText.value;
-        console.log("before onAnyInput in inpTypeColor");
+        // console.log("before onAnyInput in inpTypeColor");
         onAnyInput();
     });
 }
