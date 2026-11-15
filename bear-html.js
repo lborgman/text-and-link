@@ -344,35 +344,63 @@ export function createSelect({ options, value, name, onChange, ...rest } = { opt
  * the thumb position as it's dragged. Assumes CSS restyles the bare range
  * input directly (same approach as your checkbox/radio CSS) — no field
  * wrapper markup is required for the input itself.
- * @param {object} [options]
- * @param {number} [options.min=0]
- * @param {number} [options.max=100]
- * @param {number} [options.step=1]
- * @param {number} [options.value]
- * @param {string} [options.name]
- * @param {boolean} [options.showBubble=true]
+ * @param {object} [opts]
+ * @param {number} [opts.min=0]
+ * @param {number} [opts.max=100]
+ * @param {number} [opts.step=1]
+ * @param {number} [opts.value]
+ * @param {string} [opts.name]
+ * @param {boolean} [opts.showBubble=true]
  *
- * @param {SliderSize} [options.size=tiny]
- * @param {SliderDirection} [options.direction=horizontal]
+ * @param {SliderSize} [opts.size=tiny]
+ * @param {SliderDirection} [opts.direction=horizontal]
  *
- * @param {(value: number) => void} [options.onInput]
- * @param {number} [options.onInputThrottleMs]
- * @param {(value: number) => void|null} [options.onChange]
+ * @param {(value: number) => void} [opts.onInput]
+ * @param {number} [opts.onInputThrottleMs]
+ * @param {(value: number) => void|null} [opts.onChange]
  * @returns {{ wrapper: HTMLElement, input: HTMLInputElement, funInit: (val:number) => void }}
  */
-export function createSlider({
-    min = 0,
-    max = 100,
-    step = 1,
-    value,
-    name,
-    showBubble = true,
-    size = "tiny",
-    direction = "horizontal",
-    onInput,
-    onInputThrottleMs,
-    onChange,
-} = {}) {
+export function createSlider(rawOpts = {
+}) {
+    const opts = {
+        min: 0,
+        max: 100,
+        step: 1,
+        showBubble: true,
+        size: "tiny",
+        direction: "horizontal",
+        // onInput,
+        // onInputThrottleMs,
+        // onChange,
+
+        ...rawOpts
+    }
+    const allowedOpts = /** @type {const} */ (
+        [
+            "min",
+            "max",
+            "step",
+            "showBubble",
+            "size",
+            "direction",
+            "value",
+            "onInput",
+            "onInputThrottleMs",
+            "onChange",
+        ]);
+    const rest = { ...opts };
+    for (const key of allowedOpts) {
+        // delete rest[/** @type {keyof typeof rest} */ (key)];
+        delete rest[key];
+    }
+    if (Object.keys(rest).length > 0) {
+        const unknownKeys = Object.keys(rest).join(", ");
+        throw Error(
+            `Invalid options passed to createSlider: "${unknownKeys}". ` +
+            `\nAllowed: ${allowedOpts.join(", ")}`
+        );
+    }
+
     // console.warn("createSlider");
     // console.log("%cis there a custom element defined:", "color:red;", customElements.get('bear-range'));
     // const input = document.createElement('input');
@@ -384,35 +412,22 @@ export function createSlider({
     );
     input.setAttribute('is', 'bear-range'); // only if you want CSS like input[is="bear-range"] to match
 
-
-    // console.log("%cinput", "color:green", input);
-    // console.log("%cinput.outerHTML", "color:green", input.outerHTML);
-    // console.log("%cinput.constructor", "color:green", input.constructor);
-    // console.log("%cinput.constructor.name", "color:green", input.constructor.name);
-    // console.log("%cinput instanceof BearRange", "color:green", input instanceof BearRange);
-    // console.log("%cinput customElements", "color:green", customElements.get('bear-range'));
-
     const Registered = customElements.get('bear-range');
-    // console.log('%cregistered=', "color:yellow", Registered.name);
-    // console.log('%csame class=', "color:yellow", Registered === BearRange);
-    // console.log('%cinstanceof registered=', "color:yellow", input instanceof Registered);
-    // debugger;
-
 
 
     input.type = 'range';
-    input.min = String(min);
-    input.max = String(max);
-    input.step = String(step);
-    input.value = String(value ?? min);
-    if (name) input.name = name;
+    input.min = String(opts.min);
+    input.max = String(opts.max);
+    input.step = String(opts.step);
+    input.value = String(opts.value ?? opts.min);
+    if (opts.myName) input.name = opts.myName;
 
 
     const wrapper = document.createElement('div');
     // wrapper.className = 'slider-field';
     wrapper.classList.add('slider');
-    wrapper.classList.add(size);
-    wrapper.classList.add(direction);
+    wrapper.classList.add(opts.size);
+    wrapper.classList.add(opts.direction);
 
     wrapper.style.position = 'relative';
     wrapper.appendChild(input);
@@ -422,14 +437,14 @@ export function createSlider({
 
     const bubble = document.createElement('span');
     const updateBubble = () => {
-        const percent = (Number(input.value) - min) / (max - min);
+        const percent = (Number(input.value) - opts.min) / (opts.max - opts.min);
         bubble.textContent = input.value;
         // Nudges the bubble to follow the thumb; the 8px fudge roughly accounts
         // for thumb radius so the bubble centers over it rather than the track.
         bubble.style.left = `calc(${percent * 100}% - ${percent * 16 - 8}px)`;
     };
 
-    if (showBubble) {
+    if (opts.showBubble) {
         bubble.className = 'slider-bubble';
         wrapper.appendChild(bubble);
 
@@ -438,7 +453,7 @@ export function createSlider({
         });
         updateBubble();
     }
-    if (onInput) {
+    if (opts.onInput) {
         const handleInput =
             onInputThrottleMs ?
                 throttle(onInput, onInputThrottleMs)
@@ -448,9 +463,9 @@ export function createSlider({
             handleInput(Number(input.value));
         });
     }
-    if (onChange) {
+    if (opts.onChange) {
         input.addEventListener('change', () => {
-            onChange(Number(input.value));
+            opts.onChange(Number(input.value));
         });
     }
 
@@ -463,7 +478,7 @@ export function createSlider({
 
     /** @param {number} val */
     const funInit = (val) => {
-        input.value = val;
+        input.value = String(val);
         updateBubble();
     }
     return { wrapper, input, funInit };

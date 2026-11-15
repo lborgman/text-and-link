@@ -145,6 +145,7 @@ const detailsTestTabs = () => mkElt("details", { id: "test-tabs" }, [
 
 // ----- Test sliders ----
 const sli1 = modBear.createSlider({
+    // bad: true,
     min: 2, max: 8, step: 1, value: 4, showBubble: true,
 });
 /*
