@@ -164,6 +164,7 @@ const detailsTestSliders = () => mkElt("details", { id: "test-sliders" }, [
             )
         ])
 ]);
+sli1.funInit(5);
 
 
 

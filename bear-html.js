@@ -358,7 +358,7 @@ export function createSelect({ options, value, name, onChange, ...rest } = { opt
  * @param {(value: number) => void} [options.onInput]
  * @param {number} [options.onInputThrottleMs]
  * @param {(value: number) => void|null} [options.onChange]
- * @returns {{ wrapper: HTMLElement, input: HTMLInputElement }}
+ * @returns {{ wrapper: HTMLElement, input: HTMLInputElement, funInit: (val:number) => void }}
  */
 export function createSlider({
     min = 0,
@@ -420,18 +420,19 @@ export function createSlider({
     const spanSelected = mkElt("span");
     wrapper.appendChild(spanSelected);
 
+    const bubble = document.createElement('span');
+    const updateBubble = () => {
+        const percent = (Number(input.value) - min) / (max - min);
+        bubble.textContent = input.value;
+        // Nudges the bubble to follow the thumb; the 8px fudge roughly accounts
+        // for thumb radius so the bubble centers over it rather than the track.
+        bubble.style.left = `calc(${percent * 100}% - ${percent * 16 - 8}px)`;
+    };
+
     if (showBubble) {
-        const bubble = document.createElement('span');
         bubble.className = 'slider-bubble';
         wrapper.appendChild(bubble);
 
-        const updateBubble = () => {
-            const percent = (Number(input.value) - min) / (max - min);
-            bubble.textContent = input.value;
-            // Nudges the bubble to follow the thumb; the 8px fudge roughly accounts
-            // for thumb radius so the bubble centers over it rather than the track.
-            bubble.style.left = `calc(${percent * 100}% - ${percent * 16 - 8}px)`;
-        };
         input.addEventListener('input', () => {
             updateBubble();
         });
@@ -460,7 +461,12 @@ export function createSlider({
         updateRange(input);
     });
 
-    return { wrapper, input };
+    /** @param {number} val */
+    const funInit = (val) => {
+        input.value = val;
+        updateBubble();
+    }
+    return { wrapper, input, funInit };
 }
 class BearRangeOLD extends HTMLInputElement {
     constructor() {
