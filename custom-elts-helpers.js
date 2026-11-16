@@ -1,3 +1,18 @@
+// @ts-check
+/*
+    To silence the linter you can use this JSDoc workaround:
+
+/**
+ * @type {{
+ *   withSafeInit: (
+ *     BaseClass: CustomElementConstructor,
+ *     initMethodName?: string
+ *   ) => CustomElementConstructor
+ * }}
+ * / <-- fix this, of course
+const modCustElts = await import("custom-elts-helpers");
+*/
+
 /**
  * A mixin that defers initialization until the element is truly visible.
  * @param {CustomElementConstructor} BaseClass - The class to extend from (e.g., HTMLElement)

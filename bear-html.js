@@ -4,7 +4,9 @@
  * bear-html.js - Not beer, but bear
  *
  * Utility functions for building Beer CSS form field markup (text input,
- * textarea, switch) without depending on Beer CSS's own JS module.
+ * textarea, switch, slider, etc).
+ *
+ * Does not depend on Beer CSS's own JS module.
  *
  * Beer CSS reference: https://github.com/beercss/beercss/blob/main/docs
  */
@@ -12,9 +14,28 @@
 // @ts-ignore
 const mkElt = window["mkElt"];
 
+// const modCustElts = await import("./custom-elts-helpers.js");
+// const modCustElts = await import("custom-elts-helpers");
+/* @type {typeof import("./custom-elts-helpers.js")} */
+/* *
+ * @type {{
+ *   withSafeInit: <T extends CustomElementConstructor>(
+ *     BaseClass: T,
+ *     initMethodName?: string
+ *   ) => T
+ * }}
+ */
+/**
+ * @type {{
+ *   withSafeInit: (
+ *     BaseClass: CustomElementConstructor,
+ *     initMethodName?: string
+ *   ) => CustomElementConstructor
+ * }}
+ */
 const modCustElts = await import("custom-elts-helpers");
-// debugger;
-// class x
+// const modCustElts = await import("./custom-elts-helpers.js");
+
 class BearRange extends modCustElts.withSafeInit(HTMLInputElement) {
     onVisibleInit() {
         updateRange(this);
@@ -344,20 +365,19 @@ export function createSelect({ options, value, name, onChange, ...rest } = { opt
  * the thumb position as it's dragged. Assumes CSS restyles the bare range
  * input directly (same approach as your checkbox/radio CSS) — no field
  * wrapper markup is required for the input itself.
- * @param {object} [opts]
- * @param {number} [opts.min=0]
- * @param {number} [opts.max=100]
- * @param {number} [opts.step=1]
- * @param {number} [opts.value]
- * @param {string} [opts.name]
- * @param {boolean} [opts.showBubble=true]
+ * @param {object} [rawOpts]
+ * @param {number} [rawOpts.min=0]
+ * @param {number} [rawOpts.max=100]
+ * @param {number} [rawOpts.step=1]
+ * @param {number} [rawOpts.value]
+ * @param {boolean} [rawOpts.showBubble=true]
  *
- * @param {SliderSize} [opts.size=tiny]
- * @param {SliderDirection} [opts.direction=horizontal]
+ * @param {SliderSize} [rawOpts.size=tiny]
+ * @param {SliderDirection} [rawOpts.direction=horizontal]
  *
- * @param {(value: number) => void} [opts.onInput]
- * @param {number} [opts.onInputThrottleMs]
- * @param {(value: number) => void|null} [opts.onChange]
+ * @param {(value: number) => void} [rawOpts.onInput]
+ * @param {number} [rawOpts.onInputThrottleMs]
+ * @param {(value: number) => void|null} [rawOpts.onChange]
  * @returns {{ wrapper: HTMLElement, input: HTMLInputElement, funInit: (val:number) => void }}
  */
 export function createSlider(rawOpts = {
@@ -401,9 +421,6 @@ export function createSlider(rawOpts = {
         );
     }
 
-    // console.warn("createSlider");
-    // console.log("%cis there a custom element defined:", "color:red;", customElements.get('bear-range'));
-    // const input = document.createElement('input');
 
 
     // const input = document.createElement('bear-range');
@@ -419,8 +436,8 @@ export function createSlider(rawOpts = {
     input.min = String(opts.min);
     input.max = String(opts.max);
     input.step = String(opts.step);
-    input.value = String(opts.value ?? opts.min);
-    if (opts.myName) input.name = opts.myName;
+    // input.value = String(opts.value ?? opts.min);
+    // if (opts.myName) input.name = opts.myName;
 
 
     const wrapper = document.createElement('div');
@@ -455,22 +472,21 @@ export function createSlider(rawOpts = {
     }
     if (opts.onInput) {
         const handleInput =
-            onInputThrottleMs ?
-                throttle(onInput, onInputThrottleMs)
+            opts.onInputThrottleMs ?
+                throttle(opts.onInput, opts.onInputThrottleMs)
                 :
-                onInput;
+                opts.onInput;
         input.addEventListener('input', () => {
             handleInput(Number(input.value));
         });
     }
-    if (opts.onChange) {
+    const onChange = opts.onChange;
+    if (onChange) {
         input.addEventListener('change', () => {
-            opts.onChange(Number(input.value));
+            onChange(Number(input.value));
         });
     }
 
-    // console.warn("calling updateRange in createSlider");
-    // setTimeout(() => { updateRange(input); }, 0);
     input.addEventListener("input", evt => {
         evt.stopPropagation();
         updateRange(input);
@@ -483,77 +499,21 @@ export function createSlider(rawOpts = {
     }
     return { wrapper, input, funInit };
 }
-class BearRangeOLD extends HTMLInputElement {
-    constructor() {
-        console.log("%cCalling BearRange super", "font-size:18px;color:red;");
-        super();
-    }
-    OLDconnectedCallback() {
-        // This fires the moment the input enters the DOM
-        console.log("%cBearRange connected!", "font-size:18px;color:green;");
-        // updateRange(this);
-        setTimeout(() => {
-            requestAnimationFrame(() => {
-                console.log(this.offsetWidth);
-                updateRange(this);
-            });
-        }, 300);
-        // debugger;
-    }
-    // }
-    // class MyComponent extends HTMLElement {
-    connectedCallback() {
-        // 1. Yield to the browser to calculate layout and styles
-        requestAnimationFrame(() => {
 
-            // 2. Perform a strict visibility check
-            const isReadyForInit = this.checkVisibility({
-                opacityProperty: true,       // Returns false if opacity: 0
-                visibilityProperty: true,    // Returns false if visibility: hidden
-                // contentVisibilityProperty: true // Returns false if skipped by content-visibility
-            });
-
-            if (!isReadyForInit) {
-                // 3. Fallback: Postpone initialization until it actually becomes visible
-                this.#waitForVisibility();
-                return;
-            }
-
-            // 4. Safe to initialize: Element is visible and has a layout box
-            this.#initialize();
-        });
-    }
-
-    #initialize() {
-        console.log("Safe initialization executed. No layout errors will occur.");
-        // Run your error-prone measurement, layout, or canvas code here
-        updateRange(this);
-    }
-
-    #waitForVisibility() {
-        console.warn("Component attached but hidden. Postponing setup to prevent errors.");
-
-        const observer = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                observer.disconnect(); // Clean up memory immediately
-                this.#initialize();
-            }
-        });
-
-        observer.observe(this);
+//// Here you must specify which native tag you are extending
+try {
+    customElements.define('bear-range', BearRange, { extends: 'input' });
+} catch (error) {
+    if (error instanceof DOMException && error.name === 'NotSupportedError') {
+        const msg = 'Customized built-in elements are unsupported in Safari.';
+        console.error(msg);
+        debugger;
+        throw Error(msg);
+    } else {
+        throw error;
     }
 }
 
-// customElements.define('my-component', MyComponent);
-
-
-
-
-
-// You must specify which native tag you are extending
-// console.log("%cbefore define bear-range", "color:red;");
-customElements.define('bear-range', BearRange, { extends: 'input' });
-// console.log("%cafter define bear-range", "color:red;");
 
 
 // ---------------------------------------------------------------------------
