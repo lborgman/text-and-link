@@ -603,6 +603,11 @@ div.slider {
 
 /* Tabs */
 
+nav.tabs.dragging {
+    /* background-color: red; */
+    inset: 2px 0 0 0;
+}
+
 nav.tabs>a {
     width: fit-content;
 }
@@ -627,11 +632,16 @@ nav:is(.left, .right, .bottom, .top):not(.max) a:not(.button, .chip):is(:focus-v
     background-size: 22500%;
 }
 
+
+
+
 div.tabs-container {
-    width: 100%;
+    background-color: blue;
+    position: relative;
     overflow-x: auto;
     /* Firefox */
     scrollbar-width: none;
+
     nav {
         gap: 0;
     }
@@ -640,4 +650,38 @@ div.tabs-container {
 /* Chromium, Edge, Safari */
 div.tabs-container::-webkit-scrollbar {
     display: none;
+}
+
+div.tabs-wrapper::before,
+div.tabs-wrapper::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    padding: 2px;
+    color: red;
+    background-color: #0006 !important;
+    backdrop-filter: blur(1px);
+    opacity: 0;
+    transition: opacity 2s;
+}
+
+div.tabs-wrapper::before {
+    left: 0;
+    content: "◀";
+}
+
+div.tabs-wrapper::after {
+    right: 0;
+    content: "▶";
+}
+div.tabs-wrapper.show-left::before {
+    opacity: 1;
+}
+div.tabs-wrapper.show-right::after {
+    opacity: 1;
 }

@@ -715,6 +715,24 @@ export function createTabs({ tabs, initial = 0, onChange }) {
     const nav = document.createElement('nav');
     nav.className = 'tabs';
 
+    const navContainer = document.createElement('div');
+    navContainer.appendChild(nav);
+    navContainer.classList.add("tabs-container");
+
+    const tabsWrapper = document.createElement("div");
+    tabsWrapper.appendChild(navContainer);
+    tabsWrapper.classList.add("tabs-wrapper");
+
+    const navParent = nav.parentElement;
+    if (!navParent) {
+        throw Error("!nav.parentElement");
+    }
+    const navWrapper = navParent.parentElement;
+    if (!navWrapper) {
+        throw Error("!navWrapper");
+    }
+
+
     const panelsContainer = document.createElement('div');
     panelsContainer.className = 'tabs-panels';
 
@@ -761,8 +779,8 @@ export function createTabs({ tabs, initial = 0, onChange }) {
     // const nav = document.getElementById('tabNav');
 
     let isDown = false;
-    let startX;
-    let scrollLeft;
+    let startX = 0;
+    let scrollLeft = 0;
     let hasMoved = false;
 
     nav.addEventListener('mousedown', (e) => {
@@ -770,7 +788,7 @@ export function createTabs({ tabs, initial = 0, onChange }) {
         hasMoved = false;
         nav.classList.add('dragging');
         startX = e.pageX - nav.offsetLeft;
-        scrollLeft = nav.scrollLeft;
+        scrollLeft = navParent.scrollLeft;
     });
 
     window.addEventListener('mouseup', () => {
@@ -790,7 +808,36 @@ export function createTabs({ tabs, initial = 0, onChange }) {
             hasMoved = true;
         }
 
-        nav.scrollLeft = scrollLeft - walk;
+        navParent.scrollLeft = scrollLeft - walk;
+        // debugger;
+
+        // const container = nav.parentElement; // .tabs-container
+        const navWrapper2 = navWrapper;
+        if (!navWrapper2.classList.contains("tabs-wrapper")) {
+            debugger;
+        }
+
+        checkLeftRight();
+        function checkLeftRight(dbg) {
+            if (dbg) { debugger; }
+            const showLeft = navParent.scrollLeft > 0;
+
+            const rightEdge = nav.scrollWidth - navParent.scrollLeft - 1;
+            const showRight = rightEdge > navWrapper2.clientWidth;
+
+            if (showLeft) {
+                navWrapper.classList.add("show-left");
+            } else {
+                navWrapper.classList.remove("show-left");
+            }
+            if (showRight) {
+                navWrapper.classList.add("show-right");
+            } else {
+                navWrapper.classList.remove("show-right");
+            }
+        }
+        window.checklr = checkLeftRight;
+
     });
 
     // Prevent tab click event from firing if the user was dragging
@@ -801,13 +848,8 @@ export function createTabs({ tabs, initial = 0, onChange }) {
         }
     }, true);
 
-    const navContaner = document.createElement('div');
-    navContaner.appendChild(nav);
-    // navContaner.style.width = "100%";
-    // navContaner.style.overflowX = "clip";
-    navContaner.classList.add("tabs-container");
 
-    return { nav:navContaner, panelsContainer, funSelect };
+    return { nav: tabsWrapper, panelsContainer, funSelect };
 }
 
 
