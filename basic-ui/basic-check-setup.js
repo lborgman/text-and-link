@@ -123,15 +123,20 @@ const detailsTestIcons = () => mkElt("details", { id: "test-icons" }, [
 
 
 // ---- test-tabs block ----
-const tabsExample = modBear.createTabs({
-    tabs: [
-        { label: "Tab1", panel: mkElt("div", undefined, "This is tab 1") },
-        { label: "Tab2", panel: mkElt("div", undefined, "This is tab 2") },
-        { label: "Tab3", panel: mkElt("div", undefined, "This is tab 3") },
-    ]
-});
+const arrTabs = [];
+for (let i = 0; i < 10; i++) {
+    arrTabs.push(
+        { label: `Tab${i}`, panel: mkElt("div", undefined, `This is tab ${i}`) },
+    )
+}
+const objTabs = {
+    tabs: arrTabs
+}
+const tabsExample = modBear.createTabs(
+    objTabs
+);
 // const sectionTabs = mkElt("section", undefined,)
-tabsExample.nav.style.width = "fit-content";
+// tabsExample.nav.style.width = "fit-content";
 const detailsTestTabs = () => mkElt("details", { id: "test-tabs" }, [
     mkElt("summary", undefined, "test-tabs"),
     mkElt("div", undefined,

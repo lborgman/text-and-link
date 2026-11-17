@@ -255,6 +255,7 @@ input[type=color].input-color-square {
     }
 
 }
+
 input[type=color].input-color-square:focus {
     border-width: 2px;
 }
@@ -595,4 +596,48 @@ div.slider {
         border-radius: 3px;
     }
 
+}
+
+
+
+
+/* Tabs */
+
+nav.tabs>a {
+    width: fit-content;
+}
+
+nav.tabs:not(.left-align, .right-align, .center-align) {
+    justify-content: space-around;
+    justify-content: flex-start;
+}
+
+nav.tabs {
+    white-space: nowrap;
+    border-block-end: .0625rem solid var(--surface-variant);
+    border-radius: 0;
+    display: flex;
+}
+
+nav:is(.wave, .chip, .button, button, nav.tabbed a, .tabs>a, nav.toolbar a):not([class*=ripple]):is(:focus-visible, :hover):after,
+nav:is(.left, .right, .bottom, .top).max a:not(.button, .chip):is(:focus-visible, :hover):after,
+nav:is(.left, .right, .bottom, .top):not(.max) a:not(.button, .chip):is(:focus-visible, :hover)>i:after {
+    opacity: .1;
+    transition: background-size var(--speed2) linear;
+    background-size: 22500%;
+}
+
+div.tabs-container {
+    width: 100%;
+    overflow-x: auto;
+    /* Firefox */
+    scrollbar-width: none;
+    nav {
+        gap: 0;
+    }
+}
+
+/* Chromium, Edge, Safari */
+div.tabs-container::-webkit-scrollbar {
+    display: none;
 }

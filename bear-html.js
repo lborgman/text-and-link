@@ -709,7 +709,7 @@ export function createMenu({ trigger, items }) {
  * @param {{ label: string, panel: HTMLElement }[]} options.tabs
  * @param {number} [options.initial=0]
  * @param {(index: number) => void} [options.onChange]
- * @returns {{ nav: HTMLElement, panelsContainer: HTMLElement, select: (index: number) => void }}
+ * @returns {{ nav: HTMLDivElement, panelsContainer: HTMLDivElement, funSelect: (index: number) => void }}
  */
 export function createTabs({ tabs, initial = 0, onChange }) {
     const nav = document.createElement('nav');
@@ -725,28 +725,89 @@ export function createTabs({ tabs, initial = 0, onChange }) {
         const tabEl = document.createElement('a');
         tabEl.className = 'tab';
         tabEl.textContent = tab.label;
-        tabEl.addEventListener('click', () => select(index));
+        tabEl.addEventListener('click', () => funSelect(index));
         nav.append(tabEl);
         tabEls.push(tabEl);
 
         tab.panel.style.display = 'none';
+        tab.panel.classList.add("padding");
         panelsContainer.append(tab.panel);
     });
 
     /**
      * @param {number} index
      */
-    function select(index) {
-        tabEls.forEach((tabEl, i) => tabEl.classList.toggle('active', i === index));
+    function funSelect(index) {
+        tabEls.forEach((tabEl, i) => {
+            tabEl.classList.toggle('active', i === index)
+            if (i == index) {
+                tabEl.scrollIntoView({
+                    inline: "center",
+                    behavior: "smooth"
+                });
+            }
+        });
         tabs.forEach((tab, i) => {
             tab.panel.style.display = i === index ? '' : 'none';
         });
         if (onChange) onChange(index);
     }
 
-    select(initial);
+    funSelect(initial);
 
-    return { nav, panelsContainer, select };
+
+    // Dragging
+
+    // const nav = document.getElementById('tabNav');
+
+    let isDown = false;
+    let startX;
+    let scrollLeft;
+    let hasMoved = false;
+
+    nav.addEventListener('mousedown', (e) => {
+        isDown = true;
+        hasMoved = false;
+        nav.classList.add('dragging');
+        startX = e.pageX - nav.offsetLeft;
+        scrollLeft = nav.scrollLeft;
+    });
+
+    window.addEventListener('mouseup', () => {
+        isDown = false;
+        nav.classList.remove('dragging');
+    });
+
+    nav.addEventListener('mousemove', (e) => {
+        if (!isDown) return;
+        e.preventDefault();
+
+        const x = e.pageX - nav.offsetLeft;
+        const walk = x - startX;
+
+        // Only count as a drag if moved more than 5px (allows normal clicking)
+        if (Math.abs(walk) > 5) {
+            hasMoved = true;
+        }
+
+        nav.scrollLeft = scrollLeft - walk;
+    });
+
+    // Prevent tab click event from firing if the user was dragging
+    nav.addEventListener('click', (e) => {
+        if (hasMoved) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+    }, true);
+
+    const navContaner = document.createElement('div');
+    navContaner.appendChild(nav);
+    // navContaner.style.width = "100%";
+    // navContaner.style.overflowX = "clip";
+    navContaner.classList.add("tabs-container");
+
+    return { nav:navContaner, panelsContainer, funSelect };
 }
 
 
