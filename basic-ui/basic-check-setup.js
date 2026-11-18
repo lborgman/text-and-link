@@ -129,6 +129,8 @@ for (let i = 0; i < 10; i++) {
         { label: `Tab${i}`, panel: mkElt("div", undefined, `This is tab ${i}`) },
     )
 }
+// arrTabs.push({ label: `Tab text`, panel: `This is tab text` }); // for error testing
+
 const objTabs = {
     tabs: arrTabs
 }

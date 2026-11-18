@@ -747,9 +747,16 @@ export function createTabs({ tabs, initial = 0, onChange }) {
         nav.append(tabEl);
         tabEls.push(tabEl);
 
-        tab.panel.style.display = 'none';
-        tab.panel.classList.add("padding");
-        panelsContainer.append(tab.panel);
+        const panel = tab.panel;
+        if (panel.tagName != "DIV") {
+            const msg = "panel should be <DIV>";
+            console.error(msg, tab);
+            debugger;
+            throw Error(msg);
+        }
+        panel.style.display = 'none';
+        panel.classList.add("tabs-panel");
+        panelsContainer.append(panel);
     });
 
     /**

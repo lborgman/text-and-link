@@ -636,7 +636,7 @@ nav:is(.left, .right, .bottom, .top):not(.max) a:not(.button, .chip):is(:focus-v
 
 
 div.tabs-container {
-    background-color: blue;
+    /* background-color: blue; */
     position: relative;
     overflow-x: auto;
     /* Firefox */
@@ -662,10 +662,10 @@ div.tabs-wrapper::after {
     z-index: 1000;
     display: flex;
     align-items: center;
-    padding: 2px;
-    color: red;
-    background-color: #0006 !important;
-    backdrop-filter: blur(1px);
+    padding: 0 4px;
+    color: var(--primary, currentColor);
+    /* background-color: #0006 !important; */
+    backdrop-filter: blur(2px);
     opacity: 0;
     transition: opacity 2s;
 }
@@ -684,4 +684,8 @@ div.tabs-wrapper.show-left::before {
 }
 div.tabs-wrapper.show-right::after {
     opacity: 1;
+}
+
+div.tabs-panels > div {
+    padding-top: 1rem;
 }
