@@ -718,6 +718,15 @@ export function createTabs({ tabs, initial = 0, onChange }) {
     const navContainer = document.createElement('div');
     navContainer.appendChild(nav);
     navContainer.classList.add("tabs-container");
+    navContainer.addEventListener("keydown", evt => {
+        // if (evt.key === "ArrowLeft") { console.log("left"); }
+        const isScrollKey = ["ArrowLeft", "ArrowRight"].includes(evt.key);
+        if (isScrollKey) {
+            console.log("included, isScrollKey", evt.key);
+            checkLeftRight();
+        }
+    });
+
 
     const tabsWrapper = document.createElement("div");
     tabsWrapper.appendChild(navContainer);
@@ -735,6 +744,7 @@ export function createTabs({ tabs, initial = 0, onChange }) {
 
     const panelsContainer = document.createElement('div');
     panelsContainer.className = 'tabs-panels';
+
 
     /** @type {HTMLAnchorElement[]} */
     const tabEls = [];
@@ -779,6 +789,25 @@ export function createTabs({ tabs, initial = 0, onChange }) {
     }
 
     funSelect(initial);
+
+    function checkLeftRight(dbg) {
+        if (dbg) { debugger; }
+        const showLeft = navParent.scrollLeft > 0;
+
+        const rightEdge = nav.scrollWidth - navParent.scrollLeft - 1;
+        const showRight = rightEdge > navWrapper.clientWidth;
+
+        if (showLeft) {
+            navWrapper.classList.add("show-left");
+        } else {
+            navWrapper.classList.remove("show-left");
+        }
+        if (showRight) {
+            navWrapper.classList.add("show-right");
+        } else {
+            navWrapper.classList.remove("show-right");
+        }
+    }
 
 
     // Dragging
@@ -825,24 +854,6 @@ export function createTabs({ tabs, initial = 0, onChange }) {
         }
 
         checkLeftRight();
-        function checkLeftRight(dbg) {
-            if (dbg) { debugger; }
-            const showLeft = navParent.scrollLeft > 0;
-
-            const rightEdge = nav.scrollWidth - navParent.scrollLeft - 1;
-            const showRight = rightEdge > navWrapper2.clientWidth;
-
-            if (showLeft) {
-                navWrapper.classList.add("show-left");
-            } else {
-                navWrapper.classList.remove("show-left");
-            }
-            if (showRight) {
-                navWrapper.classList.add("show-right");
-            } else {
-                navWrapper.classList.remove("show-right");
-            }
-        }
         window.checklr = checkLeftRight;
 
     });

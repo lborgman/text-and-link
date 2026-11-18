@@ -126,7 +126,13 @@ const detailsTestIcons = () => mkElt("details", { id: "test-icons" }, [
 const arrTabs = [];
 for (let i = 0; i < 10; i++) {
     arrTabs.push(
-        { label: `Tab${i}`, panel: mkElt("div", undefined, `This is tab ${i}`) },
+        {
+            label: `Tab${i}`,
+            panel: mkElt("div", undefined, [
+                `This is tab ${i} - `,
+                mkElt("input", { type: "checkbox" })
+            ])
+        },
     )
 }
 // arrTabs.push({ label: `Tab text`, panel: `This is tab text` }); // for error testing
