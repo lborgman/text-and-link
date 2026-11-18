@@ -792,6 +792,9 @@ export function createTabs({ tabs, initial = 0, onChange }) {
 
     function checkLeftRight(dbg) {
         if (dbg) { debugger; }
+        if (!navParent) { throw Error("!navParent"); }
+        if (!navWrapper) { throw Error("!navWrapper"); }
+
         const showLeft = navParent.scrollLeft > 0;
 
         const rightEdge = nav.scrollWidth - navParent.scrollLeft - 1;
