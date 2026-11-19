@@ -36,9 +36,27 @@ const mkElt = window["mkElt"];
 const modCustElts = await import("custom-elts-helpers");
 // const modCustElts = await import("./custom-elts-helpers.js");
 
-class BearRange extends modCustElts.withSafeInit(HTMLInputElement) {
+class BearSlider extends modCustElts.withSafeInit(HTMLInputElement) {
     onVisibleInit() {
         updateRange(this);
+    }
+}
+class BearTabs extends modCustElts.withSafeInit(HTMLDivElement) {
+    // Each <bear-tabs> instance gets its own isolated timer
+    #debouncedUpdateLeftRight = createDebounce(() => {
+        console.log("updateLeftRight(this);");
+        const nav = this.querySelector("nav.tabs");
+        // updateTabsLeftRight(nav, true);
+        updateTabsLeftRight(nav);
+    }, 300);
+
+    onVisibleInit() {
+        // debugger;
+        this.updateTabsLeftRight();
+    }
+
+    updateTabsLeftRight() {
+        this.#debouncedUpdateLeftRight();
     }
 }
 
@@ -423,13 +441,12 @@ export function createSlider(rawOpts = {
 
 
 
-    // const input = document.createElement('bear-range');
     const input = /** @type {HTMLInputElement} */ (
-        document.createElement('input', { is: 'bear-range' })
+        document.createElement('input', { is: 'bear-slider' })
     );
-    input.setAttribute('is', 'bear-range'); // only if you want CSS like input[is="bear-range"] to match
+    input.setAttribute('is', 'bear-slider'); // only if you want CSS like input[is="bear-slider"] to match
 
-    const Registered = customElements.get('bear-range');
+    const Registered = customElements.get('bear-slider');
 
 
     input.type = 'range';
@@ -502,7 +519,9 @@ export function createSlider(rawOpts = {
 
 //// Here you must specify which native tag you are extending
 try {
-    customElements.define('bear-range', BearRange, { extends: 'input' });
+    customElements.define('bear-slider', BearSlider, { extends: 'input' });
+    // BearTabs
+    customElements.define('bear-tabs', BearTabs, { extends: 'div' });
 } catch (error) {
     if (error instanceof DOMException && error.name === 'NotSupportedError') {
         const msg = 'Customized built-in elements are unsupported in Safari.';
@@ -709,7 +728,8 @@ export function createMenu({ trigger, items }) {
  * @param {{ label: string, panel: HTMLElement }[]} options.tabs
  * @param {number} [options.initial=0]
  * @param {(index: number) => void} [options.onChange]
- * @returns {{ nav: HTMLDivElement, panelsContainer: HTMLDivElement, funSelect: (index: number) => void }}
+ * returns {{ nav: HTMLDivElement, panelsContainer: HTMLDivElement, funSelect: (index: number) => void }}
+ * @returns {{ nav: BearTabs, panelsContainer: HTMLDivElement, funSelect: (index: number) => void }}
  */
 export function createTabs({ tabs, initial = 0, onChange }) {
     const nav = document.createElement('nav');
@@ -723,12 +743,17 @@ export function createTabs({ tabs, initial = 0, onChange }) {
         const isScrollKey = ["ArrowLeft", "ArrowRight"].includes(evt.key);
         if (isScrollKey) {
             console.log("included, isScrollKey", evt.key);
-            checkLeftRight();
+            updateTabsLeftRight(nav);
         }
     });
 
 
-    const tabsWrapper = document.createElement("div");
+    // const tabsWrapper = document.createElement("div");
+    const tabsWrapper = /** @type {BearTabs} */ (
+        /** @type {unknown} */ (document.createElement('div', { is: 'bear-tabs' }))
+    );
+    tabsWrapper.setAttribute('is', 'bear-slider'); // only if you want CSS like input[is="bear-slider"] to match
+
     tabsWrapper.appendChild(navContainer);
     tabsWrapper.classList.add("tabs-wrapper");
 
@@ -790,27 +815,6 @@ export function createTabs({ tabs, initial = 0, onChange }) {
 
     funSelect(initial);
 
-    function checkLeftRight(dbg) {
-        if (dbg) { debugger; }
-        if (!navParent) { throw Error("!navParent"); }
-        if (!navWrapper) { throw Error("!navWrapper"); }
-
-        const showLeft = navParent.scrollLeft > 0;
-
-        const rightEdge = nav.scrollWidth - navParent.scrollLeft - 1;
-        const showRight = rightEdge > navWrapper.clientWidth;
-
-        if (showLeft) {
-            navWrapper.classList.add("show-left");
-        } else {
-            navWrapper.classList.remove("show-left");
-        }
-        if (showRight) {
-            navWrapper.classList.add("show-right");
-        } else {
-            navWrapper.classList.remove("show-right");
-        }
-    }
 
 
     // Dragging
@@ -856,8 +860,8 @@ export function createTabs({ tabs, initial = 0, onChange }) {
             debugger;
         }
 
-        checkLeftRight();
-        window.checklr = checkLeftRight;
+        updateTabsLeftRight(nav);
+        window.checklr = updateTabsLeftRight;
 
     });
 
@@ -871,6 +875,36 @@ export function createTabs({ tabs, initial = 0, onChange }) {
 
 
     return { nav: tabsWrapper, panelsContainer, funSelect };
+}
+
+function updateTabsLeftRight(nav, dbg) {
+    if (dbg) { debugger; }
+    if (nav.tagName != "NAV") {
+        debugger;
+    }
+    if (!nav.classList.contains("tabs")) {
+        debugger;
+    }
+    const navParent = nav.parentElement;
+    if (!navParent) { throw Error("!navParent"); }
+    const navWrapper = navParent.parentElement;
+    if (!navWrapper) { throw Error("!navWrapper"); }
+
+    const showLeft = navParent.scrollLeft > 0;
+
+    const rightEdge = nav.scrollWidth - navParent.scrollLeft - 1;
+    const showRight = rightEdge > navWrapper.clientWidth;
+
+    if (showLeft) {
+        navWrapper.classList.add("show-left");
+    } else {
+        navWrapper.classList.remove("show-left");
+    }
+    if (showRight) {
+        navWrapper.classList.add("show-right");
+    } else {
+        navWrapper.classList.remove("show-right");
+    }
 }
 
 
@@ -1079,3 +1113,49 @@ function rootSizeInPixels() {
     // 4. Return the guaranteed pixel number (or fallback to 16)
     return pixelWidth || 16;
 }
+
+
+/*
+function createDebounce(fn, delay = 300) {
+    let timeoutId;
+    const debounce = function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            fn.apply(this, args);
+        }, delay);
+    };
+    return debounce;
+}
+*/
+
+/**
+ * Creates a debounced version of a function that delays invoking `fn` until after
+ * `delay` milliseconds have elapsed since the last time the debounced function was called.
+ *
+ * @template {(...args: any[]) => any} T
+ * @param {T} fn - The function to debounce.
+ * @param {number} [delay=300] - The number of milliseconds to delay execution.
+ * @returns {(...args: Parameters<T>) => void} A new debounced function that preserves the caller's `this` context.
+ *
+ * @example
+ * const saveInput = createDebounce((value) => console.log('Saved:', value), 500);
+ * saveInput('hello');
+ */
+function createDebounce(fn, delay = 300) {
+    /** @type {ReturnType<typeof setTimeout> | undefined} */
+    let timeoutId;
+
+    /**
+     * @this {ThisParameterType<T>}
+     * @param {Parameters<T>} args
+     */
+    const debounce = function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+            fn.apply(this, args);
+        }, delay);
+    };
+
+    return debounce;
+}
+
