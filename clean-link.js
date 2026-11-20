@@ -66,12 +66,6 @@ const BasicUI_ColorThemes = /** @type {any} */ (globalThis).BasicUI_ColorThemes;
 // const storagePrefix = "clean-link";
 // const keyColorTheme = `${storagePrefix}-theme`;
 
-/**
- * @typedef {Object} ColorTheme
- * @property {string} [color] - CSS color
- * @property {boolean} [dark]
- * @property {string} [variant]
- */
 
 function saveTheme() {
     const strJson = JSON.stringify(currentTheme);
@@ -1218,43 +1212,6 @@ function dialogColorTheme() {
     addXclose(dlg);
     dlg.id = "color-theme-dialog";
     // eltColorInputs
-    /*
-    const dlgInnerStyle = `
-        NOoutline: 8px dotted red;
-        .basic-ui_color-inputs {
-            NOoutline: 1px dotted red;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            > * {
-                position: static;
-                NOoutline: 1px dashed yellow;
-            }
-            #OLDcolor-picker {
-                height: 40px;
-                width: 40px;
-                opacity: 1;
-            }
-        }
-
-
-        /* 1. Target Webkit browsers (Chrome, Safari, Edge, Opera) * /
-OLDinput[type=color]::-webkit-color-swatch-wrapper {
-    padding: 0;
-}
-OLDinput[type=color]::-webkit-color-swatch {
-    border: none;
-}
-
-/* 2. Target Firefox * /
-OLDinput[type=color]::-moz-color-swatch {
-    border: none;
-}
-
-    `;
-    addDialogStyle(dlg, dlgInnerStyle);
-    */
-
 
     /**
      * @param {HTMLDialogElement} dlg

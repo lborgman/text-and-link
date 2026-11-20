@@ -6,7 +6,7 @@ logConsoleHereIs(`here is basic-ui.js, module,${BASIC_UI_VER}`);
 if (document.currentScript) throw Error("import .currentScript"); // is module
 
 /** @typedef {{ wrapper: HTMLDivElement, input: HTMLInputElement }} BearTextInputField */
-/* @typedef {{ wrapper: HTMLDivElement, input: HTMLInputElement | HTMLTextAreaElement }} BearTextField */
+/* @typedef {{ wrapper: HTMLDivElement, input: HTMLInputElement | HTMLTextAreaElement }} BearTextInputField */
 
 
 const backdropDuration = getRootCssVarMs("--backdrop-duration");

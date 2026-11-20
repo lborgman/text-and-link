@@ -29,6 +29,40 @@
     For more info see jsDoc below for those two functions.
 
 */
+
+
+// Note: the @typdef:s here will be global!
+
+/**
+ * @typedef {Object} ColorTheme
+ * @property {string} [color] - CSS color
+ * @property {boolean} [dark]
+ * @property {string} [variant]
+ */
+
+/**
+ * @typedef {Object} ColorThemeVariables
+ * @property {string} "--primary"
+ * @property {string} "--primary-container"
+ * @property {string} "--secondary"
+ * @property {string} "--secondary-container"
+ * @property {string} "--tertiary"
+ * @property {string} "--tertiary-container"
+ * @property {string} "--surface"
+ * @property {string} "--surface-variant"
+ * @property {string} "--on-surface"
+ * @property {string} "--on-surface-variant"
+ * @property {string} "--outline"
+ * @property {string} "--outline-variant"
+ * @property {string} "--inverse-surface"
+ * @property {string} "--inverse-primary"
+ * @property {string} "--error"
+ * @property {string} "--error-container"
+ * @property {string} "--backdrop" - Light Mode Backdrop
+ * @property {string} "--link-color"
+ * @property {string} "--link-hover"
+ */
+
 (function () {
     console.log("basic-ui-color-themes-loader is here!!!");
     // Define your public methods
@@ -38,7 +72,8 @@
          *  @param {string} baseInput - Seed color hex code or standard CSS color name.
          *  @param {boolean} [isDark=false] - Optional flag to generate dark mode tokens.
          *  @param {'tonalSpot'|'vibrant'|'expressive'|'fidelity'|'content'|'fruitSalad'|'rainbow'|'monochrome'} [variant='tonalSpot'] - M3 Scheme Variant.
-         *  @returns {Record<string, string>} Object containing CSS custom properties.
+         *  returns {Record<string, string>} Object containing CSS custom properties.
+         *  @returns {ColorThemeVariables} Object containing CSS custom properties.
          *  @throws {TypeError}
          */
         generateTheme: function (baseInput, isDark, variant) {
@@ -46,7 +81,8 @@
         },
 
         /**
-         *  @param {Record<string, string>} colorTheme - containing CSS custom properties.
+         *  param {Record<string, string>} colorTheme - containing CSS custom properties.
+         *  @param {ColorThemeVariables} colorTheme - containing CSS custom properties.
          *  @param {HTMLElement} [targetElement]
          */
         applyTheme: function (colorTheme, targetElement = document.documentElement) {
@@ -67,7 +103,8 @@
    * Generates a minimal Material Design color palette.
    * @param {string} baseInput - Seed color hex code or standard CSS color name.
    * @param {boolean} [isDark=false] - Optional flag to generate dark mode tokens.
-   * @returns {Record<string, string>} Object containing CSS custom properties.
+   * returns {Record<string, string>} Object containing CSS custom properties.
+   * @returns {ColorThemeVariables} Object containing CSS custom properties.
    * @throws {TypeError}
    */
     function generateMaterial2ThemePalette(baseInput, isDark = false) {
@@ -196,6 +233,7 @@
      * @category Visual helpers
      */
     function applyMaterialTheme(baseColor, isDark = false, targetElement = document.documentElement) {
+        /** @type {ColorThemeVariables} */
         const palette = generateMaterialThemePalette(baseColor, isDark);
         Object.entries(palette).forEach(([prop, value]) => {
             targetElement.style.setProperty(prop, value);
@@ -211,7 +249,8 @@
      * @param {string} baseInput - Seed color hex code or standard CSS color name.
      * @param {boolean} [isDark=false] - Optional flag to generate dark mode tokens.
      * @param {'tonalSpot'|'vibrant'|'expressive'|'fidelity'|'content'|'fruitSalad'|'rainbow'|'monochrome'} [variant='tonalSpot'] - M3 Scheme Variant.
-     * @returns {Record<string, string>} Object containing CSS custom properties.
+     * returns {Record<string, string>} Object containing CSS custom properties.
+     * @returns {ColorThemeVariables} Object containing CSS custom properties.
      * @throws {TypeError}
      */
     function generateMaterial3ThemePalette(baseInput, isDark = false, variant = 'tonalSpot') {

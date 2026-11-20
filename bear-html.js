@@ -166,12 +166,11 @@ function buildField({ label, border, fill, size }, isTextarea) {
 // Text field
 // ---------------------------------------------------------------------------
 
-/** @typedef {{ wrapper: HTMLDivElement, input: HTMLInputElement | HTMLTextAreaElement }} BearTextField */
 /**
  * Creates a Beer CSS styled text input, wrapped in its required field markup.
  * @param {FieldOptions & { type?: string }} [options]
  * returns {{ wrapper: HTMLDivElement, input: HTMLInputElement | HTMLTextAreaElement }}
- * @returns {BearTextField}
+ * @returns {BearTextInputField}
  */
 export function createTextField({
     value = '',
@@ -238,7 +237,8 @@ export function createTextField({
  * Creates a Beer CSS styled textarea, wrapped in its required field markup.
  * Auto-resizes height to fit content as the user types.
  * @param {FieldOptions & { rows?: number, maxHeight?: number }} [options]
- * @returns {{ field: HTMLDivElement, textarea: HTMLTextAreaElement }}
+ * returns {{ field: HTMLDivElement, textarea: HTMLTextAreaElement }}
+ * @returns {BearTextAreaField}
  */
 export function createTextareaField({
     value = '',
@@ -288,7 +288,8 @@ export function createTextareaField({
  * @param {string} [options.label] - Optional label text shown next to the switch.
  * @param {string} [options.name]
  * @param {(checked: boolean) => void} [options.onChange]
- * @returns {{ wrapper: HTMLElement, input: HTMLInputElement }}
+ * returns {{ wrapper: HTMLElement, input: HTMLInputElement }}
+ * @returns {BearSwitch}
  */
 export function createSwitch({
     checked = false,
@@ -344,7 +345,8 @@ export function createSwitch({
  * Creates a Beer CSS styled `<select>`, wrapped in its required field markup.
  * Reuses the same field/label helpers as the text field.
  * @param {FieldOptions & { options: SelectOption[], onChange?: (value: string) => void }} options
- * @returns {{ field: HTMLDivElement, select: HTMLSelectElement }}
+ * returns {{ field: HTMLDivElement, select: HTMLSelectElement }}
+ * @returns {BearSelect}
  */
 export function createSelect({ options, value, name, onChange, ...rest } = { options: [] }) {
     const { field, label } = buildField(rest, false);
@@ -404,7 +406,8 @@ export function createSelect({ options, value, name, onChange, ...rest } = { opt
  * @param {(value: number) => void} [rawOpts.onInput]
  * @param {number} [rawOpts.onInputThrottleMs]
  * @param {(value: number) => void|null} [rawOpts.onChange]
- * @returns {{ wrapper: HTMLElement, input: HTMLInputElement, funInit: (val:number) => void }}
+ * returns {{ wrapper: HTMLElement, input: HTMLInputElement, funInit: (val:number) => void }}
+ * @returns {BearSlider}
  */
 export function createSlider(rawOpts = {
 }) {
@@ -555,7 +558,8 @@ try {
  * @param {boolean} [options.selected=false]
  * @param {boolean} [options.asButton=false] - Use `<button>` instead of `<a>`.
  * @param {(selected: boolean) => void} [options.onToggle]
- * @returns {HTMLElement}
+ * returns {HTMLAnchorElement|HTMLButtonElement}
+ * @returns {BearChip}
  */
 export function createChip({
     label,
@@ -598,7 +602,8 @@ export function createChip({
  * @param {'single'|'multi'} [options.mode='single']
  * @param {string|string[]} [options.selected] - Initial selected value(s).
  * @param {(selected: string[]) => void} [options.onChange]
- * @returns {{ wrapper: HTMLElement, getSelected: () => string[] }}
+ * returns {{ wrapper: HTMLElement, getSelected: () => string[] }}
+ * @returns {BearChipGroup}
  */
 export function createChipGroup({ items, mode = 'single', selected, onChange } = { items: [] }) {
     const wrapper = document.createElement('div');
@@ -651,7 +656,8 @@ export function createChipGroup({ items, mode = 'single', selected, onChange } =
  * @param {object} options
  * @param {HTMLElement} options.trigger - Element that opens the menu on click.
  * @param {{ label: string, icon?: string | Node, onSelect?: () => void }[]} options.items
- * @returns {{ menu: HTMLElement, open: () => void, close: () => void }}
+ * returns {{ menu: HTMLElement, open: () => void, close: () => void }}
+ * @returns {BearMenu}
  */
 export function createMenu({ trigger, items }) {
     const menu = document.createElement('menu');
@@ -737,7 +743,8 @@ export function createMenu({ trigger, items }) {
  * @param {number} [options.initial=0]
  * @param {(index: number) => void} [options.onChange]
  * returns {{ nav: HTMLDivElement, panelsContainer: HTMLDivElement, funSelect: (index: number) => void }}
- * @returns {{ nav: BearTabs, panelsContainer: HTMLDivElement, funSelect: (index: number) => void }}
+ * returns {{ nav: BearTabs, panelsContainer: HTMLDivElement, funSelect: (index: number) => void }}
+ * @returns {BearTabsObj}
  */
 export function createTabs({ tabs, initial = 0, onChange }) {
     const nav = document.createElement('nav');
