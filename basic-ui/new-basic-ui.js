@@ -5,6 +5,8 @@ const BASIC_UI_VER = "0.0.01";
 logConsoleHereIs(`here is basic-ui.js, module,${BASIC_UI_VER}`);
 if (document.currentScript) throw Error("import .currentScript"); // is module
 
+/** @typedef {{ wrapper: HTMLDivElement, input: HTMLInputElement }} BearTextInputField */
+/* @typedef {{ wrapper: HTMLDivElement, input: HTMLInputElement | HTMLTextAreaElement }} BearTextField */
 
 
 const backdropDuration = getRootCssVarMs("--backdrop-duration");
@@ -1185,8 +1187,8 @@ export function mkColorPickerSquare() {
 
 /**
  * 
- * @param {object} wrapperInpColor 
- * @param {() => void} onAnyInput 
+ * @param {BearTextInputField} bearInpColor
+ * @param {() => void} onAnyInput
  * @returns {{
  *   inpColor: HTMLInputElement,
  *   colorPicker: HTMLInputElement,
@@ -1194,23 +1196,16 @@ export function mkColorPickerSquare() {
  *   funInitColor: (arg0: string) => void
  * }} An object containing the input elements and wrapper.
  */
-export function mkDoubleColorInputs(wrapperInpColor, onAnyInput) {
+export function mkDoubleColorInputs(bearInpColor, onAnyInput) {
     // onAnyInput is checked in syncInpTextAndColorPicker!
-    /*
-    const { wrapper: wrapperInpColor, input: inpColor } =
-        createTextField({
-            label: "Color",
-            border: true
-        });
-    */
-    const inpColor = wrapperInpColor.input;
+    const inpColor = bearInpColor.input;
 
     // wrapperInpColor.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
-    wrapperInpColor.wrapper.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
+    bearInpColor.wrapper.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
 
     const colorPicker = mkColorPickerSquare();
     const spanColorInputs = mkElt("span", undefined, [
-        wrapperInpColor.wrapper,
+        bearInpColor.wrapper,
         colorPicker
     ]);
     spanColorInputs.classList.add("basic-ui_color-inputs");

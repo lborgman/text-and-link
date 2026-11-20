@@ -33,20 +33,26 @@ const mkElt = window["mkElt"];
  *   ) => CustomElementConstructor
  * }}
  */
-const modCustElts = await import("custom-elts-helpers");
+const modCustElts = await import("./custom-elts-helpers.js");
 // const modCustElts = await import("./custom-elts-helpers.js");
 
 class BearSlider extends modCustElts.withSafeInit(HTMLInputElement) {
     onVisibleInit() {
-        updateRange(this);
+        const inp = /** @type {HTMLInputElement} */ (/** @type {unknown} */ (this));
+        updateRange(inp);
     }
 }
 class BearTabs extends modCustElts.withSafeInit(HTMLDivElement) {
     // Each <bear-tabs> instance gets its own isolated timer
     #debouncedUpdateLeftRight = createDebounce(() => {
         console.log("updateLeftRight(this);");
-        const nav = this.querySelector("nav.tabs");
-        // updateTabsLeftRight(nav, true);
+        const nav = /** @type {HTMLElement} */ (this.querySelector("nav.tabs"));
+        if (!nav) {
+            const msg = "Did not find nav.tabs";
+            console.error(msg);
+            debugger;
+            throw Error(msg);
+        }
         updateTabsLeftRight(nav);
     }, 300);
 
@@ -160,10 +166,12 @@ function buildField({ label, border, fill, size }, isTextarea) {
 // Text field
 // ---------------------------------------------------------------------------
 
+/** @typedef {{ wrapper: HTMLDivElement, input: HTMLInputElement | HTMLTextAreaElement }} BearTextField */
 /**
  * Creates a Beer CSS styled text input, wrapped in its required field markup.
  * @param {FieldOptions & { type?: string }} [options]
- * @returns {{ wrapper: HTMLDivElement, input: HTMLInputElement | HTMLTextAreaElement }}
+ * returns {{ wrapper: HTMLDivElement, input: HTMLInputElement | HTMLTextAreaElement }}
+ * @returns {BearTextField}
  */
 export function createTextField({
     value = '',
@@ -861,6 +869,7 @@ export function createTabs({ tabs, initial = 0, onChange }) {
         }
 
         updateTabsLeftRight(nav);
+        // @ts-ignore
         window.checklr = updateTabsLeftRight;
 
     });
@@ -877,8 +886,11 @@ export function createTabs({ tabs, initial = 0, onChange }) {
     return { nav: tabsWrapper, panelsContainer, funSelect };
 }
 
-function updateTabsLeftRight(nav, dbg) {
-    if (dbg) { debugger; }
+/**
+ * 
+ * @param {HTMLElement} nav 
+ */
+function updateTabsLeftRight(nav) {
     if (nav.tagName != "NAV") {
         debugger;
     }
@@ -1027,20 +1039,17 @@ function throttle(func, msLimit) {
 
 
 const rootPixelSize = rootSizeInPixels();
+/**
+ * 
+ * @param {HTMLInputElement} input 
+ * @returns 
+ */
 function updateRange(input) {
-    // console.log("updateRange here");
-    // debugger;
-    // onWeak(input, "change", onChangeInput);
-    // const divSlider = parent(input);
-    const divSlider = input.closest(".slider");
-    // const bar = query("span", divSlider);
+    const divSlider = /** @type {HTMLDivElement} */ (input.closest("div.slider"));
     const bar = divSlider.querySelector("span");
-    // const inputs = queryAll("input", divSlider);
-    const inputs = divSlider.querySelectorAll("input", divSlider);
+    const inputs = divSlider.querySelectorAll("input");
     if (!inputs.length || !bar) return;
-    // const thumb = hasClass(divSlider, "max") ? 0 : .25 * rootSize * 100 / inputs[0].offsetWidth;
     const thumbHasMax = divSlider.classList.contains("max");
-    // const thumb = divSlider.classList.contains("max") ? 0 : .25 * rootPixelSize * 100 / inputs[0].offsetWidth;
     const i0 = inputs[0];
     // if (!i0.isConnected) { debugger; }
     const thumb = thumbHasMax ?
