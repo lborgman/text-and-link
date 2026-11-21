@@ -362,7 +362,8 @@ label {
 }
 .inverse-surface {
   background-color: var(--inverse-surface) !important;
-  color: var(--inverse-on-surface) !important;
+  /* color: var(--inverse-on-surface) !important; */ /* official name */
+  color: var(--on-inverse-surface) !important;
 }
 .inverse-primary {
   background-color: var(--inverse-primary) !important;

@@ -79,7 +79,7 @@
  *   "--surface-container-high": string,
  *   "--surface-container-highest": string,
  *   "--surface-variant": string,
- *   "--on-inverse-surface": string,
+ *   "--inverse-on-surface": string,
  *   "--on-primary": string,
  *   "--on-primary-container": string,
  *   "--on-secondary": string,
@@ -233,7 +233,8 @@
                 "--outline-variant": hslToHex(hDeg, 10, 24),
 
                 "--inverse-surface": hslToHex(hDeg, 10, 92),
-                "--on-inverse-surface": hslToHex(hDeg, 10, 18),
+                // "--on-inverse-surface": hslToHex(hDeg, 10, 18),
+                "--inverse-on-surface": hslToHex(hDeg, 10, 20),
                 "--inverse-primary": hslToHex(hDeg, sPct, 45),
 
                 "--error": "#f87171",
@@ -289,7 +290,7 @@
             "--outline-variant": hslToHex(hDeg, 12, 90),
 
             "--inverse-surface": hslToHex(hDeg, 10, 18),
-            "--on-inverse-surface": hslToHex(hDeg, 10, 95),
+            "--inverse-on-surface": hslToHex(hDeg, 10, 95),
             "--inverse-primary": hslToHex(hDeg, 90, 70),
 
             "--error": "#dc2626",
@@ -513,7 +514,7 @@
                 "--outline-variant": hslToHex(hDeg, 10, 28),
 
                 "--inverse-surface": hslToHex(hDeg, 10, 90),
-                "--on-inverse-surface": hslToHex(hDeg, 10, 12),
+                "--inverse-on-surface": hslToHex(hDeg, 10, 12),
                 "--inverse-primary": hslToHex(hDeg, pSat, 40),
 
                 "--error": "#ffb4ab",
@@ -561,7 +562,7 @@
             "--outline-variant": hslToHex(hDeg, 12, 80),
 
             "--inverse-surface": hslToHex(hDeg, 10, 18),
-            "--on-inverse-surface": hslToHex(hDeg, 10, 95),
+            "--inverse-on-surface": hslToHex(hDeg, 10, 95),
             "--inverse-primary": hslToHex(hDeg, 90, 80),
 
             "--error": "#ba1a1a",

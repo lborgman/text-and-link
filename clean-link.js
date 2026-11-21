@@ -1245,6 +1245,7 @@ function getCSS_bg_classes() {
     return [
         "bg-background",
         "bg-surface",
+        "bg-inverse-surface",
         "bg-surface-variant",
         "bg-primary",
         "bg-primary-container",
