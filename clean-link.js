@@ -2,8 +2,7 @@
 
 // @ts-ignore
 const mkElt = window["mkElt"];
-// @ts-ignore
-const errorHandlerAsyncEvent = window["errorHandlerAsyncEvent"];
+// const OLDerrorHandlerAsyncEvent = window["OLDerrorHandlerAsyncEvent"];
 
 navigator.serviceWorker.register('./sw.js');
 
@@ -179,7 +178,9 @@ function handleInputLink() {
                 const divCleanedDetails = mkElt("div", { id: "div-cleaned-details" });
                 advIds.sort().forEach(id => {
                     // console.log("removed ", id);
-                    divCleanedDetails.appendChild(mkElt("div", undefined, `Removed ${id}`));
+                    // divCleanedDetails.appendChild(OLDmkElt("div", undefined, `Removed ${id}`));
+                    const div = mkElt("div", undefined, `Removed ${id}`);
+                    divCleanedDetails.appendChild(div);
                 });
                 const divExpandingCleanedInfo = mkExpandable(divCleanedDetails);
                 const eltCleanedInfo = document.getElementById("cleaned-info");
@@ -204,7 +205,8 @@ function handleInputLink() {
 }
 const btnCopy = /** @type {HTMLButtonElement|null} */ (document.getElementById("btn-copy"));
 if (btnCopy == null) throw Error("btnCopy == null");
-btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEvent} evt */ async evt => {
+// btnCopy.addEventListener("click", OLDerrorHandlerAsyncEvent( /** @param {PointerEvent} evt */ async evt => {
+btnCopy.addEventListener("click", /** @param {PointerEvent} evt */ async evt => {
     // FIX-ME:
     // const isDelayedClick = evt.isDelayedClick;
     const isDelayedClick = !evt.isTrusted;
@@ -252,7 +254,7 @@ btnCopy.addEventListener("click", errorHandlerAsyncEvent( /** @param {PointerEve
         }
         cleanLinkShowSnackbar(message);
     }
-}));
+});
 btnCopy.addEventListener("NOclick", evt => {
     alert("btnCopy");
     evt.stopPropagation();
@@ -837,7 +839,8 @@ async function showUrlAsDialog(url) {
     const dialogId = "helpContent";
     let dialog = /** @type {HTMLDialogElement} */ (document.getElementById(dialogId));
     if (!dialog) {
-        dialog = /** @type {HTMLDialogElement} */ (mkElt("dialog", { id: dialogId }));
+        // dialog = /** @type {HTMLDialogElement} */ (OLDmkElt("dialog", { id: dialogId }));
+        dialog = mkElt("dialog", { id: dialogId });
         if (!dialog) { throw Error("Could not create dialog"); }
         document.body.appendChild(dialog);
     }
@@ -1040,11 +1043,18 @@ function dialogColorTheme() {
 
     function applyDialogTheme() {
         // console.warn("applyDialogTheme called");
+        const chkVariant =/** @type {HTMLInputElement} */ (divVariants.querySelector(`input:checked`));
+        if (chkVariant == null) {
+            throw Error("chkVariant == null");
+        }
+        const boolVariant = chkVariant.value;
         /** @type {ColorTheme} */
         const dlgTheme = {
             color: inpColor.value,
             dark: chkDark.checked,
-            variant: divVariants.querySelector(`input:checked`).value
+            // variant: divVariants.querySelector(`input:checked`).value
+            // variant: divVariants.querySelector(`input:checked`).value
+            variant: boolVariant
         }
         applyTheme(dlgTheme);
     }
@@ -1162,9 +1172,6 @@ function dialogColorTheme() {
      */
     function fillInTheme(theme) {
         const { color, dark, variant } = theme;
-        // const safeColor = color || '#000000';
-        // inpColor.value = safeColor;
-        // colorPicker.value = modBasicUI.colorNameToHex(safeColor);
         chkDark.checked = dark;
         const selectedVariant = variant || 'tonalSpot';
         const selectedInput = /** @type {HTMLInputElement|null} */ (divVariants.querySelector(`input[value=${selectedVariant}]`));

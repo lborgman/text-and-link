@@ -57,10 +57,14 @@ const mkElt = window["mkElt"];
  */
 export function mkXclose(funClose) {
     if (funClose) { throw Error("funClose not supported any more"); }
+    // const xClose = /** @type {HTMLButtonElement} */ (OLDmkElt("button", { class: "x-close" }, "✖"));
     const xClose = mkElt("button", { class: "x-close" }, "✖");
     xClose.addEventListener("click", /** @param {Event} evt */ evt => {
         evt.stopPropagation();
         const dlg = xClose.closest("dialog");
+        if (dlg === null) {
+            throw Error("dlg === null");
+        }
         closeDialog(dlg);
     });
     return xClose;
@@ -212,6 +216,7 @@ function addRippleAndClickDelayed(event, button) {
  * @category Visual elements
  */
 export function OLDmkFabButton(icon, title, small) {
+    // const btn =/** @type {HTMLButtonElement} */ (OLDmkElt("button", undefined, icon));
     const btn = mkElt("button", undefined, icon);
     btn.classList.add("fab-button");
     btn.title = title;
@@ -229,6 +234,8 @@ export function OLDmkFabButton(icon, title, small) {
  * @category Visual elements
  */
 export function OLDmkIconButton(icon, title) {
+    // const btn =/** @type {HTMLButtonElement} */ (OLDmkElt("button", undefined, icon));
+    // const btn =/** @type {HTMLButtonElement} */ mkElt("button", undefined, icon);
     const btn = mkElt("button", undefined, icon);
     btn.classList.add("icon-button");
     btn.title = title;
@@ -1155,7 +1162,7 @@ export function getMdcIconClass() { return mdcIconsClass; }
 
 /**
  * @param {string} iconName 
- * @returns {HTMLLIElement}
+ * @returns {HTMLSpanElement}
  * @category Visual elements
  */
 export function mkMdcIcon(iconName) {

@@ -3,6 +3,11 @@ const INIT_ERROR_VER = "0.1.8";
 if (!document.currentScript) throw Error("init-error.js must not be loaded as a module");
 
 // Simple tagged console logger
+/**
+ * @callback LogConsoleHereIs
+ * @param {string} msg
+ */
+
 window.logConsoleHereIs = (msg) => {
     // console.log(`%c${msg}`, "color:white; background-color:blue; padding: 0px 5px;");
 }
@@ -12,10 +17,9 @@ window.logConsoleHereIs(`here is init-error.js ${INIT_ERROR_VER}`);
 {
     let numErrors = 0;
 
-    /**
-     * @param {ErrorEvent | PromiseRejectionEvent} evt
-     */
+    /** @param {ErrorEvent | PromiseRejectionEvent} evt */
     const doDisplay = (evt) => {
+        // @ts-ignore
         if (window["in-app-screen"]) return;
         if (numErrors++ > 0) return;
 
@@ -24,16 +28,22 @@ window.logConsoleHereIs(`here is init-error.js ${INIT_ERROR_VER}`);
         // PromiseRejectionEvent:  evt.reason (the rejected value)
         const errorObj = evt instanceof ErrorEvent ? evt.error : evt.reason;
 
-        const message =
+        /*
+        const OLDmessage =
             (errorObj instanceof Error ? errorObj.message : String(errorObj)) ||
             evt.message || // ErrorEvent fallback
             "Unknown error";
-
+        */
+        const message = "message" in evt
+            ? evt.message
+            : String(evt.reason?.message ?? evt.reason);
         const stack = errorObj instanceof Error ? errorObj.stack : null;
 
         // Optional custom alert hook
-        if (typeof window["alertError"] === "function") {
-            window["alertError"](message, evt);
+        /** @type {((message: string, evt?: Event) => void) | undefined} */
+        const alertError = /** @type {*} */ (window)["alertError"];
+        if (typeof alertError === "function") {
+            alertError(message, evt);
             return;
         }
 
@@ -69,9 +79,12 @@ window.logConsoleHereIs(`here is init-error.js ${INIT_ERROR_VER}`);
         if (hint) {
             dlg.append(Object.assign(document.createElement("p"), { textContent: hint }));
         }
-
+        const locationInfo = "filename" in evt
+            ? `${evt.filename ?? "No filename"}:${evt.lineno ?? "?"}`
+            : "Promise rejection (no line info)";
         const pre = Object.assign(document.createElement("pre"), {
-            textContent: [location.href, stack ?? `${evt.filename ?? "No filename"}:${evt.lineno ?? "?"}`].join("\n\n"),
+            // textContent: [location.href, stack ?? `${evt.filename ?? "No filename"}:${evt.lineno ?? "?"}`].join("\n\n"),
+            textContent: [location.href, stack ?? locationInfo].join("\n\n"),
             style:
                 `
 
@@ -105,6 +118,7 @@ window.logConsoleHereIs(`here is init-error.js ${INIT_ERROR_VER}`);
         dlg.showModal();
     };
 
+    /** @param {ErrorEvent | PromiseRejectionEvent} evt */
     const displayError = (evt) => {
         if (document.readyState !== "loading") { doDisplay(evt); return; }
         document.addEventListener("DOMContentLoaded", () => doDisplay(evt), { once: true });
@@ -118,21 +132,49 @@ window.logConsoleHereIs(`here is init-error.js ${INIT_ERROR_VER}`);
     });
 }
 
-/** @global */
+
+/**
+ * @typedef {Record<string, string>} DynamicStringObject
+ */
+
+/* *
+ * @callback MkEltFn
+ * @param {string} type
+ * @param {DynamicStringObject} [attrib]
+ * @param {string|string[]|HTMLElement|HTMLElement[]} [inner]
+ * @returns {HTMLElement}
+ */
+/* *
+ * @template {string} T
+ * @callback MkEltFn
+ * @param {T} type
+ * @param {DynamicStringObject} [attrib]
+ * @param {string | string[] | HTMLElement | HTMLElement[]} [inner]
+ * @returns {T extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[T] : HTMLElement}
+ */
+/* @global */
+
+/**
+ * @typedef  {string | HTMLElement | (string | HTMLElement)[]} MkEltFnInner
+ */
+//  *   inner?: string | HTMLElement | (string | HTMLElement)[]
+/**
+ * @typedef {<T extends string>(
+ *   type: T,
+ *   attrib?: DynamicStringObject,
+ *   inner?: MkEltFnInner
+ * ) => T extends keyof HTMLElementTagNameMap ? HTMLElementTagNameMap[T] : HTMLElement} MkEltFn
+ */
+
+/** @type {MkEltFn} */
+var mkElt;
+
+
 window.mkElt = (() => {
-    /**
-     * @param {string} type 
-     * @param {DynamicStringObject} [attrib]
-     * @param {string|string[]|HTMLElement|HTMLElement[]} [inner]
-     * @returns {HTMLElement}
-     */
+    /** @type {MkEltFn} */
     function mkElt(type, attrib, inner) {
         const elt = document.createElement(type);
-
-        /**
-         * 
-         * @param {HTMLElement | HTMLElement[] | string | string[]} inr 
-         */
+        /** @param {MkEltFnInner} inr */
         function addInner(inr) {
             if (inr instanceof Element) {
                 elt.appendChild(inr);
@@ -142,33 +184,28 @@ window.mkElt = (() => {
             }
         }
         if (inner) {
-            if (Array.isArray(inner) && inner.length && typeof inner != "string") {
-                for (var i = 0; i < inner.length; i++)
-                    if (inner[i])
-                        addInner(inner[i]);
-            } else
+            if (Array.isArray(inner))
+                for (const item of inner) addInner(item);
+            else
                 addInner(inner);
         }
         for (var x in attrib) {
             elt.setAttribute(x, attrib[x]);
         }
-        return elt;
+        return /** @type {*} */ (elt);
     }
     return mkElt;
 })();
 
 
+/*
+Reduntant in every modern browser 2026
+
 // https://stackoverflow.com/questions/61080783/handling-errors-in-async-event-handlers-in-javascript-in-the-web-browser
-/** @global */
-window.errorHandlerAsyncEvent = (() => {
-    // Error handling with Async/Await in JS - ITNEXT
-    // https://itnext.io/error-handling-with-async-await-in-js-26c3f20bc06a
-    /**
-     * 
-     * @param {function} asyncFun 
-     * @returns 
-     */
-    function errorHandlerAsyncEvent(asyncFun) {
+// Error handling with Async/Await in JS - ITNEXT
+// https://itnext.io/error-handling-with-async-await-in-js-26c3f20bc06a
+window.OLDerrorHandlerAsyncEvent = (() => {
+    function OLDerrorHandlerAsyncEvent(asyncFun) {
         return function (evt) {
             asyncFun(evt).catch(err => {
                 console.log("handler", err);
@@ -176,8 +213,9 @@ window.errorHandlerAsyncEvent = (() => {
             })
         }
     }
-    return errorHandlerAsyncEvent;
+    return OLDerrorHandlerAsyncEvent;
 })();
+*/
 
 /**
  * 

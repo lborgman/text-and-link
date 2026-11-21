@@ -1,5 +1,7 @@
 // global typedefs for exports
 
+/** @typedef {import("./bear-html.js").BearTabs} BearTabs */
+
 /** typedef {{ wrapper: HTMLDivElement, input: HTMLInputElement | HTMLTextAreaElement }} BearTextField */
 /** @typedef {{ container: HTMLDivElement, input: HTMLInputElement }} BearTextInputField */
 /** @typedef {{ field: HTMLDivElement, textarea: HTMLTextAreaElement }} BearTextAreaField */
@@ -23,5 +25,7 @@
  * }} BasicUI_ColorThemesAPI
  */
 
-/** @type {BasicUI_ColorThemesAPI} */
-var BasicUI_ColorThemes;
+/** @type {BasicUI_ColorThemesAPI} */ var BasicUI_ColorThemes;
+
+/** @type {MkEltFn} */ var mkElt;
+/** @type {LogConsoleHereIs} */ var logConsoleHereIs;
