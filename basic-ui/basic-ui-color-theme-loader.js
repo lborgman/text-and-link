@@ -40,7 +40,7 @@
  * @property {string} [variant]
  */
 
-/**
+/* *
  * @typedef {Object} ColorThemeVariables
  * @property {string} "--primary"
  * @property {string} "--primary-container"
@@ -62,12 +62,53 @@
  * @property {string} "--link-color"
  * @property {string} "--link-hover"
  */
+/**
+ * @typedef {{
+ *   "--primary": string,
+ *   "--primary-container": string,
+ *   "--secondary": string,
+ *   "--secondary-container": string,
+ *   "--tertiary": string,
+ *   "--tertiary-container": string,
+ *   "--surface": string,
+ *   "--surface-dim": string,
+ *   "--surface-bright": string,
+ *   "--surface-container": string,
+ *   "--surface-container-low": string,
+ *   "--surface-container-lowest": string,
+ *   "--surface-container-high": string,
+ *   "--surface-container-highest": string,
+ *   "--surface-variant": string,
+ *   "--on-inverse-surface": string,
+ *   "--on-primary": string,
+ *   "--on-primary-container": string,
+ *   "--on-secondary": string,
+ *   "--on-secondary-container": string,
+ *   "--on-surface": string,
+ *   "--on-surface-variant": string,
+ *   "--on-tertiary": string,
+ *   "--on-tertiary-container": string,
+ *   "--outline": string,
+ *   "--outline-variant": string,
+ *   "--inverse-surface": string,
+ *   "--inverse-primary": string,
+ *   "--error": string,
+ *   "--on-error": string,
+ *   "--error-container": string,
+ *   "--on-error-container": string,
+ *   "--backdrop": string,
+ *   "--link-color": string,
+ *   "--link-hover": string
+ * }} ColorThemeVariables
+ */
+
 
 (function () {
     console.log("basic-ui-color-themes-loader is here!!!");
     // Define your public methods
+    /** @type {BasicUI_ColorThemesAPI} */
     const publicAPI = {
-        /**
+        /*
          * Generates a full Material Design 3 color palette with variant support.
          *  @param {string} baseInput - Seed color hex code or standard CSS color name.
          *  @param {boolean} [isDark=false] - Optional flag to generate dark mode tokens.
@@ -80,7 +121,7 @@
             return generateMaterial3ThemePalette(baseInput, isDark, variant);
         },
 
-        /**
+        /*
          *  param {Record<string, string>} colorTheme - containing CSS custom properties.
          *  @param {ColorThemeVariables} colorTheme - containing CSS custom properties.
          *  @param {HTMLElement} [targetElement]
@@ -97,16 +138,17 @@
     Object.freeze(publicAPI);
 
     // Attach it to the global scope
+    /** @type {typeof publicAPI} */
     globalThis.BasicUI_ColorThemes = publicAPI;
 
     /**
-   * Generates a minimal Material Design color palette.
-   * @param {string} baseInput - Seed color hex code or standard CSS color name.
-   * @param {boolean} [isDark=false] - Optional flag to generate dark mode tokens.
-   * returns {Record<string, string>} Object containing CSS custom properties.
-   * @returns {ColorThemeVariables} Object containing CSS custom properties.
-   * @throws {TypeError}
-   */
+     * Generates a minimal Material Design color palette.
+     * @param {string} baseInput - Seed color hex code or standard CSS color name.
+     * @param {boolean} [isDark=false] - Optional flag to generate dark mode tokens.
+     * returns {Record<string, string>} Object containing CSS custom properties.
+     * @returns {ColorThemeVariables} Object containing CSS custom properties.
+     * @throws {TypeError}
+     */
     function generateMaterial2ThemePalette(baseInput, isDark = false) {
         // Convert color name or raw hex string to normalized 6-digit hex
         let hex = baseInput.startsWith("#") ? baseInput : colorNameToHex(baseInput);
@@ -136,6 +178,8 @@
                 case r: h = (g - b) / d + (g < b ? 6 : 0); break;
                 case g: h = (b - r) / d + 2; break;
                 case b: h = (r - g) / d + 4; break;
+                default:
+                    throw Error(`${max}, did not match rgb`);
             }
             h /= 6;
         }
@@ -143,11 +187,22 @@
         const hDeg = Math.round(h * 360);
         const sPct = Math.round(s * 100);
 
-        // Helper: HSL to Hex
+        /**
+         * Converts HSL color values to a 6-digit hexadecimal color string.
+         * @param {number} h - Hue angle in degrees (0–360).
+         * @param {number} s - Saturation percentage (0–100).
+         * @param {number} l - Lightness percentage (0–100).
+         * @returns {`#${string}`} Hex color string (e.g., "#3b82f6").
+         */
         const hslToHex = (h, s, l) => {
             l = Math.min(100, Math.max(0, l)) / 100;
             s = Math.min(100, Math.max(0, s)) / 100;
             const a = s * Math.min(l, 1 - l);
+            /**
+             * Computes a single 2-digit hex channel component for the given color offset.
+             * @param {number} n - Channel offset (0 for red, 8 for green, 4 for blue).
+             * @returns {string} 2-character lowercase hexadecimal string (e.g., "0f").
+             */
             const f = (n) => {
                 const k = (n + h / 30) % 12;
                 const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
@@ -178,6 +233,7 @@
                 "--outline-variant": hslToHex(hDeg, 10, 24),
 
                 "--inverse-surface": hslToHex(hDeg, 10, 92),
+                "--on-inverse-surface": hslToHex(hDeg, 10, 18),
                 "--inverse-primary": hslToHex(hDeg, sPct, 45),
 
                 "--error": "#f87171",
@@ -187,7 +243,28 @@
                 "--backdrop": `hsl(${hDeg}deg 20% 5% / 72%)`,
 
                 "--link-color": "hsl(212deg 100% 75%)",
-                "--link-hover": "hsl(212deg 100% 85%)"
+                "--link-hover": "hsl(212deg 100% 85%)",
+
+                // Dark Mode additions:
+                "--on-primary": hslToHex(hDeg, sPct, 20),
+                "--on-primary-container": hslToHex(hDeg, Math.min(sPct + 10, 100), 90),
+                "--on-secondary": hslToHex((hDeg - 15 + 360) % 360, Math.max(sPct - 10, 10), 20),
+                "--on-secondary-container": hslToHex((hDeg - 15 + 360) % 360, Math.max(sPct - 10, 10), 90),
+                "--on-tertiary": hslToHex((hDeg + 170) % 360, Math.min(sPct + 10, 90), 20),
+                "--on-tertiary-container": hslToHex((hDeg + 170) % 360, Math.min(sPct + 10, 90), 90),
+                "--on-error": "#450a0a",
+                "--on-error-container": "#fecaca",
+
+                // Dark Mode additions:
+                // "--surface": hslToHex(hDeg, 10, 6),
+                "--surface-dim": hslToHex(hDeg, 10, 6),
+                "--surface-bright": hslToHex(hDeg, 10, 24),
+                "--surface-container-lowest": hslToHex(hDeg, 10, 4),
+                "--surface-container-low": hslToHex(hDeg, 10, 10),
+                "--surface-container": hslToHex(hDeg, 10, 12),
+                "--surface-container-high": hslToHex(hDeg, 10, 17),
+                "--surface-container-highest": hslToHex(hDeg, 10, 22),
+
             };
         }
 
@@ -212,6 +289,7 @@
             "--outline-variant": hslToHex(hDeg, 12, 90),
 
             "--inverse-surface": hslToHex(hDeg, 10, 18),
+            "--on-inverse-surface": hslToHex(hDeg, 10, 95),
             "--inverse-primary": hslToHex(hDeg, 90, 70),
 
             "--error": "#dc2626",
@@ -221,7 +299,28 @@
             "--backdrop": `hsl(${hDeg}deg 20% 10% / 32%)`,
 
             "--link-color": "hsl(212deg 100% 36%)",
-            "--link-hover": "hsl(212deg 100% 25%)"
+            "--link-hover": "hsl(212deg 100% 25%)",
+
+            // Light Mode additions (uses `l > 0.6` so light seed colors get dark text):
+            "--on-primary": l > 0.6 ? hslToHex(hDeg, sPct, 12) : "#ffffff",
+            "--on-primary-container": hslToHex(hDeg, sPct, 12),
+            "--on-secondary": "#ffffff",
+            "--on-secondary-container": hslToHex((hDeg - 15 + 360) % 360, Math.max(sPct - 10, 10), 12),
+            "--on-tertiary": "#ffffff",
+            "--on-tertiary-container": hslToHex((hDeg + 170) % 360, Math.min(sPct + 10, 90), 12),
+            "--on-error": "#ffffff",
+            "--on-error-container": "#450a0a",
+
+            // Light Mode additions:
+            // "--surface": hslToHex(hDeg, 10, 98),
+            "--surface-dim": hslToHex(hDeg, 10, 87),
+            "--surface-bright": hslToHex(hDeg, 10, 98),
+            "--surface-container-lowest": "#ffffff",
+            "--surface-container-low": hslToHex(hDeg, 10, 96),
+            "--surface-container": hslToHex(hDeg, 10, 94),
+            "--surface-container-high": hslToHex(hDeg, 10, 92),
+            "--surface-container-highest": hslToHex(hDeg, 10, 90),
+
         };
     }
 
@@ -234,7 +333,7 @@
      */
     function applyMaterialTheme(baseColor, isDark = false, targetElement = document.documentElement) {
         /** @type {ColorThemeVariables} */
-        const palette = generateMaterialThemePalette(baseColor, isDark);
+        const palette = generateMaterial2ThemePalette(baseColor, isDark);
         Object.entries(palette).forEach(([prop, value]) => {
             targetElement.style.setProperty(prop, value);
         });
@@ -248,7 +347,7 @@
      *
      * @param {string} baseInput - Seed color hex code or standard CSS color name.
      * @param {boolean} [isDark=false] - Optional flag to generate dark mode tokens.
-     * @param {'tonalSpot'|'vibrant'|'expressive'|'fidelity'|'content'|'fruitSalad'|'rainbow'|'monochrome'} [variant='tonalSpot'] - M3 Scheme Variant.
+     * @param {'neutral'|'tonalSpot'|'vibrant'|'expressive'|'fidelity'|'content'|'fruitSalad'|'rainbow'|'monochrome'} [variant='tonalSpot'] - M3 Scheme Variant.
      * returns {Record<string, string>} Object containing CSS custom properties.
      * @returns {ColorThemeVariables} Object containing CSS custom properties.
      * @throws {TypeError}
@@ -271,11 +370,9 @@
         const b = parseInt(hex.substring(4, 6), 16) / 255;
 
         const max = Math.max(r, g, b), min = Math.min(r, g, b);
-        let h, s, l = (max + min) / 2;
+        let h = 0, s = 0, l = (max + min) / 2;
 
-        if (max === min) {
-            h = s = 0;
-        } else {
+        if (max !== min) {
             const d = max - min;
             s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
             switch (max) {
@@ -289,12 +386,23 @@
         const hDeg = Math.round(h * 360);
         const sPct = Math.round(s * 100);
 
-        // Helper: HSL to Hex
+        /**
+         * Converts HSL color values to a 6-digit hexadecimal color string.
+         * @param {number} h - Hue angle in degrees (automatically wrapped to 0–360).
+         * @param {number} s - Saturation percentage (0–100, clamped).
+         * @param {number} l - Lightness percentage (0–100, clamped).
+         * @returns {`#${string}`} 6-digit hex color string (e.g., "#3b82f6").
+         */
         const hslToHex = (h, s, l) => {
             h = (h % 360 + 360) % 360; // Normalize hue loop
             l = Math.min(100, Math.max(0, l)) / 100;
             s = Math.min(100, Math.max(0, s)) / 100;
             const a = s * Math.min(l, 1 - l);
+            /**
+             * Computes a single 2-digit hex channel component for the given color offset..
+             * @param {number} n - Channel offset (0 for red, 8 for green, 4 for blue).
+             * @returns {string} 2-character lowercase hexadecimal string.
+             */
             const f = (n) => {
                 const k = (n + h / 30) % 12;
                 const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);

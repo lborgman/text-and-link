@@ -1101,6 +1101,7 @@ function dialogColorTheme() {
         return lbl
     }
     const variants = [
+        'neutral',
         'tonalSpot',
         'vibrant', 'expressive', 'fidelity', 'content', 'fruitSalad', 'rainbow',
         'monochrome'
