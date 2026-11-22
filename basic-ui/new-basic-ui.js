@@ -1,12 +1,9 @@
 // @ts-check
 
 const BASIC_UI_VER = "0.0.01";
-// @ts-ignore
 logConsoleHereIs(`here is basic-ui.js, module,${BASIC_UI_VER}`);
 if (document.currentScript) throw Error("import .currentScript"); // is module
 
-/** @typedef {{ wrapper: HTMLDivElement, input: HTMLInputElement }} BearTextInputField */
-/* @typedef {{ wrapper: HTMLDivElement, input: HTMLInputElement | HTMLTextAreaElement }} BearTextInputField */
 
 
 const backdropDuration = getRootCssVarMs("--backdrop-duration");
@@ -17,7 +14,7 @@ const slideDuration = getRootCssVarMs("--dialog-slide-duration");
 /**
  * @param {Record<string, any> & { [Symbol.toStringTag]: "Module" }} theModule - Any ESM module
  * @param {string} importName - Used to construct a typedef name for the module
- * @return string
+ * @return {string}
  */
 export function getJsDocForModule(theModule, importName) {
     const isESM = theModule[Symbol.toStringTag] === "Module";
@@ -47,17 +44,17 @@ ${JSDocProperties}
 
 
 
-// @ts-ignore
-const mkElt = window["mkElt"];
+// ts-ignore
+// const mkElt = window["mkElt"];
 
 /**
  * @param {function} [funClose]
  * @returns {HTMLButtonElement}
  * @category Visual elements
+ * @throws {Error}
  */
 export function mkXclose(funClose) {
     if (funClose) { throw Error("funClose not supported any more"); }
-    // const xClose = /** @type {HTMLButtonElement} */ (OLDmkElt("button", { class: "x-close" }, "✖"));
     const xClose = mkElt("button", { class: "x-close" }, "✖");
     xClose.addEventListener("click", /** @param {Event} evt */ evt => {
         evt.stopPropagation();
@@ -72,7 +69,7 @@ export function mkXclose(funClose) {
 
 /**
  * @param {HTMLDialogElement} dialog
- * returns {HTMLButtonElement}
+ * @returns {HTMLButtonElement|undefined}
  * @category Visual elements
  */
 export function addXclose(dialog) {
@@ -80,7 +77,7 @@ export function addXclose(dialog) {
     if (btnClose) { return; }
     const elt = mkXclose();
     dialog.appendChild(elt);
-    // return elt;
+    return elt;
 }
 
 document.documentElement.addEventListener("click",
@@ -401,6 +398,7 @@ export async function showDialog(bdy, retValFun, buttons, dialogClass) {
  * @param {string} [cancel]
  * @param {function} [funOkButton]
  * @throws {TypeError}
+ * @returns {Promise<boolean>}
  * @category Visual helpers
  */
 export async function showDialogConfirm(bdy, ok, cancel, funOkButton) {
@@ -549,7 +547,7 @@ export function mkDialogMenu() {
 }
 
 /**
- * @param {HTMLDialogElement} dialogMenu 
+ * @param {HTMLDialogElement} dialogMenu
  * @category Visual elements
  */
 export function addMenuDivider(dialogMenu) {
@@ -757,12 +755,13 @@ function scrollForTextInput(dlg, msTimeout = 300) {
 }
 
 
-/**
+/* *
 * Waits for a list of elements to settle their layouts.
 * @param {HTMLElement|HTMLElement[]|NodeListOf<HTMLElement>} elements - Single element or list of elements.
 * @returns {Promise<WeakMap<HTMLElement, ResizeObserverEntry>>} Resolves with a WeakMap mapping elements to their final entries.
  * @category Helpers
 */
+/*
 export function waitForLayoutSilence(elements) {
     return new Promise((resolve) => {
         // Normalize input to an array so we can safely loop over it
@@ -770,7 +769,7 @@ export function waitForLayoutSilence(elements) {
             ? Array.from(elements)
             : [elements];
 
-        /** @type {number|null} */
+        /** @type {number|null} * /
         let rafId = null;
 
         // Create the WeakMap that will be passed back to the user
@@ -801,6 +800,7 @@ export function waitForLayoutSilence(elements) {
         targets.forEach(el => observer.observe(el));
     });
 }
+*/
 
 monitorVisualViewport();
 
@@ -959,13 +959,13 @@ function getEltSnackbar() {
  *
  * Uses CSS class "show-here".
  *
- * @param {number} clientX
- * @param {number} clientY
  * @param {string|HTMLDivElement} txtOrDiv
+ * @param {number} [clientX]
+ * @param {number} [clientY]
  * @param {number} [secTimeout]
  * @returns {HTMLDivElement}
  */
-export function showHere(clientX, clientY, txtOrDiv, secTimeout) {
+export function showHere(txtOrDiv, clientX, clientY, secTimeout) {
     // Both must be number or undefined
     const hasPos = clientX != undefined && clientY != undefined;
     if (hasPos) {
@@ -1205,14 +1205,13 @@ export function mkColorPickerSquare() {
  */
 export function mkDoubleColorInputs(bearInpColor, onAnyInput) {
     // onAnyInput is checked in syncInpTextAndColorPicker!
-    const inpColor = bearInpColor.input;
+    const inpColor = /** @type {HTMLInputElement} */ (bearInpColor.eltText);
 
-    // wrapperInpColor.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
-    bearInpColor.wrapper.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
+    bearInpColor.container.style.width = "calc(9ch + 30px)"; // FIX-ME: Why is not 7ch enough??
 
     const colorPicker = mkColorPickerSquare();
     const spanColorInputs = mkElt("span", undefined, [
-        bearInpColor.wrapper,
+        bearInpColor.container,
         colorPicker
     ]);
     spanColorInputs.classList.add("basic-ui_color-inputs");

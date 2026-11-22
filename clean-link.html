@@ -446,10 +446,11 @@
             // const useDialog = confirm("Test basic-ui result as dialog?");
             const useDialog = true;
             if (!useDialog) {
-                const newDv = modCheck.getEltDebugVisual();
-                console.log({ modCheck, container, OLDdv, newDv });
-                container.append(newDv);
-                modCheck.doTheTests();
+                throw Error("!useDialog");
+                // const newDv = modCheck.getEltDebugVisual();
+                // console.log({ modCheck, container, OLDdv, newDv });
+                // container.append(newDv);
+                // modCheck.doTheTests();
             } else {
                 const btnTest = mkElt("button", undefined, "Test setup");
                 container.appendChild(btnTest);

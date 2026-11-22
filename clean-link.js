@@ -24,31 +24,6 @@ export { };
 // @ts-ignore
 const modBeerHtml = await import("bear-html");
 
-// const modBasicUI = await import("https://lborgman.github.io/basic-ui/js/basic-ui.js");
-// const modBasicUI = await import("basic-ui");
-/**
- * @typedef {Object} BasicUiModule
- * @property {Function} addMenuAlt
- * @property {Function} addMenuDivider
- * @property {Function} addXclose
- * @property {Function} closeMyDialog
- * @property {Function} colorNameToHex
- * @property {Function} getRootCssVarMs
- * @property {Function} isCssVariableDefined
- * @property {Function} mkColorPickerSquare
- * @property {Function} mkDialogMenu
- * @property {Function} mkDoubleColorInputs
- * @property {Function} mkMdcIcon
- * @property {Function} mkXclose
- * @property {Function} nextPaint
- * @property {Function} openDialog
- * @property {Function} showDialog
- * @property {Function} showDialogConfirm
- * @property {Function} showHere
- * @property {Function} snackbar
- * @property {Function} waitForLayoutSilence
- */
-
 // @ts-ignore
 const modBasicUI = /** @type {BasicUiModule} */ (await import("basic-ui"));
 
@@ -61,9 +36,6 @@ const modBasicUI = /** @type {BasicUiModule} */ (await import("basic-ui"));
 const BasicUI_ColorThemes = /** @type {any} */ (globalThis).BasicUI_ColorThemes;
 
 
-
-// const storagePrefix = "clean-link";
-// const keyColorTheme = `${storagePrefix}-theme`;
 
 
 function saveTheme() {
@@ -788,8 +760,7 @@ function cleanLinkShowSnackbar(txtOrDiv, secDuration = 4) {
  * @returns {void}
  */
 function cleanLinkShowHere(clientX, clientY, txtOrDiv, secTimeout) {
-    // return showOver(txtOrDiv, secTimeout, clientX, clientY);
-    modBasicUI.showHere(clientX, clientY, txtOrDiv, secTimeout);
+    modBasicUI.showHere(txtOrDiv, clientX, clientY, secTimeout);
 }
 
 // Remove popover without id on rim click
@@ -1024,7 +995,8 @@ function dialogColorTheme() {
         label: "Color",
         border: true
     });
-    const inpColor = wrapperInpColor.input;
+    // const inpColor = wrapperInpColor.input;
+    const inpColor = wrapperInpColor.eltText;
 
     const wrapperDoubleColors = modBasicUI.mkDoubleColorInputs(wrapperInpColor, applyDialogTheme);
     const colorPicker = wrapperDoubleColors.colorPicker;
@@ -1167,11 +1139,9 @@ function dialogColorTheme() {
         fillInTheme(currentTheme);
         applyDialogTheme(); // FIX-ME: ?
     });
-    /**
-     * @param {ColorTheme} theme
-     */
+    /** @param {ColorTheme} theme */
     function fillInTheme(theme) {
-        const { color, dark, variant } = theme;
+        const { dark = false, variant } = theme;
         chkDark.checked = dark;
         const selectedVariant = variant || 'tonalSpot';
         const selectedInput = /** @type {HTMLInputElement|null} */ (divVariants.querySelector(`input[value=${selectedVariant}]`));

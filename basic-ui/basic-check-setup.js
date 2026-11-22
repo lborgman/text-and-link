@@ -4,9 +4,10 @@
     Loading this file will define globalThis.waitUntilQuerySelector
 */
 
+// @ts-ignore
 const modBasic = await import("basic-ui");
 const modBear = await import("bear-html");
-const modMdcIcons = (location.hostname == "localhost") ? await import("mdc-icons") : undefined;
+// const modMdcIcons = (location.hostname == "localhost") ? await import("mdc-icons") : undefined;
 
 // ---- style text for #basic-ui_debugVisual ----
 const cssDebugVisual = `
@@ -67,7 +68,7 @@ const mySwitch = modBear.createSwitch({
 });
 const detailsSwitch = () => mkElt("details", { open: "" }, [
     mkElt("summary", undefined, " test-switch"),
-    mkElt("div", undefined, mySwitch.wrapper)
+    mkElt("div", undefined, mySwitch.container)
     // mySwitch.wrapper
 ]);
 
@@ -174,7 +175,7 @@ const detailsTestSliders = () => mkElt("details", { id: "test-sliders" }, [
     mkElt("div", undefined,
         [
             mkElt("div", undefined,
-                sli1.wrapper
+                sli1.container
             )
         ])
 ]);
@@ -213,28 +214,36 @@ const detailsDebugVisual = () => mkElt("details", { id: "basic-ui_debugVisual", 
 // Append wherever needed, e.g.:
 // document.body.appendChild(detailsDebugVisual);
 
+/*
 export function getEltDebugVisual() {
     return detailsDebugVisual();
 }
 export async function doTheTests() {
+    debugger;
     const dv = await globalThis.waitUntilQuerySelector("#basic-ui_debugVisual",);
     debugger;
     doTheTestsInternal(dv);
 }
+*/
 
+/** @param {HTMLDetailsElement} dv */
 async function doTheTestsInternal(dv) {
     // scriptModule
     {
+        /*
         function insertHere(output) {
             document.currentScript.parentNode.insertBefore(output, document.currentScript);
         }
-        // const eltTestText = document.getElementById("test-text");
+        */
         const eltTestText = await globalThis.waitUntilQuerySelector("#test-text");
-        const eltTestTextSection = eltTestText.querySelector("section");
+        if (!eltTestText) {
+            throw Error("!eltTestText");
+        }
+        const eltTestTextSection = /** @type {HTMLElement} */ (eltTestText.querySelector("section"));
         setTimeout(() => {
             eltTestText.addEventListener("change", evt => {
                 const target = evt.target;
-                if (target.tagName != "INPUT") {
+                if (!(target instanceof HTMLInputElement)) {
                     return;
                     debugger;
                 }
@@ -243,11 +252,17 @@ async function doTheTestsInternal(dv) {
                     debugger;
                 }
                 const divCont = target.closest("div");
+                if (!(divCont instanceof HTMLDivElement)) {
+                    debugger;
+                    throw Error("divCont is not <div>");
+                }
                 const myDiv = divCont
-                    .lastElementChild
-                    .firstElementChild
-                    .firstElementChild
+                    .lastElementChild?.firstElementChild?.firstElementChild
                     ;
+                if (!myDiv) {
+                    debugger;
+                    throw Error("!myDiv");
+                }
                 myDiv.classList.toggle("field");
             })
         }, 1000);
@@ -272,7 +287,7 @@ async function doTheTestsInternal(dv) {
                         }
                         setOpts.add(jsonOpts);
                         // console.log({ border, label, fill, fieldOpts });
-                        addTextExample(fieldOpts);
+                        addTextExample(/** @type {BearFieldOptions} */ (fieldOpts));
                     })
                 })
             })
@@ -280,17 +295,15 @@ async function doTheTestsInternal(dv) {
         const opts = {
             // <textarea name="" id=""></textarea>
         }
-        // console.log(setOpts);
-        // debugger;
+        /** @param {BearFieldOptions} fieldOpts */
         function addTextExample(fieldOpts) {
             // debugger;
-            const { wrapper, input } = modBear.createTextField(fieldOpts);
-            // console.log({ field, input });
-            const field = wrapper.firstElementChild;
+            const obj = modBear.createTextField(fieldOpts);
+            const { container, eltText } = obj;
+            const field = container.firstElementChild;
             let fieldClass = field.getAttribute("class");
             fieldClass = fieldClass.replace("field", "").trim();
             const divFieldClass = mkElt("div", undefined, fieldClass);
-            // const divFieldClass = mkElt("div", undefined, field);
             divFieldClass.style = `
                 background: blue;
                 color: white;
@@ -324,15 +337,18 @@ async function doTheTestsInternal(dv) {
     {
         // debugger; // script
         // BeerCSS’s smaller subset (from GitHub) typically includes:
+        /** @param {string} iconName */
         function insertIcon(iconName) {
             const eltIcon = mkElt("i", undefined, iconName);
             const spanName = mkElt("span", undefined, `${iconName}: `);
             // const eltTextIcon = mkElt("div", undefined, [iconName, ":", eltIcon]);
             spanName.style.opacity = "0.5";
             const eltTextIcon = mkElt("div", undefined, [spanName, eltIcon]);
+            if (!divTestIcons) throw Error("!divTestIcons");
             divTestIcons.appendChild(eltTextIcon);
         }
-        const divTestIcons = document.getElementById("test-icons").querySelector("div");
+        const divTestIcons = document.getElementById("test-icons")?.querySelector("div");
+        if (divTestIcons == null) throw Error("divTestIcons == null");
         divTestIcons.classList.add("surface");
         divTestIcons.style.display = "flex";
         divTestIcons.style.flexWrap = "wrap";
@@ -383,6 +399,9 @@ async function doTheTestsInternal(dv) {
     }
 
     const dvResult = await globalThis.waitUntilQuerySelector("#testVisual-result");
+    if (dvResult == null) throw Error("dvResult == null");
+
+    /** * @param {string} txt */
     const problem = (txt) => {
         console.error("problem: ", txt);
         debugger;
@@ -401,6 +420,7 @@ async function doTheTestsInternal(dv) {
 
 
     const iIcon = await globalThis.waitUntilQuerySelector("i", dv);
+    if (!iIcon) throw Error("!iIcon");
     const iRect = iIcon.getBoundingClientRect();
     console.log({ iIcon, iRect });
     if (iRect.width != iRect.height) {
@@ -418,7 +438,7 @@ async function doTheTestsInternal(dv) {
  * (https://www.sitelint.com/blog/javascript-and-wait-until-dom-element-exists)
  *
  * @param {string} CSSselector - The element or selector to wait for.
- * @param {HTMLElement} fromElt - The element to query from
+ * @param {HTMLElement} [fromElt] - The element to query from
  * @param {number} [timeout=1000] - The timeout in milliseconds.
  * @returns {Promise<HTMLElement|null>} A Promise that resolves with the element or null if the timeout is reached.
  */
@@ -434,6 +454,7 @@ function waitUntilQuerySelector(CSSselector, fromElt, timeout) {
     fromElt = fromElt || document.documentElement;
     timeout = typeof timeout === "number" ? timeout : 1000;
 
+    /** @param {(value: HTMLElement|null) => void} resolve */
     const waitForElement = (resolve) => {
         const startTime = window.performance.now();
         const checkElement = () => {
@@ -444,7 +465,7 @@ function waitUntilQuerySelector(CSSselector, fromElt, timeout) {
                 resolve(null);
                 return;
             }
-            const element = document.querySelector(CSSselector);
+            const element = /** @type {HTMLElement} */ (document.querySelector(CSSselector));
             if (element) {
                 resolve(element);
                 return;
@@ -459,16 +480,20 @@ function waitUntilQuerySelector(CSSselector, fromElt, timeout) {
 globalThis.waitUntilQuerySelector = waitUntilQuerySelector;
 
 export function checkSetupDialog() {
-    const dv = detailsDebugVisual();
+    const dv = /** @type {HTMLDetailsElement} */ (detailsDebugVisual());
+    if (!dv) throw Error("!dv");
+    const dvLast =/** @type {HTMLElement} */ (dv.lastElementChild);
+    if (!dvLast) throw Error("!dvLast");
     const bdy = mkElt("div", undefined, [
         mkElt("h3", undefined, "Check basic-ui setup"),
-        dv.lastElementChild
+        // dv.lastElementChild
+        dvLast
     ]);
     bdy.id = "basic-ui_debugVisual";
     const oldBdy = document.getElementById(bdy.id);
     if (oldBdy) {
         const oldDialog = oldBdy.closest("dialog");
-        oldDialog.remove();
+        oldDialog?.remove();
     }
     // export showDialog(bdy, retValFun, buttons, dialogClass) {
     modBasic.showDialog(bdy, undefined, undefined, "large");

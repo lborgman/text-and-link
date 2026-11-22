@@ -36,7 +36,7 @@ const mkElt = window["mkElt"];
 const modCustElts = await import("./custom-elts-helpers.js");
 // const modCustElts = await import("./custom-elts-helpers.js");
 
-class BearSlider extends modCustElts.withSafeInit(HTMLInputElement) {
+class BearSliderElement extends modCustElts.withSafeInit(HTMLInputElement) {
     onVisibleInit() {
         const inp = /** @type {HTMLInputElement} */ (/** @type {unknown} */ (this));
         updateRange(inp);
@@ -70,18 +70,6 @@ class BearTabs extends modCustElts.withSafeInit(HTMLDivElement) {
 // Shared internals
 // ---------------------------------------------------------------------------
 
-/**
- * @typedef {object} FieldOptions
- * @property {string} [label] - Floating label text. Omit for no label.
- * @property {string} [value] - Initial value.
- * @property {string} [placeholder] - Needed for floating labels
- * @property {boolean} [border=false] - Use bordered style.
- * @property {boolean} [fill=false] - Use filled style. `border` and `fill` are
- *   mutually exclusive per Beer CSS; if both are set, `fill` wins.
- * @property {'small'|'medium'|'large'|'extra'} [size]
- * @property {string} [name]
- * @property {(value: string) => void} [onInput]
- */
 
 let uidCounter = 0;
 
@@ -124,24 +112,18 @@ function wireFloatingLabel(control, labelEl) {
 /**
  * Builds the `.field` wrapper and optional `<label>` shared by text inputs
  * and textareas.
- * @param {FieldOptions} options
- * @param {boolean} isTextarea
+ * @param {BearFieldOptions} options
+ * param {boolean} isTextarea
  * @returns {{ field: HTMLDivElement, label: HTMLLabelElement|null }}
  */
-function buildField({ label, border, fill, size }, isTextarea) {
-    const field = document.createElement('div');
-    // if (label) { debugger; }
-    field.className = [
+function buildField({ label, border, fill }) {
+    const divField = document.createElement('div');
+    divField.className = [
         'field',
         label && 'label',
-        // fill ? 'fill' : border && 'border',
         border && "border",
         fill && "fill",
-        // isTextarea && 'textarea',
-        // size,
-    ]
-        // .filter(Boolean)
-        .join(' ');
+    ].join(' ');
 
     let labelEl = null;
     if (label) {
@@ -156,7 +138,7 @@ function buildField({ label, border, fill, size }, isTextarea) {
         labelEl.textContent = label;
     }
 
-    return { field, label: labelEl };
+    return { field: divField, label: labelEl };
 }
 
 
@@ -168,7 +150,7 @@ function buildField({ label, border, fill, size }, isTextarea) {
 
 /**
  * Creates a Beer CSS styled text input, wrapped in its required field markup.
- * @param {FieldOptions & { type?: string }} [options]
+ * @param {BearFieldOptions & { type?: string }} [options]
  * returns {{ wrapper: HTMLDivElement, input: HTMLInputElement | HTMLTextAreaElement }}
  * @returns {BearTextInputField}
  */
@@ -179,21 +161,11 @@ export function createTextField({
     onInput,
     ...rest
 } = {}) {
-    const { field, label } = buildField(rest, false);
+    const { field, label } = buildField(rest);
     const fieldType = rest.type || 'input';
 
-    const eltText = document.createElement(fieldType);
-    /*
-    if (eltText instanceof HTMLInputElement) {
-        eltText.type = "text";
-        eltText.value = value;
-        if (name) eltText.name = name;
-    }
-    if (eltText instanceof HTMLTextAreaElement) {
-        eltText.value = value;
-        if (name) eltText.name = name;
-    }
-    */
+    // const eltText = document.createElement(fieldType);
+    const eltText = mkElt(fieldType);
     if (eltText instanceof HTMLInputElement) {
         eltText.type = "text";
         eltText.value = value;
@@ -225,8 +197,8 @@ export function createTextField({
 
     Note: This is needed only for label+border. FIX-ME:
     */
-    const wrapper = mkElt("div", undefined, field);
-    return { wrapper, input: eltText };
+    const container = mkElt("div", undefined, field);
+    return { container, eltText };
 }
 
 // ---------------------------------------------------------------------------
@@ -236,7 +208,7 @@ export function createTextField({
 /**
  * Creates a Beer CSS styled textarea, wrapped in its required field markup.
  * Auto-resizes height to fit content as the user types.
- * @param {FieldOptions & { rows?: number, maxHeight?: number }} [options]
+ * @param {BearFieldOptions & { rows?: number, maxHeight?: number }} [options]
  * returns {{ field: HTMLDivElement, textarea: HTMLTextAreaElement }}
  * @returns {BearTextAreaField}
  */
@@ -248,7 +220,7 @@ export function createTextareaField({
     onInput,
     ...rest
 } = {}) {
-    const { field, label } = buildField(rest, true);
+    const { field, label } = buildField(rest);
 
     const textarea = document.createElement('textarea');
     textarea.value = value;
@@ -320,7 +292,7 @@ export function createSwitch({
     //     container.append(input, labelEl);
     //     wrapper = container;
     // }
-    const wrapper = mkElt("label", { class: "switch" }, [input, mkElt("span")]);
+    const container = mkElt("label", { class: "switch" }, [input, mkElt("span")]);
 
     /*
     if (onChange) {
@@ -328,7 +300,7 @@ export function createSwitch({
     }
     */
 
-    return { wrapper, input };
+    return { container, input };
 }
 
 // ---------------------------------------------------------------------------
@@ -344,12 +316,12 @@ export function createSwitch({
 /**
  * Creates a Beer CSS styled `<select>`, wrapped in its required field markup.
  * Reuses the same field/label helpers as the text field.
- * @param {FieldOptions & { options: SelectOption[], onChange?: (value: string) => void }} options
+ * @param {BearFieldOptions & { options: SelectOption[], onChange?: (value: string) => void }} options
  * returns {{ field: HTMLDivElement, select: HTMLSelectElement }}
  * @returns {BearSelect}
  */
 export function createSelect({ options, value, name, onChange, ...rest } = { options: [] }) {
-    const { field, label } = buildField(rest, false);
+    const { field, label } = buildField(rest);
 
     const select = document.createElement('select');
     if (name) select.name = name;
@@ -406,7 +378,6 @@ export function createSelect({ options, value, name, onChange, ...rest } = { opt
  * @param {(value: number) => void} [rawOpts.onInput]
  * @param {number} [rawOpts.onInputThrottleMs]
  * @param {(value: number) => void|null} [rawOpts.onChange]
- * returns {{ wrapper: HTMLElement, input: HTMLInputElement, funInit: (val:number) => void }}
  * @returns {BearSlider}
  */
 export function createSlider(rawOpts = {
@@ -468,17 +439,17 @@ export function createSlider(rawOpts = {
     // if (opts.myName) input.name = opts.myName;
 
 
-    const wrapper = document.createElement('div');
+    const container = document.createElement('div');
     // wrapper.className = 'slider-field';
-    wrapper.classList.add('slider');
-    wrapper.classList.add(opts.size);
-    wrapper.classList.add(opts.direction);
+    container.classList.add('slider');
+    container.classList.add(opts.size);
+    container.classList.add(opts.direction);
 
-    wrapper.style.position = 'relative';
-    wrapper.appendChild(input);
+    container.style.position = 'relative';
+    container.appendChild(input);
 
     const spanSelected = mkElt("span");
-    wrapper.appendChild(spanSelected);
+    container.appendChild(spanSelected);
 
     const bubble = document.createElement('span');
     const updateBubble = () => {
@@ -491,7 +462,7 @@ export function createSlider(rawOpts = {
 
     if (opts.showBubble) {
         bubble.className = 'slider-bubble';
-        wrapper.appendChild(bubble);
+        container.appendChild(bubble);
 
         input.addEventListener('input', () => {
             updateBubble();
@@ -525,12 +496,12 @@ export function createSlider(rawOpts = {
         input.value = String(val);
         updateBubble();
     }
-    return { wrapper, input, funInit };
+    return { container, input, funInit };
 }
 
 //// Here you must specify which native tag you are extending
 try {
-    customElements.define('bear-slider', BearSlider, { extends: 'input' });
+    customElements.define('bear-slider', BearSliderElement, { extends: 'input' });
     // BearTabs
     customElements.define('bear-tabs', BearTabs, { extends: 'div' });
 } catch (error) {
@@ -606,8 +577,8 @@ export function createChip({
  * @returns {BearChipGroup}
  */
 export function createChipGroup({ items, mode = 'single', selected, onChange } = { items: [] }) {
-    const wrapper = document.createElement('div');
-    wrapper.className = 'chip-group';
+    const container = document.createElement('div');
+    container.className = 'chip-group';
 
     const initiallySelected = new Set(
         Array.isArray(selected) ? selected : selected ? [selected] : []
@@ -635,11 +606,11 @@ export function createChipGroup({ items, mode = 'single', selected, onChange } =
             },
         });
         chips.set(item.value, chip);
-        wrapper.append(chip);
+        container.append(chip);
     }
 
     return {
-        wrapper,
+        container,
         getSelected: () => [...chips.entries()].filter(([, c]) => c.classList.contains('fill')).map(([v]) => v),
     };
 }
