@@ -114,6 +114,25 @@ const detailsTestText = () => mkElt("details", { id: "test-text" }, [
     mkElt("summary", undefined, "test-text"),
     sectionText
 ]);
+const sectionButton =
+    mkElt("section", {
+        style: `
+            display:flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap:20px;
+            NObackground-color: var(--surface);
+            margin: 0;
+            `
+    }, [
+        mkElt("style", undefined, cssTestText)
+    ]);
+sectionButton.classList.add("surface");
+
+const detailsTestButton = () => mkElt("details", { id: "test-button" }, [
+    mkElt("summary", undefined, "test-button"),
+    sectionButton
+]);
 
 // ---- test-icons block ----
 const detailsTestIcons = () => mkElt("details", { id: "test-icons" }, [
@@ -199,6 +218,7 @@ const divSurfaceVariant = () => mkElt("div", {
     detailsSwitch(),
     detailsRadio(),
     detailsTestText(),
+    detailsTestButton(),
     detailsTestIcons(),
     detailsTestTabs(),
     detailsTestSliders(),
@@ -236,10 +256,13 @@ async function doTheTestsInternal(dv) {
         }
         */
         const eltTestText = await globalThis.waitUntilQuerySelector("#test-text");
-        if (!eltTestText) {
-            throw Error("!eltTestText");
-        }
+        if (!eltTestText) { throw Error("!eltTestText"); }
         const eltTestTextSection = /** @type {HTMLElement} */ (eltTestText.querySelector("section"));
+
+        const eltTestButton = await globalThis.waitUntilQuerySelector("#test-button");
+        if (!eltTestButton) { throw Error("!eltTestButton"); }
+        const eltTestButtonSection = /** @type {HTMLElement} */ (eltTestButton.querySelector("section"));
+
         setTimeout(() => {
             eltTestText.addEventListener("change", evt => {
                 const target = evt.target;
@@ -266,7 +289,7 @@ async function doTheTestsInternal(dv) {
                 myDiv.classList.toggle("field");
             })
         }, 1000);
-        const setOpts = new Set();
+        const setTextOpts = new Set();
         ["input", "textarea"].forEach(txtType => {
             const txtTypeHeader = mkElt("h2", undefined, `<${txtType}>`);
             txtTypeHeader.style.width = "90%";
@@ -282,18 +305,97 @@ async function doTheTestsInternal(dv) {
                         if (label) { fieldOpts.label = label; }
                         if (fill) { fieldOpts.fill = true; }
                         const jsonOpts = JSON.stringify(fieldOpts);
-                        if (setOpts.has(jsonOpts)) {
+                        if (setTextOpts.has(jsonOpts)) {
                             debugger;
                         }
-                        setOpts.add(jsonOpts);
+                        setTextOpts.add(jsonOpts);
                         // console.log({ border, label, fill, fieldOpts });
-                        addTextExample(/** @type {BearFieldOptions} */ (fieldOpts));
+                        addTextExample(/** @type {BearFieldOptions} */(fieldOpts));
                     })
                 })
             })
         });
-        const opts = {
-            // <textarea name="" id=""></textarea>
+
+        const setButtonOpts = new Set();
+        // ["input", "textarea"].forEach(txtType => {
+        // const txtTypeHeader = mkElt("h2", undefined, `<${txtType}>`);
+        // txtTypeHeader.style.width = "90%";
+        // txtTypeHeader.style.marginLeft = "20px";
+        // eltTestTextSection.appendChild(txtTypeHeader);
+
+        const icon = modBasic.mkMdcIcon("settings");
+        [false, "Label"].forEach(label => {
+            [false, "Title"].forEach(title => {
+                [false, icon].forEach(icon => {
+                    [false, true].forEach(border => {
+                        [false, true].forEach(transparent => {
+                            const btnOpts = {};
+                            if (title) { btnOpts.title = title; }
+                            if (label) { btnOpts.label = label; }
+                            if (icon) { btnOpts.icon = icon; }
+                            if (border) { btnOpts.border = border; }
+                            if (transparent) { btnOpts.transparent = transparent; }
+                            const jsonOpts = JSON.stringify(btnOpts);
+                            if (setButtonOpts.has(jsonOpts)) {
+                                debugger;
+                            }
+                            setButtonOpts.add(jsonOpts);
+                            addButtonExample(btnOpts);
+                        })
+                    })
+                })
+            })
+        })
+        //});
+
+        // const opts = { <textarea name="" id=""></textarea> }
+        function addButtonExample(btnOpts) {
+            const containerOpts = mkElt("span");
+            containerOpts.style.backgroundColor = "yellow";
+            containerOpts.style.color = "black";
+            containerOpts.style.padding = "1px";
+            containerOpts.style.display = "flex";
+            containerOpts.style.flexWrap = "wrap";
+            containerOpts.style.gap = "2px";
+
+            const containerBtn = mkElt("span");
+            console.log("%cbtnOpts:", "font-size:1.5rem;", btnOpts);
+            const hasOpts = Object.keys(btnOpts).length > 0;
+            for (const key in btnOpts) {
+                const val = btnOpts[key];
+                // const elt = mkElt("span", undefined, [key, val]);
+                const displayVal =
+                    val instanceof Node
+                        ? val.cloneNode(true)
+                        : val;
+                const elt = mkElt("span", undefined, [`${key}: `, displayVal]);
+                elt.style.border = "1px solid";
+                console.log("elt opt", elt);
+                // debugger;
+                containerOpts.appendChild(elt);
+            }
+            console.log("containerOpts", containerOpts.firstElementChild, btnOpts);
+            // if (hasOpts) debugger;
+            // if (Object.keys(btnOpts).length > 0) { debugger; }
+            const container = mkElt("span", undefined, [containerOpts, containerBtn]);
+            container.style.backgroundColor = "black";
+            container.style.width = "100px";
+            container.style.padding = "4px";
+            try {
+                console.log("containerOpts try", containerOpts.firstElementChild, btnOpts);
+                // if (hasOpts) debugger;
+                const eltButton = modBear.createButton(btnOpts);
+                containerBtn.appendChild(eltButton);
+            } catch (err) {
+                console.log("containerOpts catch", containerOpts.firstElementChild, btnOpts);
+                // if (hasOpts) debugger;
+                const txtErr = err.toString();
+                containerBtn.textContent = txtErr;
+                containerBtn.style.fontSize = "0.7rem";
+                containerBtn.style.color = "red";
+
+            }
+            eltTestButtonSection.appendChild(container);
         }
         /** @param {BearFieldOptions} fieldOpts */
         function addTextExample(fieldOpts) {

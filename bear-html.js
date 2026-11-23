@@ -902,7 +902,10 @@ function updateTabsLeftRight(nav) {
  * Creates a Beer CSS styled button.
  * @param {object} [options]
  * @param {string} [options.label] - Button text.
+ * @param {string} [options.title] - Title attribute
+ *   Note: Either label or title must be supplied.
  * @param {HTMLSpanElement} [options.icon] - <span> element for icon, shown before the label. Ignored if `image` is set.
+ *        Note: the icon element is cloned.
  * @param {string} [options.image] - Image URL shown instead of an icon (e.g. avatar, logo). Takes priority over `icon`.
  * @param {string} [options.imageAlt=''] - Alt text for `image`. Ignored if `decorative` is true.
  * @param {boolean} [options.decorative=false] - Marks `image` as purely ornamental (empty alt, hidden from assistive tech) rather than meaningful content.
@@ -921,6 +924,7 @@ function updateTabsLeftRight(nav) {
  */
 export function createButton({
     label,
+    title,
     icon,
     image,
     imageAlt = '',
@@ -937,6 +941,19 @@ export function createButton({
     type = 'button',
     onClick,
 } = {}) {
+    if (title == undefined && label == undefined) {
+        const msg = "Neither title or label";
+        console.error(msg);
+        throw Error(msg);
+    }
+    if (label == undefined && icon == undefined) {
+        const msg = "Neither icon or label";
+        console.error(msg);
+        // debugger;
+        throw Error(msg);
+    }
+
+
     const button = /** @type {HTMLButtonElement} */ (document.createElement('button'));
     // button.type = type;
     button.setAttribute("type", type);
@@ -971,7 +988,12 @@ export function createButton({
             debugger;
             throw Error(msg);
         }
-        button.append(icon);
+        button.append(icon.cloneNode(true)); // Avoid reparenting icon
+    }
+
+    if (title) {
+        // button.setAttribute("title", title);
+        button.title = title;
     }
 
     if (label) {

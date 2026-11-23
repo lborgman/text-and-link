@@ -953,6 +953,7 @@ function isAndroid() {
 const btnSettings = modBeerHtml.createButton({
     icon: modBasicUI.mkMdcIcon("settings"),
     shape: "circle",
+    title: "Settings"
     // transparent: true
 });
 btnSettings.id = "btn-settings";
