@@ -679,13 +679,48 @@ div.tabs-wrapper::after {
     right: 0;
     content: "▶";
 }
+
 div.tabs-wrapper.show-left::before {
     opacity: 1;
 }
+
 div.tabs-wrapper.show-right::after {
     opacity: 1;
 }
 
-div.tabs-panels > div {
+div.tabs-panels>div {
     padding-top: 1rem;
+}
+
+
+
+/**********/
+/* .hit44 */
+/**********/
+
+.hit44::after {
+    content: "";
+    position: absolute !important;
+    min-width: 44px !important;
+    min-height: 44px !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    outline: 1px dotted yellow !important;
+    opacity: 1 !important;
+    background-image: none !important;
+    cursor: pointer !important;
+    z-index: 10 !important;
+    pointer-events: auto !important;
+}
+
+.show-hit44 .hit44:hover::after {
+    outline: 4px dotted red !important;
+}
+
+@media (pointer: coarse) {
+    .hit44::after {
+        min-width: 48px;
+        min-height: 48px;
+    }
 }

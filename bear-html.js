@@ -910,7 +910,7 @@ function updateTabsLeftRight(nav) {
  * @param {string} [options.imageAlt=''] - Alt text for `image`. Ignored if `decorative` is true.
  * @param {boolean} [options.decorative=false] - Marks `image` as purely ornamental (empty alt, hidden from assistive tech) rather than meaningful content.
  * @param {boolean} [options.border=false] - Outlined style instead of filled.
- * @param {boolean} [options.transparent=false] - Shape reveals only on hover/press; common for icon-only nav buttons.
+ * param {boolean} [options.transparent=false] - Shape reveals only on hover/press; common for icon-only nav buttons.
  * @param {boolean} [options.extend=false] - FAB shows icon + label together instead of icon-only.
  * @param {'round'|'square'|'circle'|'small-round'} [options.shape]
  * @param {'small'|'large'|'extra'} [options.size]
@@ -930,7 +930,7 @@ export function createButton({
     imageAlt = '',
     decorative = false,
     border = false,
-    transparent = false,
+    // transparent = false,
     extend = false,
     shape,
     size,
@@ -941,15 +941,20 @@ export function createButton({
     type = 'button',
     onClick,
 } = {}) {
+    if (icon && !(title || label)) {
+        const msg = "icon but no title or label";
+        throw Error(msg);
+    }
     if (title == undefined && label == undefined) {
         const msg = "Neither title or label";
-        console.error(msg);
         throw Error(msg);
     }
     if (label == undefined && icon == undefined) {
         const msg = "Neither icon or label";
-        console.error(msg);
-        // debugger;
+        throw Error(msg);
+    }
+    if (label && shape) {
+        const msg = "label and shape";
         throw Error(msg);
     }
 
@@ -959,7 +964,7 @@ export function createButton({
     button.setAttribute("type", type);
     button.className = [
         border && 'border',
-        transparent && 'transparent',
+        // transparent && 'transparent',
         extend && 'extend',
         shape,
         size,

@@ -952,10 +952,12 @@ function isAndroid() {
 // const btnSettings = mkIconButton("./info.svg", "Settings");
 const btnSettings = modBeerHtml.createButton({
     icon: modBasicUI.mkMdcIcon("settings"),
-    shape: "circle",
+    shape: "square",
+    size: "small",
     title: "Settings"
     // transparent: true
 });
+btnSettings.classList.add("hit44");
 btnSettings.id = "btn-settings";
 btnSettings.title = "- Settings";
 // btnSettings.classList.add("md-xs");

@@ -324,29 +324,45 @@ async function doTheTestsInternal(dv) {
         // eltTestTextSection.appendChild(txtTypeHeader);
 
         const icon = modBasic.mkMdcIcon("settings");
-        [false, "Label"].forEach(label => {
-            [false, "Title"].forEach(title => {
+        const catchBtnError = new Set();
+        [false, true].forEach(border => {
+            [false, "Label"].forEach(label => {
                 [false, icon].forEach(icon => {
-                    [false, true].forEach(border => {
-                        [false, true].forEach(transparent => {
-                            const btnOpts = {};
-                            if (title) { btnOpts.title = title; }
-                            if (label) { btnOpts.label = label; }
-                            if (icon) { btnOpts.icon = icon; }
-                            if (border) { btnOpts.border = border; }
-                            if (transparent) { btnOpts.transparent = transparent; }
-                            const jsonOpts = JSON.stringify(btnOpts);
-                            if (setButtonOpts.has(jsonOpts)) {
-                                debugger;
-                            }
-                            setButtonOpts.add(jsonOpts);
-                            addButtonExample(btnOpts);
+                    [false, "fill", "primary", "secondary", "tertiary"].forEach(color => {
+                        [false, 'round', 'square', 'circle', 'small-round'].forEach(shape => {
+                            [false, "small", "medium", "large", "extra"].forEach(size => {
+                                // [false, "Title"].forEach(title => 
+                                const btnOpts = {};
+                                // if (title) { btnOpts.title = title; }
+                                if (label) { btnOpts.label = label; }
+                                if (icon) {
+                                    btnOpts.icon = icon;
+                                    if (!label) { btnOpts.title = "dummy" }
+                                }
+                                if (border) { btnOpts.border = border; }
+                                if (size) { btnOpts.size = size; }
+                                if (color) { btnOpts.color = color; }
+                                if (shape) { btnOpts.shape = shape; }
+                                const jsonOpts = JSON.stringify(btnOpts);
+                                if (setButtonOpts.has(jsonOpts)) {
+                                    debugger;
+                                }
+                                setButtonOpts.add(jsonOpts);
+                                if (!label && icon) debugger;
+                                addButtonExample(btnOpts);
+                            })
                         })
-                    })
+                    });
+
                 })
             })
+        });
+        const divCatchBtnError = mkElt("div", { style: "background:red;color:yellow;padding:4px;" });
+        catchBtnError.forEach(c => {
+            const d = mkElt("div", undefined, c);
+            divCatchBtnError.appendChild(d);
         })
-        //});
+        eltTestButtonSection.appendChild(divCatchBtnError);
 
         // const opts = { <textarea name="" id=""></textarea> }
         function addButtonExample(btnOpts) {
@@ -357,9 +373,10 @@ async function doTheTestsInternal(dv) {
             containerOpts.style.display = "flex";
             containerOpts.style.flexWrap = "wrap";
             containerOpts.style.gap = "2px";
+            containerOpts.style.fontSize = "0.6rem";
 
             const containerBtn = mkElt("span");
-            console.log("%cbtnOpts:", "font-size:1.5rem;", btnOpts);
+            // console.log("%cbtnOpts:", "font-size:1.5rem;", btnOpts);
             const hasOpts = Object.keys(btnOpts).length > 0;
             for (const key in btnOpts) {
                 const val = btnOpts[key];
@@ -370,11 +387,11 @@ async function doTheTestsInternal(dv) {
                         : val;
                 const elt = mkElt("span", undefined, [`${key}: `, displayVal]);
                 elt.style.border = "1px solid";
-                console.log("elt opt", elt);
+                // console.log("elt opt", elt);
                 // debugger;
                 containerOpts.appendChild(elt);
             }
-            console.log("containerOpts", containerOpts.firstElementChild, btnOpts);
+            // console.log("containerOpts", containerOpts.firstElementChild, btnOpts);
             // if (hasOpts) debugger;
             // if (Object.keys(btnOpts).length > 0) { debugger; }
             const container = mkElt("span", undefined, [containerOpts, containerBtn]);
@@ -382,18 +399,23 @@ async function doTheTestsInternal(dv) {
             container.style.width = "100px";
             container.style.padding = "4px";
             try {
-                console.log("containerOpts try", containerOpts.firstElementChild, btnOpts);
+                // console.log("containerOpts try", containerOpts.firstElementChild, btnOpts);
                 // if (hasOpts) debugger;
                 const eltButton = modBear.createButton(btnOpts);
                 containerBtn.appendChild(eltButton);
             } catch (err) {
-                console.log("containerOpts catch", containerOpts.firstElementChild, btnOpts);
-                // if (hasOpts) debugger;
-                const txtErr = err.toString();
+                const txtErr = err.toString().slice(7);
+                const arrKnownErr = [
+                    "Neither title or label",
+                    "Neither icon or label",
+                    "label and shape",
+                    "icon but no title or label",
+                ];
+                if (arrKnownErr.includes(txtErr)) { catchBtnError.add(txtErr); return; }
+                debugger;
                 containerBtn.textContent = txtErr;
                 containerBtn.style.fontSize = "0.7rem";
                 containerBtn.style.color = "red";
-
             }
             eltTestButtonSection.appendChild(container);
         }
