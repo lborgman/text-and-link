@@ -53,7 +53,7 @@
  *   snackbar: (msg: string | HTMLDivElement, secDur?: number) => void,
  *   openDialog: (dialog: HTMLDialogElement) => void,
  *   closeDialog: (dialog: HTMLDialogElement) => void,
- *   setMdcIconStyle: (iconStyle: string) => void,
+ *   initMdcIcons: (iconStyle: string) => void,
  *   getMdcIconClass: () => string,
  *   mkMdcIcon: (iconName: string) => HTMLSpanElement,
  *   mkColorPickerSquare: () => HTMLInputElement,

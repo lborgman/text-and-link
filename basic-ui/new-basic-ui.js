@@ -1096,41 +1096,8 @@ export function closeDialog(dialog) {
 /**** Icons ****/
 /***************/
 
-// const setMdcIconsUsed = new Set();
-// setMdcIconsUsed.add("edit_off");
-
-/*
-function getOurMdcIconsList() {
-    if (setMdcIconsUsed.has("")) debugger;
-    return [...setMdcIconsUsed].sort().join(",");
-}
-*/
-
-/* *
- * @param {string} woffUrl
- * @returns {Promise<string|undefined>}
- */
-/*
-async function getMdcSymbolsInWoff2File(woffUrl) {
-    const modWoffCodepoints = await importFc4i("woff-codepoints");
-    const codepoints = await modWoffCodepoints.getCodepoints(woffUrl);
-    if (!codepoints) return;
-
-
-    const modWoff2MdcSymbols = await importFc4i("woff2-mdc-symbols");
-    const codepointToName = await modWoff2MdcSymbols.fetchGoogleSymbolNameMap(mdcIconStyle);
-    if (!codepointToName) return;
-
-    // Now you can look up names:
-    /** @type {string[]} * /
-    const names = codepoints.map(cp => codepointToName[cp]);
-    const cleanedNames = names.filter(name => { if (typeof name == "string") return name; });
-    const strNames = cleanedNames.sort().join(",");
-    return strNames;
-
-}
-*/
-
+/** @type {undefined | typeof import("../mdc-icons/mdc-icons.js")} */
+let modMdcIcons;
 
 let mdcIconStyle = "Outlined";
 // let mdcIconStyle = "Rounded";
@@ -1138,10 +1105,8 @@ let mdcIconStyle = "Outlined";
 let mdcIconsClass = "";
 setMdcIconStyle("Outlined");
 
-/**
- * @param {string} iconStyle
- */
-export function setMdcIconStyle(iconStyle) {
+/** @param {string} iconStyle */
+function setMdcIconStyle(iconStyle) {
     const arrStyles = ["Outlined", "Rounded", "Sharp"];
     if (-1 == arrStyles.indexOf(iconStyle)) {
         const msg = `Unknown iconStyle=="${iconStyle}"`;
@@ -1151,6 +1116,12 @@ export function setMdcIconStyle(iconStyle) {
     }
     mdcIconStyle = iconStyle
     mdcIconsClass = `material-symbols-${mdcIconStyle.toLowerCase()}`;
+}
+/**
+ * @param {string} iconStyle
+ */
+export function initMdcIcons(iconStyle) {
+    setMdcIconStyle(iconStyle);
 }
 
 /**
@@ -1175,12 +1146,11 @@ export function mkMdcIcon(iconName) {
 
 
 // @ts-ignore
-const modMdcIcons = (location.hostname == "localhost") ?
-    // await import("mdc-icons")
+modMdcIcons = (location.hostname == "localhost") ?
     await import("../mdc-icons/mdc-icons.js")
     :
     undefined;
-await modMdcIcons?.setIconStyle(mdcIconStyle);
+modMdcIcons?.initMdcIcons(mdcIconStyle);
 
 
 /**

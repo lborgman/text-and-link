@@ -15,16 +15,64 @@ if (!isLocalHost) {
     throw Error(msg);
 }
 
+const idBtnWoff2 = "button-woff2-symbols";
+const btnWoff2 = mkElt("button", { id: idBtnWoff2 }, "Woff2: download file!");
+
 showBtnMdcIcons();
 
+/**
+ * @param {number} msTimeOut
+ * @returns {Promise<boolean>}
+ */
+async function onPublicInternet(msTimeOut = 3000) {
+    if (!navigator.onLine) { return false; }
+    const controller = new AbortController();
+    const tmr = setTimeout(() => controller.abort(), msTimeOut);
+    try {
+        await fetch(`https://google.com/nocache=${Date.now()}`, {
+            method: "HEAD",
+            mode: "no-cors",
+            cache: "no-store",
+            signal: controller.signal
+        });
+        return true;
+    } catch {
+        return false;
+    } finally {
+        clearTimeout(tmr);
+    }
+}
 
 let mdcIconStyle = "";
 /**
  * @param {string} iconStyle 
+ * @throws {Error}
  */
-export async function setIconStyle(iconStyle) {
+export async function initMdcIcons(iconStyle) {
+    let strErr = "";
     mdcIconStyle = iconStyle;
-    await getIconsInMyWoffFile();
+    const onInternet = await onPublicInternet();
+    if (!onInternet) {
+        strErr = "off Internet";
+    }
+    if ("" == strErr)
+        try {
+            // throw Error("TEST");
+            await getIconsInMyWoffFile();
+        } catch (err) {
+            console.log("err:", err);
+            if (err instanceof Error) {
+                strErr = err.message;
+            } else {
+                strErr = String(err);
+            }
+        }
+    if ("" != strErr) {
+        console.error("initMdcIcons:", strErr);
+        btnWoff2.textContent = `Woff2: ${strErr}`;
+        btnWoff2.style.outline = "2px dotted red";
+        btnWoff2.style.pointerEvents = "none";
+    }
 }
 
 // debugger;
@@ -54,19 +102,20 @@ function getOurMdcIconsList() {
  * @param {string} action
  */
 async function checkWoff2icons(action) {
+    // debugger;
     if (!["justCheck", "dialog"].includes(action)) throw Error(`Unknown action parameter: "${action}"`);
     const myMdcWoffSymbolsList = await getMdcSymbolsInWoff2File(urlMyWoff2File);
     const hasWoffIcons = myMdcWoffSymbolsList != undefined;
 
-    // const setIconsWoff2 = new Set(hasWoffIcons ? woffIconsList.split(",") : undefined);
     // FIX-ME: Why did I need two variables for this? Do I still need that???
-    const setMdcIconsWoff2 = setIconsInMyWoff2File;
-    setMdcIconsWoff2.add("edit"); // FIX-ME: mapping codepoints problem
-    setMdcIconsWoff2.add("favorite"); // FIX-ME: mapping codepoints problem
+    const setIconsInWoff2File = setIconsInMyWoff2File;
+    const foundWoff2File = setIconsInMyWoff2File.size > 0;
+    setIconsInWoff2File.add("edit"); // FIX-ME: mapping codepoints problem
+    setIconsInWoff2File.add("favorite"); // FIX-ME: mapping codepoints problem
 
     const setIconsMissing = new Set();
     setMdcIconsUsed.forEach(sym => {
-        if (!setMdcIconsWoff2.has(sym)) { setIconsMissing.add(sym); }
+        if (!setIconsInWoff2File.has(sym)) { setIconsMissing.add(sym); }
     });
 
     // FIX-ME: codepoint problems:
@@ -82,7 +131,7 @@ async function checkWoff2icons(action) {
     const linkWOFF2 = await mkWOFF2downloadLink();
     const missing = [...setIconsMissing].sort().join(", ");
     const used = [...setMdcIconsUsed].sort().join(", ");
-    const woff2 = [...setMdcIconsWoff2].sort().join(", ");
+    const woff2 = [...setIconsInWoff2File].sort().join(", ");
     window.console.log(`Missing in woff file: "${missing}",\nsee console for .woff download link`);
 
     // alert(`Missing in woff file: "${missing}",\nsee console for .woff download link`);
@@ -96,7 +145,7 @@ async function checkWoff2icons(action) {
         elt.style.fontSize = "1.1rem";
         return elt;
     }
-    const aDownload = mkElt("a", { href: linkWOFF2 }, "Download new WOFF2");
+    const aDownload = mkElt("a", { href: linkWOFF2 }, "Download a new WOFF2 file");
     aDownload.style = `
         text-decoration: underline;
     `;
@@ -104,10 +153,11 @@ async function checkWoff2icons(action) {
     const eltDownload = mkElt("div", undefined, [
         aDownload,
         mkElt("p", undefined, [
-            `Replace or add the file `,
-            // mkElt("div", undefined, "./ext/mdc-fonts/my-symbols.woff2"),
-            mkElt("div", undefined, urlMyWoff2File),
-            ` with the new file.`
+            "Then ",
+            foundWoff2File ? "replace":"add",
+            // "replace or add",
+            " the file at ",
+            mkElt("div", {style:"font-weight:bold;margin-top:0.3rem;"}, urlMyWoff2File)
         ])
     ]);
     console.log({ urlWoff2File: urlMyWoff2File });
@@ -118,19 +168,28 @@ async function checkWoff2icons(action) {
         background-color: yellowgreen;
         color: black;
     `;
+    const divWoff2 = mkElt("div", undefined, [makeGroupLabel(`WOFF2 file (${setIconsInWoff2File.size}): `), `${woff2}`]);
+    if (foundWoff2File) {
+        divWoff2.appendChild(mkElt("div", { style: "font-style:italic; padding-left:2rem;" },
+            "(WOFF2 file exists)"));
+    } else {
+        divWoff2.appendChild(mkElt("div", { style: "font-style:italic; padding-left:2rem;" },
+            "(There is no real WOFF2 file yet)"));
+    }
     const bdy = mkElt("div", undefined, [
         mkElt("p", { style: "font-weight:bold; font-size:1.25rem;" }, "Missing Material Symbols"),
         mkElt("div", undefined, [makeGroupLabel(`Used (${setMdcIconsUsed.size}): `), `${used}`]),
-        mkElt("div", undefined, [makeGroupLabel(`WOFF2 (${setMdcIconsWoff2.size}): `), `${woff2}`]),
+        // mkElt("div", undefined, [makeGroupLabel(`WOFF2 (${setIconsInWoff2File.size}): `), `${woff2}`]),
+        divWoff2,
         mkElt("div", undefined, [makeGroupLabel(`Missing (${setIconsMissing.size}): `), `${missing}`]),
         eltDownload,
     ]);
     // showDialog(bdy);
     const dlg = mkElt("dialog", undefined, bdy);
-    dlg.style.backgroundColor = "red";
-    dlg.style.color = "black";
+    dlg.style.backgroundColor = "blue";
+    dlg.style.color = "white";
     dlg.style.opacity = "1";
-    dlg.style.outline = "1px solid yellow";
+    dlg.style.outline = "1px solid white";
     document.documentElement.appendChild(dlg);
     dlg.showModal();
     // syncViewPort();
@@ -164,29 +223,19 @@ async function getMdcSymbolsInWoff2File(woffUrl) {
 }
 
 function showBtnMdcIcons() {
-    const idBtnSym = "button-mdc-symbols";
-    const btnSymbols = mkElt("button", { id: idBtnSym }, "Get new Woff2");
-    btnSymbols.title = "- A new Woff2 file is needed";
-    btnSymbols.style = `
-        background-color: red;
-        color: black;
-        padding: 2px 10px;
-        border-radius: 5px;
-        outline: 1px solid yellow;
-    `;
 
 
 
     /////// Make it easy to dismiss the "Get new Woff2"-button:
 
     // 1. Set to manual to prevent native browser engine flashes
-    btnSymbols.setAttribute("popover", "manual");
-    document.body.appendChild(btnSymbols);
-    btnSymbols.showPopover();
+    btnWoff2.setAttribute("popover", "manual");
+    document.body.appendChild(btnWoff2);
+    btnWoff2.showPopover();
 
     // Define a unified cleanup function
     const cleanupSymbolsPopover = () => {
-        btnSymbols.remove();
+        btnWoff2.remove();
         document.removeEventListener('click', outsideClickListener, true);
         document.removeEventListener('keydown', escapeKeyListener, true);
     };
@@ -195,7 +244,7 @@ function showBtnMdcIcons() {
     const outsideClickListener =
         /** @param {MouseEvent} event */
         (event) => {
-            if (!btnSymbols.contains(/** @type {Node} */(event.target))) {
+            if (!btnWoff2.contains(/** @type {Node} */(event.target))) {
                 cleanupSymbolsPopover();
             }
         };
@@ -215,15 +264,15 @@ function showBtnMdcIcons() {
 
 
 
-    btnSymbols.style.inset = "auto";
-    btnSymbols.style.margin = "0";
-    btnSymbols.style.bottom = "15px";
-    btnSymbols.style.right = "15px";
-    btnSymbols.addEventListener("click",
+    btnWoff2.style.inset = "auto";
+    btnWoff2.style.margin = "0";
+    btnWoff2.style.bottom = "15px";
+    btnWoff2.style.right = "15px";
+    btnWoff2.addEventListener("click",
         /** @param {MouseEvent} evt */
         evt => {
             evt.stopPropagation();
-            btnSymbols.remove();
+            btnWoff2.remove();
             checkWoff2icons("dialog");
         });
 }
@@ -277,7 +326,7 @@ function saveStoredIconsUsed() {
 async function mkWOFF2downloadLink() {
     const ourIcons = getOurMdcIconsList();
     if (0 == mdcIconStyle.length) {
-        const msg = "Icon style has not been set (call setIconStyle)";
+        const msg = "Icon style has not been set (call initMdcIcons)";
         console.error(msg);
         debugger;
         throw Error(msg);

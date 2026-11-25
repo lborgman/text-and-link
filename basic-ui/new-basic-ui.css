@@ -724,3 +724,19 @@ div.tabs-panels>div {
         min-height: 48px;
     }
 }
+
+
+
+#button-woff2-symbols {
+    background-color: blue;
+    color: white;
+    padding: 2px 10px;
+    border-radius: 5px;
+    outline: 1px solid white;
+}
+
+#button-woff2-symbols::backdrop {
+    /* Note: the remaning % is transparent: */
+    background-color: color-mix(in oklab, blue 20%, gray 30%);
+    backdrop-filter: blur(1.0px);
+}
