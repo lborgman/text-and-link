@@ -26,6 +26,7 @@ const modBeerHtml = await import("bear-html");
 
 // @ts-ignore
 const modBasicUI = /** @type {BasicUiModule} */ (await import("basic-ui"));
+modBasicUI.initMdcIcons("Outlined", ["add_link"]);
 
 /**
  * @type {{

@@ -1097,31 +1097,38 @@ export function closeDialog(dialog) {
 /***************/
 
 /** @type {undefined | typeof import("../mdc-icons/mdc-icons.js")} */
-let modMdcIcons;
+const modMdcIcons = (location.hostname == "localhost") ? await import("../mdc-icons/mdc-icons.js") : undefined;
 
-let mdcIconStyle = "Outlined";
-// let mdcIconStyle = "Rounded";
-// let mdcIconStyle = "Sharp";
+
+const basicUImdcIconStyles = /** @type {const} */ (["Outlined", "Rounded", "Sharp"]);
+/** @typedef {(typeof basicUImdcIconStyles)[number]} IconStyle */
+
+// /** @type {IconStyle} */ let basicUImdcIconStyle;
+
+
 let mdcIconsClass = "";
-setMdcIconStyle("Outlined");
+// initBasicUImdcIconStyle("Outlined", ["home"]);
 
-/** @param {string} iconStyle */
-function setMdcIconStyle(iconStyle) {
-    const arrStyles = ["Outlined", "Rounded", "Sharp"];
-    if (-1 == arrStyles.indexOf(iconStyle)) {
+/**
+ * @param {IconStyle} iconStyle
+ * @param {string[]} [mustHaveIcons]
+ */
+function initBasicUImdcIconStyle(iconStyle, mustHaveIcons = []) {
+    if (-1 == basicUImdcIconStyles.indexOf(iconStyle)) {
         const msg = `Unknown iconStyle=="${iconStyle}"`;
         console.error(msg);
         debugger;
         throw Error(msg);
     }
-    mdcIconStyle = iconStyle
-    mdcIconsClass = `material-symbols-${mdcIconStyle.toLowerCase()}`;
+    modMdcIcons?.initMdcIcons(iconStyle, mustHaveIcons);
+    mdcIconsClass = `material-symbols-${iconStyle.toLowerCase()}`;
 }
 /**
- * @param {string} iconStyle
+ * @param {IconStyle} iconStyle
+ * @param {string[]} [mustHaveIcons]
  */
-export function initMdcIcons(iconStyle) {
-    setMdcIconStyle(iconStyle);
+export function initMdcIcons(iconStyle, mustHaveIcons) {
+    initBasicUImdcIconStyle(iconStyle, mustHaveIcons);
 }
 
 /**
@@ -1132,11 +1139,14 @@ export function getMdcIconClass() { return mdcIconsClass; }
 
 
 /**
- * @param {string} iconName 
+ * @param {string} iconName
  * @returns {HTMLSpanElement}
+ * @throws {Error}
  * @category Visual elements
  */
 export function mkMdcIcon(iconName) {
+    console.log("mkMdcIcon:", iconName, mdcIconsClass);
+    if (mdcIconsClass == "") { throw Error("mdcIconsClass is not set, call initMdcIcons"); }
     modMdcIcons?.addToUsedIcons(iconName);
     const spanIcon = mkElt("span", { class: mdcIconsClass }, iconName);
     return spanIcon;
@@ -1145,12 +1155,6 @@ export function mkMdcIcon(iconName) {
 
 
 
-// @ts-ignore
-modMdcIcons = (location.hostname == "localhost") ?
-    await import("../mdc-icons/mdc-icons.js")
-    :
-    undefined;
-modMdcIcons?.initMdcIcons(mdcIconStyle);
 
 
 /**

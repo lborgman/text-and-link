@@ -1,7 +1,7 @@
 // @ts-check
 
-// @ts-ignore
-const mkElt = window["mkElt"];
+// ts-ignore
+// const mkElt = window["mkElt"];
 
 const isLocalHost = Boolean(
     window.location.hostname === 'localhost' ||
@@ -14,6 +14,14 @@ if (!isLocalHost) {
     debugger;
     throw Error(msg);
 }
+
+const mdcIconStyles = /** @type {const} */ (["Outlined", "Rounded", "Sharp"]);
+/** @typedef {(typeof mdcIconStyles)[number]} IconStyle */
+/** @type {IconStyle} */ let mdcIconStyle = "Outlined";
+/** @param {string} iconStyle */
+const isIconSTyle = (iconStyle) => mdcIconStyles.indexOf(iconStyle) != -1;
+
+let mdcIconsClass = "";
 
 const idBtnWoff2 = "button-woff2-symbols";
 const btnWoff2 = mkElt("button", { id: idBtnWoff2 }, "Woff2: download file!");
@@ -43,35 +51,63 @@ async function onPublicInternet(msTimeOut = 3000) {
     }
 }
 
-let mdcIconStyle = "";
+
+const setMdcIconsUsed = new Set();
+// setMdcIconsUsed.add("edit_off"); // FIX-ME: Do I still need this?
+// addToUsed("edit_off"); // FIX-ME: Do I still need this?
 /**
- * @param {string} iconStyle 
+ * @param {string} iconName 
  * @throws {Error}
  */
-export async function initMdcIcons(iconStyle) {
-    let strErr = "";
+export async function addToUsedIcons(iconName) {
+    const hasIt = await checkIcon(iconName);
+    if (!hasIt) { throw Error(`There is no icon named "${iconName}"`)}
+    setMdcIconsUsed.add(iconName);
+}
+
+const setIconsInMyWoff2File = new Set();
+
+
+const mdcIconRegex = /^[a-z0-9]+(?:_[a-z0-9]+)*$/;
+
+/**
+ * @param {IconStyle} iconStyle
+ * @param {string[]} [mustHaveIcons]
+ * @throws {Error}
+ */
+export async function initMdcIcons(iconStyle, mustHaveIcons = []) {
+    const isIconNameArray = (/** @type {any} */ val) =>
+        Array.isArray(val) && val.every((item) =>
+            typeof item === 'string' && mdcIconRegex.test(item));
+    if (!isIconNameArray(mustHaveIcons)) { throw Error(`mustHaveIcons must be array of icon names`) };
+    if (!isIconSTyle(iconStyle)) throw Error(`Not iconStyle: "${iconStyle}"`);
+
+    // debugger;
+    mustHaveIcons.forEach(icon => addToUsedIcons(icon));
+
+    let strNetworkErr = "";
     mdcIconStyle = iconStyle;
     const onInternet = await onPublicInternet();
     if (!onInternet) {
-        strErr = "off Internet";
+        strNetworkErr = "off Internet";
     }
-    if ("" == strErr)
+    if ("" == strNetworkErr)
         try {
-            // throw Error("TEST");
             await getIconsInMyWoffFile();
         } catch (err) {
             console.log("err:", err);
             if (err instanceof Error) {
-                strErr = err.message;
+                strNetworkErr = err.message;
             } else {
-                strErr = String(err);
+                strNetworkErr = String(err);
             }
         }
-    if ("" != strErr) {
-        console.error("initMdcIcons:", strErr);
-        btnWoff2.textContent = `Woff2: ${strErr}`;
+    if ("" != strNetworkErr) {
+        console.error("initMdcIcons:", strNetworkErr);
+        btnWoff2.textContent = `Woff2: ${strNetworkErr}`;
         btnWoff2.style.outline = "2px dotted red";
         btnWoff2.style.pointerEvents = "none";
+        return;
     }
 }
 
@@ -81,17 +117,9 @@ const myDir = new URL('./', import.meta.url).href;
 // FIX-ME: What format do I need here:
 const urlMyWoff2File = `${myDir}woff2/my-symbols.woff2`;
 
-const setMdcIconsUsed = new Set();
-setMdcIconsUsed.add("edit_off"); // FIX-ME: Do I still need this?
 
-const setIconsInMyWoff2File = new Set();
-
-/**
- * @param {string} iconName
- */
-export function addToUsedIcons(iconName) {
-    setMdcIconsUsed.add(iconName);
-}
+/* * @param {string} iconName */
+// export function addToUsedIcons(iconName) { OLDsetMdcIconsUsed.add(iconName); }
 
 function getOurMdcIconsList() {
     if (setMdcIconsUsed.has("")) debugger;
@@ -154,10 +182,10 @@ async function checkWoff2icons(action) {
         aDownload,
         mkElt("p", undefined, [
             "Then ",
-            foundWoff2File ? "replace":"add",
+            foundWoff2File ? "replace" : "add",
             // "replace or add",
             " the file at ",
-            mkElt("div", {style:"font-weight:bold;margin-top:0.3rem;"}, urlMyWoff2File)
+            mkElt("div", { style: "font-weight:bold;margin-top:0.3rem;" }, urlMyWoff2File)
         ])
     ]);
     console.log({ urlWoff2File: urlMyWoff2File });
@@ -290,21 +318,11 @@ export function setMdcIconsFor(whichApp) {
 */
 
 
-const keyMdcIcons = () => {
-    return `used-mdc-symbols-${urlMyWoff2File}`;
-    /*
-    if (0 == iconsForApp.length) {
-        const msg = "iconsForApp is not set";
-        console.error(msg);
-        debugger;
-        throw Error(msg);
-    }
-    return `used-mdc-symbols-${iconsForApp}`;
-    */
-}
+const keyUsedIcons = () => { return `mdc-symbols-used-${urlMyWoff2File}`; }
+const keyMustHaveIcons = () => { return `mdc-symbols-must-have-${urlMyWoff2File}`; }
 
 function getStoredIconsUsed() {
-    const keyIconsUsed = keyMdcIcons();
+    const keyIconsUsed = keyUsedIcons();
     const storedIconsUsed = localStorage.getItem(keyIconsUsed);
     if (storedIconsUsed != null) {
         const arrUsed = storedIconsUsed.split(",");
@@ -319,7 +337,7 @@ function saveStoredIconsUsed() {
     if (!iconsForApp) return;
     getStoredIconsUsed();
     if (setMdcIconsUsed.size == 0) return;
-    localStorage.setItem(keyMdcIcons(), [...setMdcIconsUsed].sort().join(","));
+    localStorage.setItem(keyUsedIcons(), [...setMdcIconsUsed].sort().join(","));
 }
 
 
@@ -373,3 +391,34 @@ async function getIconsInMyWoffFile() {
     }
 }
 
+
+
+/** @typedef {Record<string, string>[]} CodePoints */
+
+/** @returns {Promise<CodePoints>} */
+async function getCodepoints() {
+    const response = await fetch('https://cdn.jsdelivr.net/npm/material-icons@latest/iconfont/codepoints.json');
+    // console.log("after fetch");
+    const codepoints = await response.json();
+    // console.log("after response");
+    return codepoints;
+}
+
+/** @type {CodePoints} */
+const codepoints = await getCodepoints();
+const hasHome = await checkIcon("home");
+console.log("hasHome:", hasHome);
+
+/**
+ * @param {string} iconName
+ * @returns {Promise<boolean>}
+ */
+async function checkIcon(iconName) {
+    // const response = await fetch('https://cdn.jsdelivr.net/npm/material-icons@latest/iconfont/codepoints.json');
+    // console.log("after fetch");
+    // const codepoints = await response.json();
+    // console.log("after response");
+    // return Object.prototype.hasOwnProperty.call(codepoints, iconName);
+    return codepoints[iconName] != undefined
+}
+addToUsedIcons("edit_off"); // FIX-ME: Do I still need this?
