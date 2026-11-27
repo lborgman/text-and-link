@@ -61,7 +61,7 @@ const setMdcIconsUsed = new Set();
  */
 export async function addToUsedIcons(iconName) {
     const hasIt = await checkIcon(iconName);
-    if (!hasIt) { throw Error(`There is no icon named "${iconName}"`)}
+    if (!hasIt) { throw Error(`There is no icon named "${iconName}"`) }
     setMdcIconsUsed.add(iconName);
 }
 
@@ -204,6 +204,77 @@ async function checkWoff2icons(action) {
         divWoff2.appendChild(mkElt("div", { style: "font-style:italic; padding-left:2rem;" },
             "(There is no real WOFF2 file yet)"));
     }
+    const linkedSheets = [...document.querySelectorAll("link[rel=stylesheet]")];
+    console.log("linkedSheets:", linkedSheets);
+    // debugger;
+    const arrGoogleSymbolsLinks = linkedSheets.filter(elt => {
+        if (!(elt instanceof HTMLLinkElement)) throw Error("not link");
+        const u = new URL(elt.href);
+        const found = u.hostname == "fonts.googleapis.com"
+            && u.pathname == "/css2"
+            ;
+        return found;
+    });
+    console.log("arrGoogleSymbols:", arrGoogleSymbolsLinks);
+    const arrMyWoff2Links = linkedSheets.filter(elt => {
+        if (!(elt instanceof HTMLLinkElement)) throw Error("not link");
+        const u = new URL(elt.href);
+        // debugger;
+        const found =
+            u.pathname.endsWith("/my-symbols.woff2");
+        ;
+        return found;
+    });
+    console.log("arrMyWoff2Links:", arrMyWoff2Links);
+
+    // debugger;
+    const divStylesheetStatus = mkElt("div");
+    switch (arrGoogleSymbolsLinks.length) {
+        case 0:
+            divStylesheetStatus.appendChild(mkElt("div", {style:"font-weight:bold;"}, "No google font link"));
+            break;
+        case 1:
+        default:
+            divStylesheetStatus.appendChild(mkElt("div", {style:"font-weight:bold;"}, "Google font links:"));
+            const ul = mkElt("ul");
+            ul.style.paddingLeft = "1.3rem";
+            ul.style.marginTop = "0px";
+            ul.style.fontStyle = "italic";
+            arrGoogleSymbolsLinks.forEach(link => {
+                const li = mkElt("li", undefined, link.outerHTML);
+                ul.appendChild(li);
+            })
+            divStylesheetStatus.appendChild(ul);
+
+    }
+    switch (arrMyWoff2Links.length) {
+        case 0:
+            divStylesheetStatus.appendChild(mkElt("div", {style:"font-weight:bold;"}, "No woff2 link"));
+            break;
+        case 1:
+        default:
+            divStylesheetStatus.appendChild(mkElt("div", {style:"font-weight:bold;"}, "Woff2 links:"));
+            const ul = mkElt("ul");
+            ul.style.paddingLeft = "1.3rem";
+            ul.style.marginTop = "0px";
+            ul.style.fontStyle = "italic";
+            arrMyWoff2Links.forEach(link => {
+                const li = mkElt("li", undefined, link.outerHTML);
+                ul.appendChild(li);
+            })
+            divStylesheetStatus.appendChild(ul);
+    }
+
+    const detInstructions = mkElt("details", { class: "summary-marker-after" }, [
+        mkElt("summary", undefined, "Help"),
+        mkElt("p", undefined,
+            `
+            There should either be a link to google symbol font (around 1MB)
+            or a link to the woff2 file (a few kB).
+            `),
+        mkElt("h6", undefined, "I found those:"),
+        divStylesheetStatus,
+    ]);
     const bdy = mkElt("div", undefined, [
         mkElt("p", { style: "font-weight:bold; font-size:1.25rem;" }, "Missing Material Symbols"),
         mkElt("div", undefined, [makeGroupLabel(`Used (${setMdcIconsUsed.size}): `), `${used}`]),
@@ -211,6 +282,7 @@ async function checkWoff2icons(action) {
         divWoff2,
         mkElt("div", undefined, [makeGroupLabel(`Missing (${setIconsMissing.size}): `), `${missing}`]),
         eltDownload,
+        detInstructions,
     ]);
     // showDialog(bdy);
     const dlg = mkElt("dialog", undefined, bdy);
@@ -422,3 +494,4 @@ async function checkIcon(iconName) {
     return codepoints[iconName] != undefined
 }
 addToUsedIcons("edit_off"); // FIX-ME: Do I still need this?
+addToUsedIcons("expand_more"); // Used in CSS for <details>/<summary>

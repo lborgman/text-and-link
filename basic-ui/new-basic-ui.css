@@ -740,3 +740,62 @@ div.tabs-panels>div {
     background-color: color-mix(in oklab, blue 20%, gray 30%);
     backdrop-filter: blur(1.0px);
 }
+
+
+
+/* =========================================================
+   Beer CSS — Material Design 3 Accordion (.accordion)
+   =========================================================
+    Beer CSs removes the toggler on <details>.
+    Add it back after <summary>.
+*/
+
+/* 1. Enable smooth height animation. */
+details.summary-marker-after {
+    interpolate-size: allow-keywords;
+}
+
+details.summary-marker-after::details-content {
+    block-size: 0;
+    overflow: clip;
+    transition:
+        block-size 250ms cubic-bezier(0.2, 0, 0, 1),
+        content-visibility 250ms allow-discrete;
+}
+
+details.summary-marker-after[open]::details-content {
+    block-size: auto;
+}
+
+/* 2. Summary layout & trailing Material Symbols chevron */
+details.summary-marker-after>summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: fit-content;
+}
+
+details.summary-marker-after>summary::after {
+    content: "expand_more";
+    font-family: "Material Symbols Outlined";
+    font-weight: normal;
+    font-style: normal;
+    font-size: 1.5rem;
+    line-height: 1;
+    flex-shrink: 0;
+    transition: transform 200ms cubic-bezier(0.2, 0, 0, 1);
+}
+
+details.summary-marker-after[open]>summary::after {
+    transform: rotate(180deg);
+}
+
+/* 3. Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+
+    details.summary-marker-after::details-content,
+    details.summary-marker-after>summary::after {
+        transition: none;
+    }
+}
