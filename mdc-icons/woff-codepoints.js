@@ -28,11 +28,10 @@ async function fontkitGetCodepoints(woffUrl) {
     } catch (err) {
         console.error(woffUrl, err);
         throw Error(err);
-        debugger; // eslint-disable-line no-debugger
     }
     if (!response.ok) {
-        if (response.status == 404) return;
-        debugger; // eslint-disable-line no-debugger
+        // debugger; // eslint-disable-line no-debugger
+        if (response.status == 404) return [];
     }
     const arrayBuffer = await response.arrayBuffer();
 

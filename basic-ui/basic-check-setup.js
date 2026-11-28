@@ -19,8 +19,8 @@ const cssDebugVisual = `
         }
 
         summary {
-            color: yellow;
-            background-color: darkgreen;
+            color: #fff9;
+            background-color: black;
             list-style-type: revert;
             padding: 4px;
             outline: 1px solid #0004;
@@ -332,24 +332,24 @@ async function doTheTestsInternal(dv) {
                         [false, 'round', 'square', 'circle', 'small-round'].forEach(shape => {
                             [false, "small", "medium", "large", "extra"].forEach(size => {
                                 // [false, "Title"].forEach(title => 
-                                const btnOpts = {};
+                                const optsBtn = {};
                                 // if (title) { btnOpts.title = title; }
-                                if (label) { btnOpts.label = label; }
+                                if (label) { optsBtn.label = label; }
                                 if (icon) {
-                                    btnOpts.icon = icon;
-                                    if (!label) { btnOpts.title = "dummy" }
+                                    optsBtn.icon = icon;
+                                    if (!label) { optsBtn.title = "dummy" }
                                 }
-                                if (border) { btnOpts.border = border; }
-                                if (size) { btnOpts.size = size; }
-                                if (color) { btnOpts.color = color; }
-                                if (shape) { btnOpts.shape = shape; }
-                                const jsonOpts = JSON.stringify(btnOpts);
+                                if (border) { optsBtn.border = border; }
+                                if (size) { optsBtn.size = size; }
+                                if (color) { optsBtn.color = color; }
+                                if (shape) { optsBtn.shape = shape; }
+                                const jsonOpts = JSON.stringify(optsBtn);
                                 if (setButtonOpts.has(jsonOpts)) {
                                     debugger;
                                 }
                                 setButtonOpts.add(jsonOpts);
                                 if (!label && icon) debugger;
-                                addButtonExample(btnOpts);
+                                addButtonExample(optsBtn);
                             })
                         })
                     });
@@ -365,42 +365,46 @@ async function doTheTestsInternal(dv) {
         eltTestButtonSection.appendChild(divCatchBtnError);
 
         // const opts = { <textarea name="" id=""></textarea> }
+        /**
+         * @param {Object} btnOpts
+         * @param {string|boolean} [btnOpts.label]
+         * @param {HTMLSpanElement} [btnOpts.icon]
+         * @param {string|boolean} [btnOpts.border]
+         * @param {string|boolean} [btnOpts.size]
+         * @param {string|boolean} [btnOpts.color]
+         * @param {string|boolean} [btnOpts.shape]
+         * @returns {undefined}
+         */
         function addButtonExample(btnOpts) {
             const containerOpts = mkElt("span");
             containerOpts.style.backgroundColor = "yellow";
             containerOpts.style.color = "black";
-            containerOpts.style.padding = "1px";
+            containerOpts.style.fontSize = "0.6rem";
+            containerOpts.style.padding = "2px";
             containerOpts.style.display = "flex";
             containerOpts.style.flexWrap = "wrap";
-            containerOpts.style.gap = "2px";
-            containerOpts.style.fontSize = "0.6rem";
+            // containerOpts.style.gap = "1px";
+            containerOpts.style.marginBottom = "4px";
+            containerOpts.classList.add("surface");
 
             const containerBtn = mkElt("span");
-            // console.log("%cbtnOpts:", "font-size:1.5rem;", btnOpts);
-            const hasOpts = Object.keys(btnOpts).length > 0;
-            for (const key in btnOpts) {
-                const val = btnOpts[key];
-                // const elt = mkElt("span", undefined, [key, val]);
-                const displayVal =
-                    val instanceof Node
-                        ? val.cloneNode(true)
-                        : val;
+            // const hasOpts = Object.keys(btnOpts).length > 0;
+            // for (const key in btnOpts) {
+            // const val = btnOpts[key];
+            for (const [key, val] of Object.entries(btnOpts)) {
+                const displayVal = val instanceof Node ? val.cloneNode(true) : val;
                 const elt = mkElt("span", undefined, [`${key}: `, displayVal]);
-                elt.style.border = "1px solid";
-                // console.log("elt opt", elt);
-                // debugger;
+                elt.style.border = "0.5px solid";
+                elt.style.border = "none";
+                elt.style.borderRadius = "2px";
+                // elt.style.padding = "1px";
                 containerOpts.appendChild(elt);
             }
-            // console.log("containerOpts", containerOpts.firstElementChild, btnOpts);
-            // if (hasOpts) debugger;
-            // if (Object.keys(btnOpts).length > 0) { debugger; }
             const container = mkElt("span", undefined, [containerOpts, containerBtn]);
             container.style.backgroundColor = "black";
             container.style.width = "100px";
             container.style.padding = "4px";
             try {
-                // console.log("containerOpts try", containerOpts.firstElementChild, btnOpts);
-                // if (hasOpts) debugger;
                 const eltButton = modBear.createButton(btnOpts);
                 containerBtn.appendChild(eltButton);
             } catch (err) {

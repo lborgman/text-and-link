@@ -19,7 +19,7 @@ const mdcIconStyles = /** @type {const} */ (["Outlined", "Rounded", "Sharp"]);
 /** @typedef {(typeof mdcIconStyles)[number]} IconStyle */
 /** @type {IconStyle} */ let mdcIconStyle = "Outlined";
 /** @param {string} iconStyle */
-const isIconSTyle = (iconStyle) => mdcIconStyles.indexOf(iconStyle) != -1;
+const isIconSTyle = (iconStyle) => mdcIconStyles.some(style => style === iconStyle);
 
 let mdcIconsClass = "";
 
@@ -43,8 +43,10 @@ async function onPublicInternet(msTimeOut = 3000) {
             cache: "no-store",
             signal: controller.signal
         });
+        console.log("on public internet");
         return true;
     } catch {
+        console.log("not on public internet");
         return false;
     } finally {
         clearTimeout(tmr);
@@ -53,6 +55,8 @@ async function onPublicInternet(msTimeOut = 3000) {
 
 
 const setMdcIconsUsed = new Set();
+const setMdcIconsMustHave = new Set();
+const setMdcIconsAlways = new Set();
 // setMdcIconsUsed.add("edit_off"); // FIX-ME: Do I still need this?
 // addToUsed("edit_off"); // FIX-ME: Do I still need this?
 /**
@@ -60,8 +64,8 @@ const setMdcIconsUsed = new Set();
  * @throws {Error}
  */
 export async function addToUsedIcons(iconName) {
-    const hasIt = await checkIcon(iconName);
-    if (!hasIt) { throw Error(`There is no icon named "${iconName}"`) }
+    const knowsIt = await knownIconName(iconName);
+    if (!knowsIt) { throw Error(`There is no icon named "${iconName}"`) }
     setMdcIconsUsed.add(iconName);
 }
 
@@ -83,7 +87,10 @@ export async function initMdcIcons(iconStyle, mustHaveIcons = []) {
     if (!isIconSTyle(iconStyle)) throw Error(`Not iconStyle: "${iconStyle}"`);
 
     // debugger;
-    mustHaveIcons.forEach(icon => addToUsedIcons(icon));
+    mustHaveIcons.forEach(icon => {
+        // addToUsedIcons(icon);
+        setMdcIconsMustHave.add(icon);
+    });
 
     let strNetworkErr = "";
     mdcIconStyle = iconStyle;
@@ -118,8 +125,6 @@ const myDir = new URL('./', import.meta.url).href;
 const urlMyWoff2File = `${myDir}woff2/my-symbols.woff2`;
 
 
-/* * @param {string} iconName */
-// export function addToUsedIcons(iconName) { OLDsetMdcIconsUsed.add(iconName); }
 
 function getOurMdcIconsList() {
     if (setMdcIconsUsed.has("")) debugger;
@@ -157,8 +162,19 @@ async function checkWoff2icons(action) {
     if (action == "justCheck") return setIconsMissing.size;
 
     const linkWOFF2 = await mkWOFF2downloadLink();
-    const missing = [...setIconsMissing].sort().join(", ");
+
+    const always = [...setMdcIconsAlways].sort().join(", ");
+    const mustHave = [...setMdcIconsMustHave].sort().join(", ");
     const used = [...setMdcIconsUsed].sort().join(", ");
+    const setNeeded = new Set()
+        // @ts-ignore - linter does not support ES2025 yet
+        .union(setMdcIconsAlways)
+        .union(setMdcIconsUsed)
+        .union(setMdcIconsMustHave);
+    // debugger;
+    const needed = [...setNeeded].sort().join(", ");
+
+    const missing = [...setIconsMissing].sort().join(", ");
     const woff2 = [...setIconsInWoff2File].sort().join(", ");
     window.console.log(`Missing in woff file: "${missing}",\nsee console for .woff download link`);
 
@@ -231,11 +247,11 @@ async function checkWoff2icons(action) {
     const divStylesheetStatus = mkElt("div");
     switch (arrGoogleSymbolsLinks.length) {
         case 0:
-            divStylesheetStatus.appendChild(mkElt("div", {style:"font-weight:bold;"}, "No google font link"));
+            divStylesheetStatus.appendChild(mkElt("div", { style: "font-weight:bold;" }, "No google font link"));
             break;
         case 1:
         default:
-            divStylesheetStatus.appendChild(mkElt("div", {style:"font-weight:bold;"}, "Google font links:"));
+            divStylesheetStatus.appendChild(mkElt("div", { style: "font-weight:bold;" }, "Google font links:"));
             const ul = mkElt("ul");
             ul.style.paddingLeft = "1.3rem";
             ul.style.marginTop = "0px";
@@ -249,11 +265,11 @@ async function checkWoff2icons(action) {
     }
     switch (arrMyWoff2Links.length) {
         case 0:
-            divStylesheetStatus.appendChild(mkElt("div", {style:"font-weight:bold;"}, "No woff2 link"));
+            divStylesheetStatus.appendChild(mkElt("div", { style: "font-weight:bold;" }, "No woff2 link"));
             break;
         case 1:
         default:
-            divStylesheetStatus.appendChild(mkElt("div", {style:"font-weight:bold;"}, "Woff2 links:"));
+            divStylesheetStatus.appendChild(mkElt("div", { style: "font-weight:bold;" }, "Woff2 links:"));
             const ul = mkElt("ul");
             ul.style.paddingLeft = "1.3rem";
             ul.style.marginTop = "0px";
@@ -277,8 +293,13 @@ async function checkWoff2icons(action) {
     ]);
     const bdy = mkElt("div", undefined, [
         mkElt("p", { style: "font-weight:bold; font-size:1.25rem;" }, "Missing Material Symbols"),
+        mkElt("div", undefined, [makeGroupLabel(`Always (${setMdcIconsAlways.size}): `), `${always}`]),
+        mkElt("div", undefined, [makeGroupLabel(`Must have (${setMdcIconsMustHave.size}): `), `${mustHave}`]),
         mkElt("div", undefined, [makeGroupLabel(`Used (${setMdcIconsUsed.size}): `), `${used}`]),
+        mkElt("br"),
+        mkElt("div", undefined, [makeGroupLabel(`Needed (${setNeeded.size}): `), `${needed}`]),
         // mkElt("div", undefined, [makeGroupLabel(`WOFF2 (${setIconsInWoff2File.size}): `), `${woff2}`]),
+        mkElt("br"),
         divWoff2,
         mkElt("div", undefined, [makeGroupLabel(`Missing (${setIconsMissing.size}): `), `${missing}`]),
         eltDownload,
@@ -300,14 +321,10 @@ async function checkWoff2icons(action) {
  * @returns {Promise<string|undefined>}
  */
 async function getMdcSymbolsInWoff2File(woffUrl) {
-    // debugger;
-    // const modWoffCodepoints = await importFc4i("woff-codepoints");
     const modWoffCodepoints = await import("./woff-codepoints.js");
     const codepoints = await modWoffCodepoints.getCodepoints(woffUrl);
-    if (!codepoints) return;
+    if (codepoints.length == 0) return;
 
-
-    // const modWoff2MdcSymbols = await importFc4i("woff2-mdc-symbols");
     const modWoff2MdcSymbols = await import("./woff2-mdc-symbols.js");
     /** @type {Record<string,string>} */
     const codepointToName = await modWoff2MdcSymbols.fetchGoogleSymbolNameMap(mdcIconStyle);
@@ -465,7 +482,7 @@ async function getIconsInMyWoffFile() {
 
 
 
-/** @typedef {Record<string, string>[]} CodePoints */
+/** @typedef {Record<string, string>} CodePoints */
 
 /** @returns {Promise<CodePoints>} */
 async function getCodepoints() {
@@ -473,19 +490,20 @@ async function getCodepoints() {
     // console.log("after fetch");
     const codepoints = await response.json();
     // console.log("after response");
+    // debugger;
     return codepoints;
 }
 
 /** @type {CodePoints} */
 const codepoints = await getCodepoints();
-const hasHome = await checkIcon("home");
-console.log("hasHome:", hasHome);
+const knowsHome = await knownIconName("home");
+console.log("knowsHome:", knowsHome);
 
 /**
  * @param {string} iconName
  * @returns {Promise<boolean>}
  */
-async function checkIcon(iconName) {
+async function knownIconName(iconName) {
     // const response = await fetch('https://cdn.jsdelivr.net/npm/material-icons@latest/iconfont/codepoints.json');
     // console.log("after fetch");
     // const codepoints = await response.json();
@@ -493,5 +511,7 @@ async function checkIcon(iconName) {
     // return Object.prototype.hasOwnProperty.call(codepoints, iconName);
     return codepoints[iconName] != undefined
 }
-addToUsedIcons("edit_off"); // FIX-ME: Do I still need this?
-addToUsedIcons("expand_more"); // Used in CSS for <details>/<summary>
+// addToUsedIcons("edit_off"); // FIX-ME: Do I still need this?
+// addToUsedIcons("expand_more"); // Used in CSS for <details>/<summary>
+setMdcIconsAlways.add("edit_off"); // FIX-ME: Do I still need this?
+setMdcIconsAlways.add("expand_more"); // Used in CSS for <details>/<summary>

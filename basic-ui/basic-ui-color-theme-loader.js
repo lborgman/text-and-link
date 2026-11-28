@@ -104,7 +104,7 @@
 
 
 (function () {
-    console.log("basic-ui-color-themes-loader is here!!!");
+    // console.log("basic-ui-color-themes-loader is here!!!");
     // Define your public methods
     /** @type {BasicUI_ColorThemesAPI} */
     const publicAPI = {
