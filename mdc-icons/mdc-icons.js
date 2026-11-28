@@ -212,13 +212,14 @@ async function checkWoff2icons(action) {
         background-color: yellowgreen;
         color: black;
     `;
-    const divWoff2 = mkElt("div", undefined, [makeGroupLabel(`WOFF2 file (${setIconsInWoff2File.size}): `), `${woff2}`]);
+    // const divWoff2 = mkElt("div", undefined, [makeGroupLabel(`WOFF2 file (${setIconsInWoff2File.size}): `), `${woff2}`]);
+    const divWoff2 = mkElt("div");
     if (foundWoff2File) {
-        divWoff2.appendChild(mkElt("div", { style: "font-style:italic; padding-left:2rem;" },
-            "(WOFF2 file exists)"));
+        // divWoff2.appendChild(mkElt("div", { style: "font-style:italic; padding-left:2rem;" }, "(WOFF2 file exists)"));
+        divWoff2.appendChild(mkElt("div", undefined, [makeGroupLabel(`WOFF2 file (${setIconsInWoff2File.size}): `), `${woff2}`]));
     } else {
-        divWoff2.appendChild(mkElt("div", { style: "font-style:italic; padding-left:2rem;" },
-            "(There is no real WOFF2 file yet)"));
+        divWoff2.appendChild(mkElt("div", { style: "font-style:italic;" },
+            "Did not find the WOFF2 file."));
     }
     const linkedSheets = [...document.querySelectorAll("link[rel=stylesheet]")];
     console.log("linkedSheets:", linkedSheets);
@@ -281,29 +282,51 @@ async function checkWoff2icons(action) {
             divStylesheetStatus.appendChild(ul);
     }
 
-    const detInstructions = mkElt("details", { class: "summary-marker-after" }, [
+    const detWoff2Instructions = mkElt("details", { class: "summary-marker-after" }, [
         mkElt("summary", undefined, "Help"),
+        mkElt("p", undefined, `
+            Google font symbols can be downloaded directory from Google
+            or via a smaller .woff2 file.
+            The latter is especially useful for a PWA that should work offline.
+            `),
+        mkElt("dl", undefined, [
+            mkElt("dt", undefined, "Used:"),
+            mkElt("dd", undefined, "Collected when displaying your web page under localhost"),
+            mkElt("dt", undefined, "Must have:"),
+            mkElt("dd", undefined, "You decided this when you called .init??"),
+            mkElt("dt", undefined, "Always needed:"),
+            mkElt("dd", undefined, "Used in CSS files"),
+        ]),
         mkElt("p", undefined,
             `
-            There should either be a link to google symbol font (around 1MB)
+            In your web page there should either be
+            a link to google symbol font (around 1MB)
             or a link to the woff2 file (a few kB).
             `),
-        mkElt("h6", undefined, "I found those:"),
+        mkElt("h6", undefined, "I see those in your web page:"),
         divStylesheetStatus,
     ]);
+    detWoff2Instructions.style.backgroundColor = "color-mix(in oklab, white 85%, transparent)";
+    detWoff2Instructions.style.color = "black";
+    detWoff2Instructions.style.borderRadius = "4px";
+    detWoff2Instructions.style.padding = "4px 16px";
+    detWoff2Instructions.style.margin = "16px 0";
+
     const bdy = mkElt("div", undefined, [
-        mkElt("p", { style: "font-weight:bold; font-size:1.25rem;" }, "Missing Material Symbols"),
-        mkElt("div", undefined, [makeGroupLabel(`Always (${setMdcIconsAlways.size}): `), `${always}`]),
+        mkElt("h2", { style: "font-weight:bold; font-size:1.25rem;" }, "Using a Woff2 file"),
+        detWoff2Instructions,
+
+        mkElt("div", undefined, [makeGroupLabel(`Always needed (${setMdcIconsAlways.size}): `), `${always}`]),
         mkElt("div", undefined, [makeGroupLabel(`Must have (${setMdcIconsMustHave.size}): `), `${mustHave}`]),
         mkElt("div", undefined, [makeGroupLabel(`Used (${setMdcIconsUsed.size}): `), `${used}`]),
         mkElt("br"),
         mkElt("div", undefined, [makeGroupLabel(`Needed (${setNeeded.size}): `), `${needed}`]),
-        // mkElt("div", undefined, [makeGroupLabel(`WOFF2 (${setIconsInWoff2File.size}): `), `${woff2}`]),
         mkElt("br"),
         divWoff2,
-        mkElt("div", undefined, [makeGroupLabel(`Missing (${setIconsMissing.size}): `), `${missing}`]),
+        (!foundWoff2File) ?
+            "" :
+            mkElt("div", undefined, [makeGroupLabel(`Missing (${setIconsMissing.size}): `), `${missing}`]),
         eltDownload,
-        detInstructions,
     ]);
     // showDialog(bdy);
     const dlg = mkElt("dialog", undefined, bdy);
